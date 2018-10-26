@@ -15,8 +15,11 @@ class BranchSelection:
                 (op,sel) = line.split()
                 if   op == "keep": ops.append( (sel, 1) )
                 elif op == "drop": ops.append( (sel, 0) )
-                elif op == "keepmatch": ops.append( (re.compile("(:?%s)$" % sel), 1) )
-                elif op == "dropmatch": ops.append( (re.compile("(:?%s)$" % sel), 0) )
+                #elif op == "keepmatch": ops.append( (re.compile("(:?%s)$" % sel), 1) )
+                #elif op == "dropmatch": ops.append( (re.compile("(:?%s)$" % sel), 0) )
+                elif op == "keepmatch": ops.append( (re.compile("(:?%s)" % sel), 1) )
+                elif op == "dropmatch": ops.append( (re.compile("(:?%s)" % sel), 0) )
+                elif op == "nomatch": ops.append( (re.compile("(:?%s)" % sel), 0) )
                 else:
                     print "Error in file %s, line '%s': it's not (keep|keepmatch|drop|dropmatch) <branch_pattern>" % (filename, line)
             except ValueError, e:
@@ -25,9 +28,11 @@ class BranchSelection:
     def selectBranches(self,tree):
         tree.SetBranchStatus("*",1)
         branchNames = [ b.GetName() for b in tree.GetListOfBranches() ]
+        
         for bre, stat in self._ops:
             if type(bre) == re._pattern_type:
-                for n in branchNames: 
-                    if re.match(bre, n): tree.SetBranchStatus(n, stat)
+                for n in branchNames:
+                    if re.match(bre, n):
+                        tree.SetBranchStatus(n, stat)
             else:
                 tree.SetBranchStatus(bre, stat)

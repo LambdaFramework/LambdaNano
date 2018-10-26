@@ -30,10 +30,28 @@ class mhtjuProducerCpp(Module): # MHT producer, unclean jets only (no lepton ove
         pass
 
     def initReaders(self,tree): # this function gets the pointers to Value and ArrayReaders and sets them in the C++ worker class
+        #jettiness
         self.nJet = tree.valueReader("nJet")
         self.Jet_pt = tree.arrayReader("Jet_pt")
         self.Jet_phi = tree.arrayReader("Jet_phi")
-        self.worker.setJets(self.nJet,self.Jet_pt,self.Jet_phi)
+        self.Jet_puId = tree.arrayReader("Jet_puId")
+        #electron
+        self.nElectron = tree.valueReader("nElectron")
+        self.Electron_pt = tree.arrayReader("Electron_pt")
+        self.Electron_phi = tree.arrayReader("Electron_phi")
+        self.Electron_cutBased = tree.arrayReader("Electron_cutBased")
+        #muon
+        self.nMuon = tree.valueReader("nMuon")
+        self.Muon_pt = tree.arrayReader("Muon_pt")
+        self.Muon_phi = tree.arrayReader("Muon_phi")
+        self.Muon_softId = tree.arrayReader("Muon_softId")
+        self.Muon_mediumId = tree.arrayReader("Muon_mediumId")
+        self.Muon_tightId = tree.arrayReader("Muon_tightId")
+        #sending it worker
+        self.worker.setJets(self.nJet,self.Jet_pt,self.Jet_phi,self.Jet_puId)
+        self.worker.setElectron(self.nElectron,self.Electron_pt,self.Electron_phi,self.Electron_cutBased)
+        self.worker.setMuon(self.nMuon,self.Muon_pt,self.Muon_phi,self.Muon_softId,self.Muon_mediumId,self.Muon_tightId)
+        
         self._ttreereaderversion = tree._ttreereaderversion # self._ttreereaderversion must be set AFTER all calls to tree.valueReader or tree.arrayReader
 
     def analyze(self, event):
