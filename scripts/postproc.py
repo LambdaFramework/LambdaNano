@@ -100,7 +100,7 @@ if __name__ == "__main__":
             print '  please point to the correct path to scripts/ using option \'--bs $CMSSW_BASE/src/PhysicsTools/NanoAODTools/scripts/\''
             print
             sys.exit()
-	if len(options.lsfoutput) == 0 or os.path.exists(options.lsfoutput):
+	if len( options.lsfoutput) == 0 or os.path.exists("%s%s-%s"%( options.base , options.samplelists , options.lsfoutput ) ):
             print '--- ERROR ---'
             print '  \''+options.lsfoutput+'\' folder already exists or is null!'
             print '  please delete it or use a different name using option \'-o FOLDER-NAME\''
@@ -110,11 +110,7 @@ if __name__ == "__main__":
         
         bj = batchJob( p , options.queue , options.maxlsftime , options.eventspersec , options.lsfoutput , options.base )
 
-        if options.samplelists in samplelist:
-            bj.addSL(options.samplelists) 
-        else:
-            print "ERROR: undefined samplelists"
-            sys.exit()
+        bj.addSL(options.samplelists) 
         bj.submit(dryrun=True)
     else:
         p.run()
