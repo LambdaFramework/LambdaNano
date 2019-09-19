@@ -1,4 +1,4 @@
-samplelist ={
+datasets ={
     'Run2_2016_v4': {
         'data' : {
             "SingleElectronRun2016B_ver1-Nano14Dec2018_ver1-v1",

@@ -5,7 +5,7 @@ ROOT.PyConfig.IgnoreCommandLineOptions = True
 from importlib import import_module
 from PhysicsTools.NanoAODTools.postprocessing.framework.postprocessor import PostProcessor
 from PhysicsTools.NanoAODTools.postprocessing.helpers.submission import batchJob
-from PhysicsTools.NanoAODTools.postprocessing.modules.configs import samplelist
+#from PhysicsTools.NanoAODTools.postprocessing.modules.datasets import datasets
 
 if __name__ == "__main__":
     from optparse import OptionParser
@@ -108,10 +108,10 @@ if __name__ == "__main__":
             sys.exit()
         os.system('mkdir %s-%s'%(options.samplelists,options.lsfoutput))
         
-        bj = batchJob( p , options.queue , options.maxlsftime , options.eventspersec , options.samplelists , options.lsfoutput , options.base )
+        bj = batchJob( p , options.queue , options.maxlsftime , options.eventspersec , options.lsfoutput , options.base )
 
         if options.samplelists in samplelist:
-            bj.addSL(samplelist[options.samplelists]) 
+            bj.addSL(options.samplelists) 
         else:
             print "ERROR: undefined samplelists"
             sys.exit()

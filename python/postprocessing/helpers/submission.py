@@ -1,24 +1,22 @@
 import os, re, sys
 import commands
 import math, time
-import importlib
+from PhysicsTools.NanoAODTools.postprocessing.modules.datasets import datasets
 
 class batchJob:
-    def __init__(self, processor, queue, maxlsftime, eventspersec, samplelist, lsfoutput, base):
+    def __init__(self, processor, queue, maxlsftime, eventspersec, lsfoutput, base):
         self.processor    = processor
         self.queue        = queue
         self.maxlsftime  = maxlsftime
         self.eventspersec = eventspersec
-        self.samplelist   = samplelist
         self.lsfoutput    = lsfoutput
         self.base         = base
 
-    def addSL(self, samplelistmod):
-        #samplelistmod = importlib.import_module('samplelist_%s' %samplelist)
-        self.samplelistData = list(samplelistmod['data'])
-        self.samplelistMC = list(samplelistmod['mc'])
-        if 'test' in samplelistmod:
-            self.samplelists = list(samplelistmod['test'])
+    def addSL(self, samplelist):
+        self.samplelistData = list(datasets[samplelist]['data'])
+        self.samplelistMC = list(datasets[samplelist]['mc'])
+        if 'test' in datasets[samplelist]:
+            self.samplelists = list(datasets[samplelist]['test'])
         else:
             self.samplelists = self.samplelistData + self.samplelistMC
 
