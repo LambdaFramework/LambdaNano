@@ -5,7 +5,6 @@ ROOT.PyConfig.IgnoreCommandLineOptions = True
 from importlib import import_module
 from PhysicsTools.NanoAODTools.postprocessing.framework.postprocessor import PostProcessor
 from PhysicsTools.NanoAODTools.postprocessing.helpers.submission import batchJob
-#from PhysicsTools.NanoAODTools.postprocessing.modules.datasets import datasets
 
 if __name__ == "__main__":
     from optparse import OptionParser
@@ -39,6 +38,8 @@ if __name__ == "__main__":
 
     (options, args) = parser.parse_args()
 
+    print options
+
     if os.getcwd().split('/')[-1] == "scripts":
         print "Please run the script from base directory: %s" %options.base
         sys.exit()
@@ -49,10 +50,18 @@ if __name__ == "__main__":
     if len(args) < 2 and not options.batch :
 	 parser.print_help()
          sys.exit(1)
+    if options.batch:
+        outdir=[] ; args = []
     else:
-        args=[] ; outdir = args
+        print args[1]
+        if '.txt' in args[1] and os.path.isfile(args[1]):
+            file=open(os.path.expandvars('%s'%args[1]),'r')
+            filelist = file.readlines()
+            outdir = args[0] ; args = map(lambda s: s.strip(), filelist)
+        else:
+            outdir = args[0] ; args = args[1:]
 
-    if not options.batch: outdir = args[0]; args = args[1:]
+    print args
 
     modules = []
     for mod, names in options.imports: 
@@ -108,9 +117,10 @@ if __name__ == "__main__":
             sys.exit()
         os.system('mkdir %s-%s'%(options.samplelists,options.lsfoutput))
         
-        bj = batchJob( p , options.queue , options.maxlsftime , options.eventspersec , options.lsfoutput , options.base )
+        bj = batchJob( p , options.queue , options.maxlsftime , options.eventspersec , '%s-%s'%(options.samplelists,options.lsfoutput) , options.base )
 
-        bj.addSL(options.samplelists) 
+        bj.addSL(options.samplelists)
+        bj.addModule(options.imports)
         bj.submit(dryrun=True)
     else:
         p.run()
