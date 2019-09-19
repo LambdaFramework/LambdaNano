@@ -88,8 +88,9 @@ samplelist ={
             "QCD_Pt-20toInf_MuEnrichedPt15_TuneCUETP8M1_13TeV_pythia8-v1",
             },
         'test' : {
+            "SingleElectronRun2016C-Nano14Dec2018-v1",
             "WWW_4F_TuneCUETP8M1_13TeV-amcatnlo-pythia8-v1",
-            "WWZ_TuneCUETP8M1_13TeV-amcatnlo-pythia8-v1",
+            "TTZToLLNuNu_M-10_TuneCUETP8M1_13TeV-amcatnlo-pythia8_ext3-v1",
             },
         },
     'Run2_2017_v4' : {

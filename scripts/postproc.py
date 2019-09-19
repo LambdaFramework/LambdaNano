@@ -39,6 +39,10 @@ if __name__ == "__main__":
 
     (options, args) = parser.parse_args()
 
+    if os.getcwd().split('/')[-1] == "scripts":
+        print "Please run the script from base directory: %s" %options.base
+        sys.exit()
+
     if options.friend:
         if options.cut or options.json: raise RuntimeError("Can't apply JSON or cut selection when producing friends")
 
@@ -104,7 +108,7 @@ if __name__ == "__main__":
             sys.exit()
         os.system('mkdir %s-%s'%(options.samplelists,options.lsfoutput))
         
-        bj = batchJob( p , options.queue , options.maxlsftime , options.eventspersec , options.lsfoutput , options.base )
+        bj = batchJob( p , options.queue , options.maxlsftime , options.eventspersec , options.samplelists , options.lsfoutput , options.base )
 
         if options.samplelists in samplelist:
             bj.addSL(samplelist[options.samplelists]) 

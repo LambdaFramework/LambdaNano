@@ -4,11 +4,12 @@ import math, time
 import importlib
 
 class batchJob:
-    def __init__(self, processor, queue, maxlifetime, eventpsersec, lsfoutput, base):
+    def __init__(self, processor, queue, maxlsftime, eventspersec, samplelist, lsfoutput, base):
         self.processor    = processor
         self.queue        = queue
-        self.maxlifetime  = maxlifetime
-        self.eventpsersec = eventpsersec
+        self.maxlsftime  = maxlsftime
+        self.eventspersec = eventspersec
+        self.samplelist   = samplelist
         self.lsfoutput    = lsfoutput
         self.base         = base
 
@@ -17,43 +18,29 @@ class batchJob:
         self.samplelistData = list(samplelistmod['data'])
         self.samplelistMC = list(samplelistmod['mc'])
         if 'test' in samplelistmod:
-            self.samplelist = list(samplelistmod['test'])
+            self.samplelists = list(samplelistmod['test'])
         else:
-            self.samplelist = self.samplelistData + self.samplelistMC
+            self.samplelists = self.samplelistData + self.samplelistMC
 
     def submit(self, dryrun=False):
-        #1 job/1 root file
+        #1 job/1 dataset, possibly create job contains multiple root file
         var=0
-        print self.samplelist
-        print "Stop in submission script"
-        sys.exit()
+        if '2016' in self.samplelist:
+            dirdata='Run2016'
+            dirmc='Summer16'
+        elif '2017' in self.samplelist:
+            dirdata='Run2017'
+            dirmc='Fall17'
+        elif '2018' in self.samplelist:
+            dirdata='Run2018'
+            dirmc='Autumn18'
+            
         for l in self.samplelists:
-            tag=l.split("/")[-1].split('.')[0]
-            #if not tag in sample:
-            #    if not '_Skim' in tag:
-            #        print tag, 'not in samples\n'
-            #        continue
-            if Cfg.era()=="Run2_16":
-                dir= 'Run2016' if 'Run2016' in l else 'Summer16'
-            elif Cfg.era()=="Run2_17":
-                dir= 'Run2017' if 'Run2017' in l else 'Fall17'
-            elif Cfg.era()=="Run2_17":
-                dir= 'Run2018' if 'Run2018' in l else 'Autumn18'
-            else:
-                print "ERROR: No ERA"
-                sys.exit()
-
+            #tag=l.split("/")[-1].split('.')[0]
             print "Reading filelist --> %s" %l
-            file=open(os.path.expandvars(options.base+'data/datasets/pdt2/Legnaro_T2/'+dir+'/'+l+'.txt'),'r')
+            file=open(os.path.expandvars( self.base + 'python/postprocessing/data/filelists/Legnaro_T2/%s/' %(dirdata if 'Run' in l else dirmc) +l+'.txt' ),'r')            
             filelist = file.readlines()
-            sel=filter(lambda x: x.filename()=="%s"%l , DSE)
-            if len(sel)==0:
-                print "ERROR"
-                print len(sel)
-                print "SKIPPING filelist --> %s" %l
-                sys.exit()
-                continue;
-            splitting= max(int(float(sel[0].nevent())/(options.maxlsftime*3600*options.eventspersec)),1)
+            splitting= max(int(float(sel[0].nevent())/(self.maxlsftime*3600*self.eventspersec)),1)
             njobs    = int(len(filelist)/splitting)+1
             sublists = [filelist[i:i+njobs] for i in range(0, len(filelist), njobs)]
             print '\nSplitting',l,'in',len(sublists),'chunk(s) of approximately',njobs,'files each'
