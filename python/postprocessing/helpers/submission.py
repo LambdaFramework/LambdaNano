@@ -12,14 +12,22 @@ class batchJob:
         self.lsfoutput    = lsfoutput
         self.base         = base
 
-    def addSL(self, samplelist):
-        samplelistmod = importlib.import_module('samplelist_%s' %samplelist)
-        self.samplelist = samplelistmod.samplelists
+    def addSL(self, samplelistmod):
+        #samplelistmod = importlib.import_module('samplelist_%s' %samplelist)
+        self.samplelistData = list(samplelistmod['data'])
+        self.samplelistMC = list(samplelistmod['mc'])
+        if 'test' in samplelistmod:
+            self.samplelist = list(samplelistmod['test'])
+        else:
+            self.samplelist = self.samplelistData + self.samplelistMC
 
     def submit(self, dryrun=False):
         #1 job/1 root file
         var=0
-        for l in samplelists:
+        print self.samplelist
+        print "Stop in submission script"
+        sys.exit()
+        for l in self.samplelists:
             tag=l.split("/")[-1].split('.')[0]
             #if not tag in sample:
             #    if not '_Skim' in tag:

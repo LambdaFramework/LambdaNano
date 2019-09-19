@@ -5,6 +5,7 @@ ROOT.PyConfig.IgnoreCommandLineOptions = True
 from importlib import import_module
 from PhysicsTools.NanoAODTools.postprocessing.framework.postprocessor import PostProcessor
 from PhysicsTools.NanoAODTools.postprocessing.helpers.submission import batchJob
+from PhysicsTools.NanoAODTools.postprocessing.modules.configs import samplelist
 
 if __name__ == "__main__":
     from optparse import OptionParser
@@ -13,7 +14,7 @@ if __name__ == "__main__":
     parser.add_option("-J"       , "--json"             , dest="json"      , type="string" , default=None, help="Select events using this JSON file")
     parser.add_option("-c"       , "--cut"              , dest="cut"       , type="string" , default=None, help="Cut string")
     parser.add_option("-b"       , "--branch-selection" , dest="branchsel" , type="string" , default=None, help="Branch selection")
-    parser.add_option('--bs'     , '--base'             , dest='base'      , type="string" , default='%s/src/PhysicsTools/NanoAODTools/scripts/' \
+    parser.add_option('--bs'     , '--base'             , dest='base'      , type="string" , default='%s/src/PhysicsTools/NanoAODTools/' \
                       %os.environ['CMSSW_BASE'] if 'CMSSW_BASE' in os.environ else os.getcwd() , action='store' , help="Workin directory")
     
     parser.add_option("--bi"              , "--branch-selection-input"                  , dest="branchsel_in"  , type="string" , default=None , help="Branch selection input")
@@ -33,18 +34,21 @@ if __name__ == "__main__":
     parser.add_option('-m'                , '--maxlsftime'       , action='store'       , type='int'           , dest='maxlsftime'  ,   default=4, help="maximum life time in LSF")
     parser.add_option('-p'                , '--eventspersec'     , action='store'       , type='int'           , dest='eventspersec', default=25, help="event persec")
     parser.add_option('-q'                , '--queue'            , action='store'       , type='string'        , dest='queue'       , default='local-cms-short', help="queue")
+    parser.add_option('-l'                , '--samplelists'      , action='store'       , type='string'        , dest='samplelists' , default='Run2_2016_v4' , help="Sample list")
     parser.add_option('-o'                , '--lsfoutput'        , action='store'       , type='string'        , dest='lsfoutput'   , default='' , help="LSF output folder name")
-    parser.add_option('-l'                , '--samplelists'      , action='store'       , type='string'        , dest='samplelists' , default='WHSS_2017' , help="Sample list")
 
     (options, args) = parser.parse_args()
 
     if options.friend:
         if options.cut or options.json: raise RuntimeError("Can't apply JSON or cut selection when producing friends")
 
-    if len(args) < 2 :
+    if len(args) < 2 and not options.batch :
 	 parser.print_help()
          sys.exit(1)
-    outdir = args[0]; args = args[1:]
+    else:
+        args=[] ; outdir = args
+
+    if not options.batch: outdir = args[0]; args = args[1:]
 
     modules = []
     for mod, names in options.imports: 
@@ -83,26 +87,31 @@ if __name__ == "__main__":
             outputbranchsel = options.branchsel_out)
     
     if options.batch:
+        print "batch initialization"
         #environmental check
         print
-        if not os.path.exists(os.path.expandvars(option.base)):
+        if not os.path.exists(os.path.expandvars(options.base)):
             print '--- ERROR ---'
-            print '  \''+option.base+'\' path not found expanding '+option.base
+            print '  \''+options.base+'\' path not found expanding '+options.base
             print '  please point to the correct path to scripts/ using option \'--bs $CMSSW_BASE/src/PhysicsTools/NanoAODTools/scripts/\''
             print
-            exit()
-	if len(option.lsfoutput) == 0 or os.path.exists(option.lsfoutput):
+            sys.exit()
+	if len(options.lsfoutput) == 0 or os.path.exists(options.lsfoutput):
             print '--- ERROR ---'
-            print '  \''+option.lsfoutput+'\' folder already exists or is null!'
+            print '  \''+options.lsfoutput+'\' folder already exists or is null!'
             print '  please delete it or use a different name using option \'-o FOLDER-NAME\''
             print
-            exit()
-        os.system('mkdir '+options.lsfoutput)
+            sys.exit()
+        os.system('mkdir %s-%s'%(options.samplelists,options.lsfoutput))
         
-        bj = batchJob( p , option.queue , option.maxlsftime , option.eventspersec , option.lsfoutput , option.base )
-        bj.addSL(option.samplelists)
+        bj = batchJob( p , options.queue , options.maxlsftime , options.eventspersec , options.lsfoutput , options.base )
+
+        if options.samplelists in samplelist:
+            bj.addSL(samplelist[options.samplelists]) 
+        else:
+            print "ERROR: undefined samplelists"
+            sys.exit()
         bj.submit(dryrun=True)
-        
     else:
         p.run()
 

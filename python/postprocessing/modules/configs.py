@@ -86,8 +86,12 @@ samplelist ={
             "tZq_ll_4f_13TeV-amcatnlo-pythia8_ext1-v1",
             "VHToNonbb_M125_13TeV_amcatnloFXFX_madspin_pythia8-v1",
             "QCD_Pt-20toInf_MuEnrichedPt15_TuneCUETP8M1_13TeV_pythia8-v1",
+            },
+        'test' : {
+            "WWW_4F_TuneCUETP8M1_13TeV-amcatnlo-pythia8-v1",
+            "WWZ_TuneCUETP8M1_13TeV-amcatnlo-pythia8-v1",
+            },
         },
-    },
     'Run2_2017_v4' : {
         'data' : {
             "SingleElectronRun2017B-31Mar2018-v1",      
@@ -100,7 +104,7 @@ samplelist ={
             "SingleMuonRun2017D-31Mar2018-v1",  
             "SingleMuonRun2017E-31Mar2018-v1",  
             "SingleMuonRun2017F-31Mar2018-v1",
-        },
+            },
         'mv'   : {
             "DYJetsToLL_M-10to50_TuneCP5_13TeV-madgraphMLM-pythia8-v1",
             #"DYJetsToLL_M-10to50_TuneCP5_13TeV-madgraphMLM-pythia8-v2",
@@ -221,6 +225,6 @@ samplelist ={
             "TTWJetsToLNu_TuneCP5_13TeV-amcatnloFXFX-madspin-pythia8_ext1-v1",
             "TTZToLLNuNu_M-10_TuneCP5_13TeV-amcatnlo-pythia8_ext1-v1"
             "WpWpJJ_EWK-QCD_TuneCP5_13TeV-madgraph-pythia8-v1",
+            },
         },
-    },
-}
+    }
