@@ -1,0 +1,1 @@
+dcap://t2-srm-02.lnl.infn.it/pnfs/lnl.infn.it/data/cms//store/mc/RunIIAutumn18NanoAODv4/DMSimp_MonoZLL_NLO_Vector_TuneCP3_GQ0p25_GDM1p0_MY1-1000_MXd-100/NANOAODSIM/Nano14Dec2018_102X_upgrade2018_realistic_v16-v1/70000/F01E0809-B0C5-A341-B808-9FEE49D1836C.root

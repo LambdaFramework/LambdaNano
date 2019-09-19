@@ -1,0 +1,1 @@
+dcap://t2-srm-02.lnl.infn.it/pnfs/lnl.infn.it/data/cms//store/mc/RunIIAutumn18NanoAODv4/VBFToBulkGravitonToHHTo2B2G_M-450_narrow_TuneCP5_PSWeights_13TeV-madgraph-pythia8/NANOAODSIM/Nano14Dec2018_102X_upgrade2018_realistic_v16-v1/230000/673CCADA-42C1-2547-A767-DE8731763E2B.root

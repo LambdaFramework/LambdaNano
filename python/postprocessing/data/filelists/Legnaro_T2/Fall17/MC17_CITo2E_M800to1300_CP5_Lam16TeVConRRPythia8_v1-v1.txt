@@ -1,0 +1,1 @@
+dcap://t2-srm-02.lnl.infn.it/pnfs/lnl.infn.it/data/cms//store/mc/RunIIFall17NanoAOD/MC17_CITo2E_M800to1300_CP5_Lam16TeVConRRPythia8_v1/NANOAODSIM/PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/70000/4A247207-BDAC-E811-B686-246E96D10C24.root

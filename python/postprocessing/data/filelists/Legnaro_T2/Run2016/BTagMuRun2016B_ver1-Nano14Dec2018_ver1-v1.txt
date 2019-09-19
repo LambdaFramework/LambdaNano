@@ -1,0 +1,2 @@
+dcap://t2-srm-02.lnl.infn.it/pnfs/lnl.infn.it/data/cms//store/data/Run2016B_ver1/BTagMu/NANOAOD/Nano14Dec2018_ver1-v1/10000/258A2AC1-E2D2-2544-8B38-2376E1D62E7A.root
+dcap://t2-srm-02.lnl.infn.it/pnfs/lnl.infn.it/data/cms//store/data/Run2016B_ver1/BTagMu/NANOAOD/Nano14Dec2018_ver1-v1/10000/83CE3241-2433-964B-98CF-D671F4D2E66E.root

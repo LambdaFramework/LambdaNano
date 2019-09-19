@@ -1,0 +1,2 @@
+dcap://t2-srm-02.lnl.infn.it/pnfs/lnl.infn.it/data/cms//store/mc/RunIISummer16NanoAODv4/AxialMonoW_Mphi-100_Mchi-1_gSM-0p25_gDM-1p0_v2_13TeV-madgraph/NANOAODSIM/PUMoriond17_Nano14Dec2018_102X_mcRun2_asymptotic_v6-v2/00000/05BC1F50-7DB4-B348-ABEE-B38636E0E4DD.root
+dcap://t2-srm-02.lnl.infn.it/pnfs/lnl.infn.it/data/cms//store/mc/RunIISummer16NanoAODv4/AxialMonoW_Mphi-100_Mchi-1_gSM-0p25_gDM-1p0_v2_13TeV-madgraph/NANOAODSIM/PUMoriond17_Nano14Dec2018_102X_mcRun2_asymptotic_v6-v2/00000/270BA43A-4E38-9A45-B361-173F06EE2EFB.root

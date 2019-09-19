@@ -1,0 +1,1 @@
+dcap://t2-srm-02.lnl.infn.it/pnfs/lnl.infn.it/data/cms//store/data/Run2017E/FSQJet2/NANOAOD/Nano14Dec2018-v1/90000/54ACD0B2-83FB-B84F-84AE-DCA3DF1B4C12.root

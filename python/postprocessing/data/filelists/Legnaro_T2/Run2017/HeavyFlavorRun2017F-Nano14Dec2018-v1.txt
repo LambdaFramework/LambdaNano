@@ -1,0 +1,1 @@
+dcap://t2-srm-02.lnl.infn.it/pnfs/lnl.infn.it/data/cms//store/data/Run2017F/HeavyFlavor/NANOAOD/Nano14Dec2018-v1/20000/A8DD0FDC-6D9F-0B46-8FFB-8618DCA20BFB.root

@@ -1,0 +1,3 @@
+dcap://t2-srm-02.lnl.infn.it/pnfs/lnl.infn.it/data/cms//store/mc/RunIISummer16NanoAODv4/ChargedHiggsToCS_M160_13TeV-madgraph/NANOAODSIM/PUMoriond17_Nano14Dec2018_102X_mcRun2_asymptotic_v6-v1/10000/020B7866-E8B1-5D4C-A4D0-32DF3AC74B27.root
+dcap://t2-srm-02.lnl.infn.it/pnfs/lnl.infn.it/data/cms//store/mc/RunIISummer16NanoAODv4/ChargedHiggsToCS_M160_13TeV-madgraph/NANOAODSIM/PUMoriond17_Nano14Dec2018_102X_mcRun2_asymptotic_v6-v1/10000/19CF4197-1F79-C24B-82B6-82C45345A067.root
+dcap://t2-srm-02.lnl.infn.it/pnfs/lnl.infn.it/data/cms//store/mc/RunIISummer16NanoAODv4/ChargedHiggsToCS_M160_13TeV-madgraph/NANOAODSIM/PUMoriond17_Nano14Dec2018_102X_mcRun2_asymptotic_v6-v1/10000/D034E5B8-D221-9543-B618-FF7EDF88B8F1.root

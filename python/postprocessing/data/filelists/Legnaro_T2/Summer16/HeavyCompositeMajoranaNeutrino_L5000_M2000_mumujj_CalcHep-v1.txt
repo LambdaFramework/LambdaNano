@@ -1,0 +1,2 @@
+dcap://t2-srm-02.lnl.infn.it/pnfs/lnl.infn.it/data/cms//store/mc/RunIISummer16NanoAODv4/HeavyCompositeMajoranaNeutrino_L5000_M2000_mumujj_CalcHep/NANOAODSIM/PUMoriond17_Nano14Dec2018_102X_mcRun2_asymptotic_v6-v1/130000/2F67E10D-B7EF-CE43-BB1F-DF49554C7FDE.root
+dcap://t2-srm-02.lnl.infn.it/pnfs/lnl.infn.it/data/cms//store/mc/RunIISummer16NanoAODv4/HeavyCompositeMajoranaNeutrino_L5000_M2000_mumujj_CalcHep/NANOAODSIM/PUMoriond17_Nano14Dec2018_102X_mcRun2_asymptotic_v6-v1/130000/6A7424C5-B4A8-EA44-84ED-AA2E5C9CA333.root

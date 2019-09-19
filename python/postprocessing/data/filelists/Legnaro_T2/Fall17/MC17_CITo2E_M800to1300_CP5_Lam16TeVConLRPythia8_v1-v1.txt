@@ -1,0 +1,4 @@
+dcap://t2-srm-02.lnl.infn.it/pnfs/lnl.infn.it/data/cms//store/mc/RunIIFall17NanoAOD/MC17_CITo2E_M800to1300_CP5_Lam16TeVConLRPythia8_v1/NANOAODSIM/PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/30000/AC8B130A-97A6-E811-9FC2-A4BF0112F52E.root
+dcap://t2-srm-02.lnl.infn.it/pnfs/lnl.infn.it/data/cms//store/mc/RunIIFall17NanoAOD/MC17_CITo2E_M800to1300_CP5_Lam16TeVConLRPythia8_v1/NANOAODSIM/PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/90000/92A20884-FBA8-E811-8345-001E677926C2.root
+dcap://t2-srm-02.lnl.infn.it/pnfs/lnl.infn.it/data/cms//store/mc/RunIIFall17NanoAOD/MC17_CITo2E_M800to1300_CP5_Lam16TeVConLRPythia8_v1/NANOAODSIM/PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/90000/C0C62D85-FBA8-E811-ABE6-0CC47A57D086.root
+dcap://t2-srm-02.lnl.infn.it/pnfs/lnl.infn.it/data/cms//store/mc/RunIIFall17NanoAOD/MC17_CITo2E_M800to1300_CP5_Lam16TeVConLRPythia8_v1/NANOAODSIM/PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/90000/CE5E9860-FBA8-E811-9C57-EC0D9A822626.root

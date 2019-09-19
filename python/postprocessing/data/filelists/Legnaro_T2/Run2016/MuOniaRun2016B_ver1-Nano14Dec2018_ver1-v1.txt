@@ -1,0 +1,1 @@
+dcap://t2-srm-02.lnl.infn.it/pnfs/lnl.infn.it/data/cms//store/data/Run2016B_ver1/MuOnia/NANOAOD/Nano14Dec2018_ver1-v1/80000/8DF76EEA-1E53-694B-B63B-0549FF662831.root

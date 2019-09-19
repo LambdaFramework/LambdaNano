@@ -1,0 +1,1 @@
+dcap://t2-srm-02.lnl.infn.it/pnfs/lnl.infn.it/data/cms//store/mc/RunIIFall17NanoAOD/HavyCompositeMajoranaNeutrino_L11000_M2000_eejj_CalcHep/NANOAODSIM/PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/00000/900E7EB9-8973-E911-95AA-FA163E128596.root
