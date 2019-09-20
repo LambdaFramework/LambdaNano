@@ -37,6 +37,7 @@ class batchJob:
 
         self.modules=[]
         for mod in modconfig:
+            if 'puWeight' in mod: self.modules.append( '-I PhysicsTools.NanoAODTools.postprocessing.modules.puWeightProducer %s'%mod )
             self.modules.append( '-I PhysicsTools.NanoAODTools.postprocessing.modules.%s %s'%(mod,mod) )
 
         self.slimmer = slimmer

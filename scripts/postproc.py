@@ -34,10 +34,11 @@ if __name__ == "__main__":
     parser.add_option("-z"                , "--compression"      , dest="compression"   , type="string"        , default=("LZMA:9"), help="Compression: none, or (algo):(level) ")
     parser.add_option("-w"                , "--workflow"         , dest="workflow"      , type="string"        , default=""        , help="Specify the workflow of postprocessing step")    
     parser.add_option("--batch"           , dest="batch"         , action="store_true"  , default=False        , help="Submit to Padova batch processing")
+    parser.add_option("--dryrun"          , dest="dryrun"        , action="store_true"  , default=False        , help="With batch option, dry run")
     parser.add_option('-m'                , '--maxlsftime'       , action='store'       , type='int'           , dest='maxlsftime'  ,   default=4, help="maximum life time in LSF")
     parser.add_option('-p'                , '--eventspersec'     , action='store'       , type='int'           , dest='eventspersec', default=25, help="event persec")
     parser.add_option('-q'                , '--queue'            , action='store'       , type='string'        , dest='queue'       , default='local-cms-short', help="queue")
-    parser.add_option('-l'                , '--samplelists'      , action='store'       , type='string'        , dest='samplelists' , default='Run2_2016_v4' , help="Sample list")
+    parser.add_option('-l'                , '--samplelists'      , action='store'       , type='string'        , dest='samplelists' , default='' , help="Sample list")
     parser.add_option('-o'                , '--lsfoutput'        , action='store'       , type='string'        , dest='lsfoutput'   , default='' , help="LSF output folder name")
 
     (options, args) = parser.parse_args()
@@ -51,10 +52,10 @@ if __name__ == "__main__":
 
     if len(args) < 2 and not options.batch :
 	 parser.print_help()
-         print MAGENTA+"For running in batch, example:"+ENDC
-         print MAGENTA+"python scripts/postproc.py --batch -w WH_SS_analysis -o test -c \"MET_pt>200\""+ENDC
-         print MAGENTA+"For running locally"+ENDC
-         print MAGENTA+"python scripts/postproc.py test/ test/WWW_4F_TuneCUETP8M1_13TeV-amcatnlo-pythia8.root -c \"Muon_pt[0]>30\""+ENDC
+         print YELLOW+"For running in batch, example:"+ENDC
+         print YELLOW+"python scripts/postproc.py --batch --dryrun -w WH_SS -l Run2_2016_v4 -o test -c \"MET_pt>200\""+ENDC
+         print YELLOW+"For running locally"+ENDC
+         print YELLOW+"python scripts/postproc.py test/ test/WWW_4F_TuneCUETP8M1_13TeV-amcatnlo-pythia8.root -c \"Muon_pt[0]>30\""+ENDC
          sys.exit(1)
     if options.batch:
         outdir=[] ; args = []
@@ -73,6 +74,7 @@ if __name__ == "__main__":
         obj = sys.modules[mod]
         selnames = names.split(",")
         mods = dir(obj)
+        print mods
         for name in selnames:
             if name in mods:
                 print OKGREEN+"Loading "+name+" from "+mod+ENDC
@@ -104,8 +106,8 @@ if __name__ == "__main__":
             firstEntry = options.firstEntry,
             outputbranchsel = options.branchsel_out)
     
-    if options.batch and options.workflow!='':
-        print "batch initialization"
+    if options.batch and (options.workflow!='' or options.samplelists!=''):
+        print HEADER+"batch initialization"+ENDC
         #Remaking processor
         #environmental check
         print
@@ -125,8 +127,10 @@ if __name__ == "__main__":
         
         #making batch script, every variable is fed externally to postproc.py
         bj = batchJob( options.queue , options.maxlsftime , options.eventspersec , '%s-%s'%(options.samplelists,options.lsfoutput) , options.base )
-        bj.register( options.samplelists, options.cut , workflow[options.workflow] , options.branchsel )
-        bj.submit(dryrun=False)
+        bj.register( options.samplelists, options.cut , workflow["%s_%s" %(options.workflow,options.samplelists.split('_')[1])] , options.branchsel )
+        bj.submit(options.dryrun)
+    elif options.batch and (options.workflow=='' or options.samplelists!=''):
+        raise Exception('workflow or samplelists are empty, please specify workflow AND samplelist')
     else:
         p.run()
 
