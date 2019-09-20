@@ -1,0 +1,25 @@
+drop *
+
+## Global
+keep luminosityBlock
+keep run
+keep genWeight
+keep event
+keep Pileup*
+keep PV*
+
+## Variable
+# GEN
+keep GenJet*
+keep GenJetAK8*
+keep GenPart*
+
+# RECO
+keep Photon*
+keep PuppiMET*
+keep Tau*
+keep MET*
+keep Muon*
+keep Electron*
+keep Jet*
+keep FatJet*

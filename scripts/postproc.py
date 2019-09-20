@@ -5,17 +5,20 @@ ROOT.PyConfig.IgnoreCommandLineOptions = True
 from importlib import import_module
 from PhysicsTools.NanoAODTools.postprocessing.framework.postprocessor import PostProcessor
 from PhysicsTools.NanoAODTools.postprocessing.helpers.submission import batchJob
+from PhysicsTools.NanoAODTools.postprocessing.helpers.workflow import workflow
+from PhysicsTools.NanoAODTools.postprocessing.helpers.colors import *
 
 if __name__ == "__main__":
     from optparse import OptionParser
     parser = OptionParser(usage="%prog [options] outputDir inputFiles")
     parser.add_option("-s"       , "--postfix"          , dest="postfix"   , type="string" , default=None, help="Postfix which will be appended to the file name (default: _Friend for friends, _Skim for skims)")
     parser.add_option("-J"       , "--json"             , dest="json"      , type="string" , default=None, help="Select events using this JSON file")
-    parser.add_option("-c"       , "--cut"              , dest="cut"       , type="string" , default=None, help="Cut string")
-    parser.add_option("-b"       , "--branch-selection" , dest="branchsel" , type="string" , default=None, help="Branch selection")
+    parser.add_option("-c"       , "--cut"              , dest="cut"       , type="string" , default="", help="Cut string")
+    parser.add_option("-b"       , "--branch-selection" , dest="branchsel" , type="string" , default='%s/src/PhysicsTools/NanoAODTools/scripts/slimming.txt' \
+                          %os.environ['CMSSW_BASE'] if 'CMSSW_BASE' in os.environ else os.getcwd(), help="Branch selection")
     parser.add_option('--bs'     , '--base'             , dest='base'      , type="string" , default='%s/src/PhysicsTools/NanoAODTools/' \
-                      %os.environ['CMSSW_BASE'] if 'CMSSW_BASE' in os.environ else os.getcwd() , action='store' , help="Workin directory")
-    
+                          %os.environ['CMSSW_BASE'] if 'CMSSW_BASE' in os.environ else os.getcwd() , action='store' , help="Workin directory")
+
     parser.add_option("--bi"              , "--branch-selection-input"                  , dest="branchsel_in"  , type="string" , default=None , help="Branch selection input")
     parser.add_option("--bo"              , "--branch-selection-output"                 , dest="branchsel_out" , type="string" , default=None , help="Branch selection output")
     parser.add_option("--friend"          , dest="friend"        , action="store_true"  , default=False        , help="Produce friend trees in output (current default is to produce full trees)")
@@ -29,6 +32,7 @@ if __name__ == "__main__":
     parser.add_option("-I"                , "--import"           , dest="imports"       , type="string"        , default=[], action="append", nargs=2, \
                       help="Import modules (python package, comma-separated list of ");
     parser.add_option("-z"                , "--compression"      , dest="compression"   , type="string"        , default=("LZMA:9"), help="Compression: none, or (algo):(level) ")
+    parser.add_option("-w"                , "--workflow"         , dest="workflow"      , type="string"        , default=""        , help="Specify the workflow of postprocessing step")    
     parser.add_option("--batch"           , dest="batch"         , action="store_true"  , default=False        , help="Submit to Padova batch processing")
     parser.add_option('-m'                , '--maxlsftime'       , action='store'       , type='int'           , dest='maxlsftime'  ,   default=4, help="maximum life time in LSF")
     parser.add_option('-p'                , '--eventspersec'     , action='store'       , type='int'           , dest='eventspersec', default=25, help="event persec")
@@ -37,8 +41,6 @@ if __name__ == "__main__":
     parser.add_option('-o'                , '--lsfoutput'        , action='store'       , type='string'        , dest='lsfoutput'   , default='' , help="LSF output folder name")
 
     (options, args) = parser.parse_args()
-
-    print options
 
     if os.getcwd().split('/')[-1] == "scripts":
         print "Please run the script from base directory: %s" %options.base
@@ -49,11 +51,12 @@ if __name__ == "__main__":
 
     if len(args) < 2 and not options.batch :
 	 parser.print_help()
+         print "For running in batch, example:"
+         print "python scripts/postproc.py --batch -w WH_SS_analysis -o test -c \"MET_pt>200\""
          sys.exit(1)
     if options.batch:
         outdir=[] ; args = []
     else:
-        print args[1]
         if '.txt' in args[1] and os.path.isfile(args[1]):
             file=open(os.path.expandvars('%s'%args[1]),'r')
             filelist = file.readlines()
@@ -61,22 +64,22 @@ if __name__ == "__main__":
         else:
             outdir = args[0] ; args = args[1:]
 
-    print args
-
     modules = []
-    for mod, names in options.imports: 
+    
+    for mod, names in options.imports:
         import_module(mod)
         obj = sys.modules[mod]
         selnames = names.split(",")
         mods = dir(obj)
         for name in selnames:
             if name in mods:
-                print "Loading %s from %s " % (name, mod)
+                print OKGREEN+"Loading "+name+" from "+mod+ENDC
                 if type(getattr(obj,name)) == list:
                     for mod in getattr(obj,name):
                         modules.append( mod())
                 else:
                     modules.append(getattr(obj,name)())
+
     if options.noOut:
         if len(modules) == 0: 
             raise RuntimeError("Running with --noout and no modules does nothing!")
@@ -99,8 +102,9 @@ if __name__ == "__main__":
             firstEntry = options.firstEntry,
             outputbranchsel = options.branchsel_out)
     
-    if options.batch:
+    if options.batch and options.workflow!='':
         print "batch initialization"
+        #Remaking processor
         #environmental check
         print
         if not os.path.exists(os.path.expandvars(options.base)):
@@ -117,11 +121,10 @@ if __name__ == "__main__":
             sys.exit()
         os.system('mkdir %s-%s'%(options.samplelists,options.lsfoutput))
         
-        bj = batchJob( p , options.queue , options.maxlsftime , options.eventspersec , '%s-%s'%(options.samplelists,options.lsfoutput) , options.base )
-
-        bj.addSL(options.samplelists)
-        bj.addModule(options.imports)
-        bj.submit(dryrun=True)
+        #making batch script, every variable is fed externally to postproc.py
+        bj = batchJob( options.queue , options.maxlsftime , options.eventspersec , '%s-%s'%(options.samplelists,options.lsfoutput) , options.base )
+        bj.register( options.samplelists, options.cut , workflow[options.workflow] , options.branchsel )
+        bj.submit(dryrun=False)
     else:
         p.run()
 

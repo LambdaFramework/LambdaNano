@@ -5,18 +5,15 @@ from PhysicsTools.NanoAODTools.postprocessing.modules.datasets import datasets
 from PhysicsTools.NanoAODTools.postprocessing.helpers.colors import *
 
 class batchJob:
-    def __init__(self, processor, queue, maxlsftime, eventspersec, lsfoutput, base):
-        self.processor    = processor
+    def __init__(self, queue, maxlsftime, eventspersec, lsfoutput, base):
         self.queue        = queue
         self.maxlsftime  = maxlsftime
         self.eventspersec = eventspersec
         self.lsfoutput    = lsfoutput
         self.base         = base
-    
-    def addModule(self, modules):
-        self.modules = modules
 
-    def addSL(self, samplelist):
+    def register(self, samplelist , cutter, modconfig , slimmer ):
+        
         if '2016' in samplelist:
             self.dirdata='Run2016'
             self.dirmc='Summer16'
@@ -27,14 +24,23 @@ class batchJob:
             self.dirdata='Run2018'
             self.dirmc='Autumn18'
 
+        self.jsoner = '%s/python/postprocessing/data/json/%s' %( self.base, datasets[samplelist]['cert'] )
+        if self.jsoner.split('.')[1:][0]!='txt': raise Exception('ERROR: Json file is not correctly loaded!')
         self.samplelistData = list(datasets[samplelist]['data'])
         self.samplelistMC = list(datasets[samplelist]['mc'])
         if 'test' in datasets[samplelist]:
             self.samplelists = list(datasets[samplelist]['test'])
         else:
             self.samplelists = self.samplelistData + self.samplelistMC
+            
+        self.cutter = cutter
 
+        self.modules=[]
+        for mod in modconfig:
+            self.modules.append( '-I PhysicsTools.NanoAODTools.postprocessing.modules.%s %s'%(mod,mod) )
 
+        self.slimmer = slimmer
+        
     def submit(self, dryrun=False):
         #1 job/1 dataset, possibly create job contains multiple root file
         var=0            
@@ -62,8 +68,7 @@ class batchJob:
                 splitlist.close()
         
                 with open('job.sh', 'w') as fout:
-                    #fout.write('#!/bin/bash\n')
-                    #fout.write('#BSUB -J '+l+'_'+str(x).zfill(4)+'\n')
+                    fout.write('#!/bin/bash\n')
                     fout.write('echo "PWD:"\n')
                     fout.write('pwd\n')
                     fout.write('export VO_CMS_SW_DIR=/cvmfs/cms.cern.ch\n')
@@ -77,14 +82,10 @@ class batchJob:
                     fout.write('eval `scram runtime -sh`\n')
                     fout.write('ls\n')
                     fout.write('echo "running"\n')
-                    fout.write('python %s/scripts/postproc.py ./ %s/list.txt --cut=%s --branch-selection=%s --import=%s --json=%s\n' \
-                                   %( self.base ,\
-                                          lsubfold ,\
-                                          self.processor.cut , \
-                                          self.processor.branchsel , \
-                                          self.modules , \
-                                          self.processor.json\
-                                          ))
+                    fout.write('python %s/scripts/postproc.py ./ %s/list.txt --cut=\"%s\" --branch-selection=%s ' %( self.base , lsubfold ,self.cutter, self.slimmer ))
+                    if 'Run' in l.filename(): fout.write('--json=%s ' %(self.jsoner))
+                    for i,moder in enumerate(self.modules): 
+                        fout.write('%s\n'%moder if i+1==len(self.modules) else '%s '%moder )
                     fout.write('exit $?\n') 
                     fout.write('echo ""\n')
                 os.system('chmod 755 job.sh')
@@ -100,4 +101,5 @@ class batchJob:
         print 'CURRENT JOB SUMMARY:'
         if not dryrun: os.system('bjobs')
         print var, "number of job has been submitted" if not dryrun else "number of job has been created."
+        os.system('bqueues')
         print

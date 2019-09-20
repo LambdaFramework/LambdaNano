@@ -23,6 +23,7 @@ class Dataset():
 
 datasets ={
     'Run2_2016_v4': {
+        'cert' : 'Cert_271036-284044_13TeV_23Sep2016ReReco_Collisions16_JSON.txt',
         'data' : {
             Dataset('data_obs' , 'SingleElectronRun2016B_ver1-Nano14Dec2018_ver1-v1' , 1422819 , 1.0 , 1.0),
             Dataset('data_obs' , 'SingleElectronRun2016B_ver2-Nano14Dec2018_ver2-v1' , 246440440 , 1.0 , 1.0),
@@ -210,6 +211,7 @@ datasets ={
             },
         },
     'Run2_2017_v2' : {
+        'cert' : 'Cert_294927-306462_13TeV_EOY2017ReReco_Collisions17_JSON.txt',
         'data' : {
             Dataset('data_obs' , 'SingleElectronRun2017B-31Mar2018-v1' , 60537490 , 1.0 , 1.0),
             Dataset('data_obs' , 'SingleElectronRun2017C-31Mar2018-v1' , 136637888 , 1.0 , 1.0),
@@ -376,6 +378,7 @@ datasets ={
             },
         },
     'Run2_2018_v4' : {
+        'cert' : 'Cert_314472-325175_13TeV_17SeptEarlyReReco2018ABC_PromptEraD_Collisions18_JSON.txt',
         'data' : {
             Dataset('data_obs' , 'SingleMuonRun2018A-Nano14Dec2018-v1' , 241608232 , 1.0 , 1.0),
             Dataset('data_obs' , 'SingleMuonRun2018B-Nano14Dec2018-v1' , 119918017 , 1.0 , 1.0),
