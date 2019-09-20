@@ -74,7 +74,6 @@ if __name__ == "__main__":
         obj = sys.modules[mod]
         selnames = names.split(",")
         mods = dir(obj)
-        print mods
         for name in selnames:
             if name in mods:
                 print OKGREEN+"Loading "+name+" from "+mod+ENDC
