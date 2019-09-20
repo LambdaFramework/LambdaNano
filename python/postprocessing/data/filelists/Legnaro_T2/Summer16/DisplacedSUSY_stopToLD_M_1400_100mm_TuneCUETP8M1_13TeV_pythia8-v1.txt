@@ -1,0 +1,2 @@
+dcap://t2-srm-02.lnl.infn.it/pnfs/lnl.infn.it/data/cms//store/mc/RunIISummer16NanoAODv4/DisplacedSUSY_stopToLD_M_1400_100mm_TuneCUETP8M1_13TeV_pythia8/NANOAODSIM/PUMoriond17_Nano14Dec2018_102X_mcRun2_asymptotic_v6-v1/30000/0308CF39-DF65-264B-B066-238AE2B7E5BD.root
+dcap://t2-srm-02.lnl.infn.it/pnfs/lnl.infn.it/data/cms//store/mc/RunIISummer16NanoAODv4/DisplacedSUSY_stopToLD_M_1400_100mm_TuneCUETP8M1_13TeV_pythia8/NANOAODSIM/PUMoriond17_Nano14Dec2018_102X_mcRun2_asymptotic_v6-v1/30000/50DF51F7-8264-6146-BCA8-8B838A0006B6.root

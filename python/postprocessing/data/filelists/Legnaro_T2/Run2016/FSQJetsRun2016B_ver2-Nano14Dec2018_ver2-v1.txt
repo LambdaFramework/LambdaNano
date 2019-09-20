@@ -1,0 +1,4 @@
+dcap://t2-srm-02.lnl.infn.it/pnfs/lnl.infn.it/data/cms//store/data/Run2016B_ver2/FSQJets/NANOAOD/Nano14Dec2018_ver2-v1/20000/0DA5A032-BDF9-9642-811D-B0221ACB1BCC.root
+dcap://t2-srm-02.lnl.infn.it/pnfs/lnl.infn.it/data/cms//store/data/Run2016B_ver2/FSQJets/NANOAOD/Nano14Dec2018_ver2-v1/20000/4B75230F-B198-D04F-B4CA-F546D34018F3.root
+dcap://t2-srm-02.lnl.infn.it/pnfs/lnl.infn.it/data/cms//store/data/Run2016B_ver2/FSQJets/NANOAOD/Nano14Dec2018_ver2-v1/20000/B78F431D-821F-BA4A-B08C-474DB5C5C5EC.root
+dcap://t2-srm-02.lnl.infn.it/pnfs/lnl.infn.it/data/cms//store/data/Run2016B_ver2/FSQJets/NANOAOD/Nano14Dec2018_ver2-v1/20000/C7E3C1FF-EC84-8A4A-82C2-8788600055BF.root

@@ -1,0 +1,1 @@
+dcap://t2-srm-02.lnl.infn.it/pnfs/lnl.infn.it/data/cms//store/mc/RunIIAutumn18NanoAODv4/SeesawTypeIII_M-1250_1mu1tau_13TeV-madgraph/NANOAODSIM/Nano14Dec2018_102X_upgrade2018_realistic_v16-v1/110000/2D60B309-204B-514B-88AD-0E9447239585.root

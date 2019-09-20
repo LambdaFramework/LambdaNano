@@ -1,0 +1,1 @@
+dcap://t2-srm-02.lnl.infn.it/pnfs/lnl.infn.it/data/cms//store/mc/RunIISummer16NanoAODv4/HeavyCompositeMajoranaNeutrino_L4000_M2000_mumujj_CalcHep/NANOAODSIM/PUMoriond17_Nano14Dec2018_102X_mcRun2_asymptotic_v6-v1/260000/407CDF95-0720-4144-A49B-650EC8537E29.root

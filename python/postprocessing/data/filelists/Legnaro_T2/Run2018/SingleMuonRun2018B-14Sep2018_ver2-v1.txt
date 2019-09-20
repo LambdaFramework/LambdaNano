@@ -1,0 +1,5 @@
+dcap://t2-srm-02.lnl.infn.it/pnfs/lnl.infn.it/data/cms//store/data/Run2018B/SingleMuon/NANOAOD/14Sep2018_ver2-v1/00000/2CE168F9-E698-6042-A74D-B05AE94F4C8C.root
+dcap://t2-srm-02.lnl.infn.it/pnfs/lnl.infn.it/data/cms//store/data/Run2018B/SingleMuon/NANOAOD/14Sep2018_ver2-v1/00000/41286319-C013-6545-AF57-18E0B2BD6406.root
+dcap://t2-srm-02.lnl.infn.it/pnfs/lnl.infn.it/data/cms//store/data/Run2018B/SingleMuon/NANOAOD/14Sep2018_ver2-v1/00000/5CCDBB70-D053-D74B-BC7E-7FF13D65A378.root
+dcap://t2-srm-02.lnl.infn.it/pnfs/lnl.infn.it/data/cms//store/data/Run2018B/SingleMuon/NANOAOD/14Sep2018_ver2-v1/00000/BE699BCF-7789-5141-A428-6AAAA690CDF3.root
+dcap://t2-srm-02.lnl.infn.it/pnfs/lnl.infn.it/data/cms//store/data/Run2018B/SingleMuon/NANOAOD/14Sep2018_ver2-v1/00000/F18EEE8A-7235-EA40-881E-D6E431FAF1A8.root

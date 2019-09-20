@@ -1,0 +1,1 @@
+dcap://t2-srm-02.lnl.infn.it/pnfs/lnl.infn.it/data/cms//store/mc/RunIIFall17NanoAOD/WW_DoubleScattering_13TeV-pythia8_TuneCP5/NANOAODSIM/PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/50000/884EB086-1E44-E811-9E53-0025904CF710.root

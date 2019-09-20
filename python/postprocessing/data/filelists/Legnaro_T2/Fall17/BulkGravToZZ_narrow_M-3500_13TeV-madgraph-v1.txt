@@ -1,0 +1,2 @@
+dcap://t2-srm-02.lnl.infn.it/pnfs/lnl.infn.it/data/cms//store/mc/RunIIFall17NanoAOD/BulkGravToZZ_narrow_M-3500_13TeV-madgraph/NANOAODSIM/PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/70000/7EED505C-1042-E811-994E-002590FD5A72.root
+dcap://t2-srm-02.lnl.infn.it/pnfs/lnl.infn.it/data/cms//store/mc/RunIIFall17NanoAOD/BulkGravToZZ_narrow_M-3500_13TeV-madgraph/NANOAODSIM/PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/90000/4C71970D-7642-E811-B0C2-0CC47AA53DBE.root

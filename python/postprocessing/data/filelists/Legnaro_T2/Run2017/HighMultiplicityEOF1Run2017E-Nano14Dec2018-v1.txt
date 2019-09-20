@@ -1,0 +1,5 @@
+dcap://t2-srm-02.lnl.infn.it/pnfs/lnl.infn.it/data/cms//store/data/Run2017E/HighMultiplicityEOF1/NANOAOD/Nano14Dec2018-v1/80000/688ACD45-20A2-E04A-8539-0473CC004369.root
+dcap://t2-srm-02.lnl.infn.it/pnfs/lnl.infn.it/data/cms//store/data/Run2017E/HighMultiplicityEOF1/NANOAOD/Nano14Dec2018-v1/80000/7C08EE1C-3CAF-2541-AF2A-3AE44AE3CADF.root
+dcap://t2-srm-02.lnl.infn.it/pnfs/lnl.infn.it/data/cms//store/data/Run2017E/HighMultiplicityEOF1/NANOAOD/Nano14Dec2018-v1/80000/802032AC-DC26-5340-A3BF-A62BD83B2FBA.root
+dcap://t2-srm-02.lnl.infn.it/pnfs/lnl.infn.it/data/cms//store/data/Run2017E/HighMultiplicityEOF1/NANOAOD/Nano14Dec2018-v1/80000/EB22DD4D-DBAE-4E48-AEA2-D49BB693C33C.root
+dcap://t2-srm-02.lnl.infn.it/pnfs/lnl.infn.it/data/cms//store/data/Run2017E/HighMultiplicityEOF1/NANOAOD/Nano14Dec2018-v1/80000/EC373E23-1D74-1346-BFBF-0A676DB1D8A7.root

@@ -1,0 +1,1 @@
+dcap://t2-srm-02.lnl.infn.it/pnfs/lnl.infn.it/data/cms//store/mc/RunIIFall17NanoAOD/TTWZ_TuneCP5_13TeV-madgraph-pythia8/NANOAODSIM/PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/10000/3CD6D4CF-C642-E811-B63A-0025904AC2CC.root

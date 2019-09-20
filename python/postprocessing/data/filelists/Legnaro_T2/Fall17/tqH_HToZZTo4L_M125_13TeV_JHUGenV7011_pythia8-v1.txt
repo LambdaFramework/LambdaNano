@@ -1,0 +1,3 @@
+dcap://t2-srm-02.lnl.infn.it/pnfs/lnl.infn.it/data/cms//store/mc/RunIIFall17NanoAOD/tqH_HToZZTo4L_M125_13TeV_JHUGenV7011_pythia8/NANOAODSIM/PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/00000/E40EE942-D044-E811-90EF-0025905B856E.root
+dcap://t2-srm-02.lnl.infn.it/pnfs/lnl.infn.it/data/cms//store/mc/RunIIFall17NanoAOD/tqH_HToZZTo4L_M125_13TeV_JHUGenV7011_pythia8/NANOAODSIM/PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/40000/7E9398AC-C544-E811-A7FF-0CC47A4D76B6.root
+dcap://t2-srm-02.lnl.infn.it/pnfs/lnl.infn.it/data/cms//store/mc/RunIIFall17NanoAOD/tqH_HToZZTo4L_M125_13TeV_JHUGenV7011_pythia8/NANOAODSIM/PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/70000/6404719A-6C44-E811-BDF3-0CC47A78A2EC.root

@@ -1,0 +1,2 @@
+dcap://t2-srm-02.lnl.infn.it/pnfs/lnl.infn.it/data/cms//store/mc/RunIIAutumn18NanoAODv4/WpWpJJ_EWK-QCD_TuneCP5_13TeV-madgraph-pythia8/NANOAODSIM/Nano14Dec2018_102X_upgrade2018_realistic_v16-v1/30000/0E314B49-130A-604E-8898-593BF4216942.root
+dcap://t2-srm-02.lnl.infn.it/pnfs/lnl.infn.it/data/cms//store/mc/RunIIAutumn18NanoAODv4/WpWpJJ_EWK-QCD_TuneCP5_13TeV-madgraph-pythia8/NANOAODSIM/Nano14Dec2018_102X_upgrade2018_realistic_v16-v1/30000/263E7A76-9449-6343-8DA1-86328E5686F5.root

@@ -1,0 +1,4 @@
+dcap://t2-srm-02.lnl.infn.it/pnfs/lnl.infn.it/data/cms//store/mc/RunIIFall17NanoAOD/DarkPhotonToMuMu_M190_madgraph_pythia8_TuneCP5/NANOAODSIM/PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/00000/5CDE48E1-06FF-E811-AC17-0025905C2D98.root
+dcap://t2-srm-02.lnl.infn.it/pnfs/lnl.infn.it/data/cms//store/mc/RunIIFall17NanoAOD/DarkPhotonToMuMu_M190_madgraph_pythia8_TuneCP5/NANOAODSIM/PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/00000/C24053E6-06FF-E811-BB93-A0369F6368FE.root
+dcap://t2-srm-02.lnl.infn.it/pnfs/lnl.infn.it/data/cms//store/mc/RunIIFall17NanoAOD/DarkPhotonToMuMu_M190_madgraph_pythia8_TuneCP5/NANOAODSIM/PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/00000/D82132E3-06FF-E811-A76A-A0369FD0B198.root
+dcap://t2-srm-02.lnl.infn.it/pnfs/lnl.infn.it/data/cms//store/mc/RunIIFall17NanoAOD/DarkPhotonToMuMu_M190_madgraph_pythia8_TuneCP5/NANOAODSIM/PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/00000/DA41C7F4-06FF-E811-A1C0-008CFA197C10.root

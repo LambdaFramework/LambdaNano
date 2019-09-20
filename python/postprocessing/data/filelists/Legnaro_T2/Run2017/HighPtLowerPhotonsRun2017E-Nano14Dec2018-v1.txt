@@ -1,0 +1,2 @@
+dcap://t2-srm-02.lnl.infn.it/pnfs/lnl.infn.it/data/cms//store/data/Run2017E/HighPtLowerPhotons/NANOAOD/Nano14Dec2018-v1/90000/CCC3BDA6-36E2-F34C-A1FF-5F84725FC158.root
+dcap://t2-srm-02.lnl.infn.it/pnfs/lnl.infn.it/data/cms//store/data/Run2017E/HighPtLowerPhotons/NANOAOD/Nano14Dec2018-v1/90000/F4DBC054-3A03-784D-88E3-59CAD8D1ADE0.root

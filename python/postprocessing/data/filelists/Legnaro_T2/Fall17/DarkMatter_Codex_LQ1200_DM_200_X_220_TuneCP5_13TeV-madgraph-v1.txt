@@ -1,0 +1,2 @@
+dcap://t2-srm-02.lnl.infn.it/pnfs/lnl.infn.it/data/cms//store/mc/RunIIFall17NanoAOD/DarkMatter_Codex_LQ1200_DM_200_X_220_TuneCP5_13TeV-madgraph/NANOAODSIM/PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/10000/30543763-D6AC-E811-AE81-44A84225C629.root
+dcap://t2-srm-02.lnl.infn.it/pnfs/lnl.infn.it/data/cms//store/mc/RunIIFall17NanoAOD/DarkMatter_Codex_LQ1200_DM_200_X_220_TuneCP5_13TeV-madgraph/NANOAODSIM/PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/10000/86DD8B57-D6AC-E811-8409-90B11C0701C1.root

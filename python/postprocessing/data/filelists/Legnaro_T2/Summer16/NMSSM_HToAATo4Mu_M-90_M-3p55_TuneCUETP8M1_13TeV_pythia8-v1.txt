@@ -1,0 +1,2 @@
+dcap://t2-srm-02.lnl.infn.it/pnfs/lnl.infn.it/data/cms//store/mc/RunIISummer16NanoAODv4/NMSSM_HToAATo4Mu_M-90_M-3p55_TuneCUETP8M1_13TeV_pythia8/NANOAODSIM/PUMoriond17_Nano14Dec2018_102X_mcRun2_asymptotic_v6-v1/50000/454C826D-79D0-E647-87EE-FF623D17A368.root
+dcap://t2-srm-02.lnl.infn.it/pnfs/lnl.infn.it/data/cms//store/mc/RunIISummer16NanoAODv4/NMSSM_HToAATo4Mu_M-90_M-3p55_TuneCUETP8M1_13TeV_pythia8/NANOAODSIM/PUMoriond17_Nano14Dec2018_102X_mcRun2_asymptotic_v6-v1/50000/D14D96DF-36DD-9540-A52B-11A5D7550CD5.root

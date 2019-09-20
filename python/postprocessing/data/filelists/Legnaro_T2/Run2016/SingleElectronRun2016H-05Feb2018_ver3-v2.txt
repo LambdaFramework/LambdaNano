@@ -1,0 +1,5 @@
+dcap://t2-srm-02.lnl.infn.it/pnfs/lnl.infn.it/data/cms//store/data/Run2016H/SingleElectron/NANOAOD/05Feb2018_ver3-v2/80000/64D033B0-BB0A-E811-B932-008CFA152144.root
+dcap://t2-srm-02.lnl.infn.it/pnfs/lnl.infn.it/data/cms//store/data/Run2016H/SingleElectron/NANOAOD/05Feb2018_ver3-v2/80000/80CF5E0B-BB0A-E811-9856-EC0D9A82237E.root
+dcap://t2-srm-02.lnl.infn.it/pnfs/lnl.infn.it/data/cms//store/data/Run2016H/SingleElectron/NANOAOD/05Feb2018_ver3-v2/80000/D60BF92E-BB0A-E811-86E0-20CF3027A5CC.root
+dcap://t2-srm-02.lnl.infn.it/pnfs/lnl.infn.it/data/cms//store/data/Run2016H/SingleElectron/NANOAOD/05Feb2018_ver3-v2/80000/F0A88E9F-BC0A-E811-BF2E-FA163E6F9FFD.root
+dcap://t2-srm-02.lnl.infn.it/pnfs/lnl.infn.it/data/cms//store/data/Run2016H/SingleElectron/NANOAOD/05Feb2018_ver3-v2/80000/FA67A8A4-BB0A-E811-81E0-34E6D7BDDECE.root

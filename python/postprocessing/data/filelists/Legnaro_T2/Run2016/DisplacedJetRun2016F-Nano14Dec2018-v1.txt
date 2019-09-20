@@ -1,0 +1,8 @@
+dcap://t2-srm-02.lnl.infn.it/pnfs/lnl.infn.it/data/cms//store/data/Run2016F/DisplacedJet/NANOAOD/Nano14Dec2018-v1/90000/3A208015-BA47-9D42-8606-C87BB90D0926.root
+dcap://t2-srm-02.lnl.infn.it/pnfs/lnl.infn.it/data/cms//store/data/Run2016F/DisplacedJet/NANOAOD/Nano14Dec2018-v1/90000/4C1B9905-FAC3-6346-9239-8C29A3C1ADE6.root
+dcap://t2-srm-02.lnl.infn.it/pnfs/lnl.infn.it/data/cms//store/data/Run2016F/DisplacedJet/NANOAOD/Nano14Dec2018-v1/90000/5A53FBF2-6FA8-3743-9A66-7BC365AED494.root
+dcap://t2-srm-02.lnl.infn.it/pnfs/lnl.infn.it/data/cms//store/data/Run2016F/DisplacedJet/NANOAOD/Nano14Dec2018-v1/90000/9E35DAF8-FB6B-5D4B-B9B9-BCB09CB77C73.root
+dcap://t2-srm-02.lnl.infn.it/pnfs/lnl.infn.it/data/cms//store/data/Run2016F/DisplacedJet/NANOAOD/Nano14Dec2018-v1/90000/A39CDC91-61F1-8341-AF53-BEBB77C8AE1B.root
+dcap://t2-srm-02.lnl.infn.it/pnfs/lnl.infn.it/data/cms//store/data/Run2016F/DisplacedJet/NANOAOD/Nano14Dec2018-v1/90000/ACE7CEFA-3B61-4642-AF08-A5A8F6581604.root
+dcap://t2-srm-02.lnl.infn.it/pnfs/lnl.infn.it/data/cms//store/data/Run2016F/DisplacedJet/NANOAOD/Nano14Dec2018-v1/90000/E1D18F1D-CBF8-CB40-8FF2-11A5CE2A1852.root
+dcap://t2-srm-02.lnl.infn.it/pnfs/lnl.infn.it/data/cms//store/data/Run2016F/DisplacedJet/NANOAOD/Nano14Dec2018-v1/90000/EB6FDB83-D428-6E42-852C-3E83449E1E70.root

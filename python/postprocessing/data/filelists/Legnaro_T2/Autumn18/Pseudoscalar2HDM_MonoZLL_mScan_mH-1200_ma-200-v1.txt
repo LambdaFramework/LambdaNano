@@ -1,0 +1,2 @@
+dcap://t2-srm-02.lnl.infn.it/pnfs/lnl.infn.it/data/cms//store/mc/RunIIAutumn18NanoAODv4/Pseudoscalar2HDM_MonoZLL_mScan_mH-1200_ma-200/NANOAODSIM/Nano14Dec2018_102X_upgrade2018_realistic_v16-v1/60000/37077F18-7B5D-A24E-B842-DC73ED4CAA1A.root
+dcap://t2-srm-02.lnl.infn.it/pnfs/lnl.infn.it/data/cms//store/mc/RunIIAutumn18NanoAODv4/Pseudoscalar2HDM_MonoZLL_mScan_mH-1200_ma-200/NANOAODSIM/Nano14Dec2018_102X_upgrade2018_realistic_v16-v1/70000/80C4C9C6-7375-B94E-A976-B73F6CC7DB36.root

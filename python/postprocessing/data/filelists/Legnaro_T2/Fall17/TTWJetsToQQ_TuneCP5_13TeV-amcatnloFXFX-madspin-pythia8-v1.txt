@@ -1,0 +1,2 @@
+dcap://t2-srm-02.lnl.infn.it/pnfs/lnl.infn.it/data/cms//store/mc/RunIIFall17NanoAOD/TTWJetsToQQ_TuneCP5_13TeV-amcatnloFXFX-madspin-pythia8/NANOAODSIM/PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/10000/7C4F9490-E742-E811-9A29-0025905C3E38.root
+dcap://t2-srm-02.lnl.infn.it/pnfs/lnl.infn.it/data/cms//store/mc/RunIIFall17NanoAOD/TTWJetsToQQ_TuneCP5_13TeV-amcatnloFXFX-madspin-pythia8/NANOAODSIM/PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/20000/A455565D-CB42-E811-8F8F-003048947BB9.root
