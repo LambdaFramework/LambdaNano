@@ -51,8 +51,10 @@ if __name__ == "__main__":
 
     if len(args) < 2 and not options.batch :
 	 parser.print_help()
-         print "For running in batch, example:"
-         print "python scripts/postproc.py --batch -w WH_SS_analysis -o test -c \"MET_pt>200\""
+         print MAGENTA+"For running in batch, example:"+ENDC
+         print MAGENTA+"python scripts/postproc.py --batch -w WH_SS_analysis -o test -c \"MET_pt>200\""+ENDC
+         print MAGENTA+"For running locally"+ENDC
+         print MAGENTA+"python scripts/postproc.py test/ test/WWW_4F_TuneCUETP8M1_13TeV-amcatnlo-pythia8.root -c \"Muon_pt[0]>30\""+ENDC
          sys.exit(1)
     if options.batch:
         outdir=[] ; args = []
