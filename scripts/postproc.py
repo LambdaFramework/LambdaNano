@@ -15,7 +15,7 @@ if __name__ == "__main__":
     parser.add_option("-J"       , "--json"             , dest="json"      , type="string" , default=None, help="Select events using this JSON file")
     parser.add_option("-c"       , "--cut"              , dest="cut"       , type="string" , default="", help="Cut string")
     parser.add_option("-b"       , "--branch-selection" , dest="branchsel" , type="string" , default='%s/src/PhysicsTools/NanoAODTools/scripts/slimming.txt' \
-                          %os.environ['CMSSW_BASE'] if 'CMSSW_BASE' in os.environ else os.getcwd(), help="Branch selection")
+                          %os.environ['CMSSW_BASE'] if 'CMSSW_BASE' in os.environ else '%s/scripts/slimming.txt' %os.getcwd(), help="Branch selection")
     parser.add_option('--bs'     , '--base'             , dest='base'      , type="string" , default='%s/src/PhysicsTools/NanoAODTools/' \
                           %os.environ['CMSSW_BASE'] if 'CMSSW_BASE' in os.environ else os.getcwd() , action='store' , help="Workin directory")
 
