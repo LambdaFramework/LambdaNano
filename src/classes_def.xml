@@ -1,0 +1,7 @@
+<lcgdict>
+<selection>
+  <class name="WeightCalculatorFromHistogram"/>
+  <class name="ReduceMantissaToNbitsRounding"/>
+  <class name="LeptonEfficiencyCorrectorCppWorker"/>
+</selection>
+</lcgdict>
