@@ -8,7 +8,7 @@ Tools for working with NanoAOD (requiring only python + root, not CMSSW)
   Rewritten lambdaframework, more consistent with postprocesser definition with plotter.
 
  - [x] Postprocesser interface (SiewYan)
- - [ ] Chain of steps , specify which module is running (SiewYan+Matteo)
+ - [x] Chain of steps , specify which module is running (SiewYan+Matteo)
  - [ ] Production, the correct ntuple use (SiewYan+Matteo)
  - [ ] Collection of module:
     - [ ] Lepton maker (jet cleaning+WP compute) (SiewYan)
