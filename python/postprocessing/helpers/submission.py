@@ -90,6 +90,9 @@ class batchJob:
                     fout.write('python %s/scripts/postproc.py ./ %s/list.txt --cut=\"%s\" --branch-selection=%s ' %( self.base , lsubfold ,self.cutter, self.slimmer ))
                     if 'Run' in l.filename(): fout.write('--json=%s ' %(self.jsoner))
                     for i,moder in enumerate(self.modules): 
+                        #remove module does nothing to the DATA
+                        if 'Run' in l.filename() and 'lepSF' in moder: continue;
+                        if 'Run' in l.filename() and 'puWeight' in moder: continue;
                         fout.write('%s\n'%moder if i+1==len(self.modules) else '%s '%moder )
                     fout.write('exit $?\n') 
                     fout.write('echo ""\n')
