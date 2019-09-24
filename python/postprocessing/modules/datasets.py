@@ -21,6 +21,9 @@ class Dataset():
         return self._matcheff
     pass
 
+#dataset constructor format:
+#legend name , dataset name , nevent , crosss section , kfactor , matcheff
+
 datasets ={
     'Run2_2016_v4': {
         'cert' : 'Cert_271036-284044_13TeV_23Sep2016ReReco_Collisions16_JSON.txt',
