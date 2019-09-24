@@ -1,6 +1,8 @@
 #ifndef reducemantissa_h
 #define reducemantissa_h
 
+#include <cassert>
+
 class ReduceMantissaToNbitsRounding {
             public:
                 ReduceMantissaToNbitsRounding(int bits) : 

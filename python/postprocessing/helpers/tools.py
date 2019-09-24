@@ -56,3 +56,9 @@ def matchObjectCollectionMultiple(objs,collection,dRmax=0.4,presel=lambda x,y: T
                 matched.append( c )
         pairs[obj] = matched
     return pairs
+
+def getPt(pO):
+    return pO.pt
+
+def getpt(pO):
+    return pO[0].pt
