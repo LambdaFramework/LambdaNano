@@ -59,7 +59,7 @@ datasets ={
             ##DYJets
             #Dataset('DYJetsToLL' , 'DYJetsToLL_M-10to50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8-v1' , 67981236 , 18810.0 , 1.0),
             #Dataset('DYJetsToLL' , 'DYJetsToLL_M-10to50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8_ext1-v1' , 40364234 , 18810.0 , 1.0),
-            Dataset('DYJetsToLL' , 'DYJetsToLL_M-10to50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8-v1' , 35114961 , 16270.0 , 1.0),
+            #Dataset('DYJetsToLL' , 'DYJetsToLL_M-10to50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8-v1' , 35114961 , 16270.0 , 1.0),
             #Dataset('DYJetsToLL' , 'DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8_ext2-v1' , 120777245 , 5941.0 , 1.0),
             #Dataset('DYJetsToLL' , 'DYJetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_ext1-v1' , 49748967 , 4963.0 , 1.0),
             Dataset('DYJetsToLL' , 'DYJetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_ext2-v1' , 96531428 , 4963.0 , 1.23),
@@ -207,11 +207,11 @@ datasets ={
             
             Dataset('VH' , 'VHToNonbb_M125_13TeV_amcatnloFXFX_madspin_pythia8-v1' , 1007898 , 2.127 , 1.0),
             },
-        'test' : {
-            Dataset('data_obs' , 'SingleElectronRun2016B_ver2-Nano14Dec2018_ver2-v1' , 246440440 , 1.0 , 1.0),
-            Dataset('VVV' , 'WWW_4F_TuneCUETP8M1_13TeV-amcatnlo-pythia8-v1' , 240000 , 0.2086 , 1.0),
-            Dataset('ttV' , 'TTZToLLNuNu_M-10_TuneCUETP8M1_13TeV-amcatnlo-pythia8_ext3-v1' , 5934228 , 0.2529 , 1.0),
-            },
+        #'test' : {
+        #    Dataset('data_obs' , 'SingleElectronRun2016B_ver2-Nano14Dec2018_ver2-v1' , 246440440 , 1.0 , 1.0),
+        #    Dataset('VVV' , 'WWW_4F_TuneCUETP8M1_13TeV-amcatnlo-pythia8-v1' , 240000 , 0.2086 , 1.0),
+        #    Dataset('ttV' , 'TTZToLLNuNu_M-10_TuneCUETP8M1_13TeV-amcatnlo-pythia8_ext3-v1' , 5934228 , 0.2529 , 1.0),
+        #    },
         },
     'Run2_2017_v2' : {
         'cert' : 'Cert_294927-306462_13TeV_EOY2017ReReco_Collisions17_JSON.txt',

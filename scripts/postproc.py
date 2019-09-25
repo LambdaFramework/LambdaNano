@@ -35,8 +35,9 @@ if __name__ == "__main__":
     parser.add_option("-w"                , "--workflow"         , dest="workflow"      , type="string"        , default=""        , help="Specify the workflow of postprocessing step")    
     parser.add_option("--batch"           , dest="batch"         , action="store_true"  , default=False        , help="Submit to Padova batch processing")
     parser.add_option("--dryrun"          , dest="dryrun"        , action="store_true"  , default=False        , help="With batch option, dry run")
-    parser.add_option('-m'                , '--maxlsftime'       , action='store'       , type='int'           , dest='maxlsftime'  ,   default=4, help="maximum life time in LSF")
-    parser.add_option('-p'                , '--eventspersec'     , action='store'       , type='int'           , dest='eventspersec', default=25, help="event persec")
+    #parser.add_option("--dataOnly"        , dest="dataOnly"      , action="store_true"  , default=False        , help="With batch option, make only data jobs, default make only mc job")
+    parser.add_option('-m'                , '--maxlsftime'       , action='store'       , type='int'           , dest='maxlsftime'  ,   default=5, help="maximum life time in LSF")
+    parser.add_option('-p'                , '--eventspersec'     , action='store'       , type='int'           , dest='eventspersec', default=100, help="event persec")
     parser.add_option('-q'                , '--queue'            , action='store'       , type='string'        , dest='queue'       , default='local-cms-short', help="queue")
     parser.add_option('-l'                , '--samplelists'      , action='store'       , type='string'        , dest='samplelists' , default='' , help="Sample list")
     parser.add_option('-o'                , '--lsfoutput'        , action='store'       , type='string'        , dest='lsfoutput'   , default='' , help="LSF output folder name")
@@ -53,7 +54,7 @@ if __name__ == "__main__":
     if len(args) < 2 and not options.batch :
 	 parser.print_help()
          print YELLOW+"For running in batch, example:"+ENDC
-         print YELLOW+"python scripts/postproc.py --batch --dryrun -w WH_SS -l Run2_2016_v4 -o test -c \"MET_pt>200\""+ENDC
+         print YELLOW+"python scripts/postproc.py --batch --dryrun -w WH_SS -l Run2_2016_v4 -o test -c \"( (Muon_pt[0]>5 && Muon_mediumId[0]>0) || (Electron_pt[0]>15 && Electron_cutBased[0]>0) )\""+ENDC
          print YELLOW+"For running locally"+ENDC
          print YELLOW+"python scripts/postproc.py test/ test/WWW_4F_TuneCUETP8M1_13TeV-amcatnlo-pythia8.root -c \"Muon_pt[0]>30\""+ENDC
          sys.exit(1)
