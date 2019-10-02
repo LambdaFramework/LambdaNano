@@ -36,7 +36,7 @@ Repeat only the last command at the beginning of every session.
 
 Please never commit neither the build directory, nor the empty init.py files created by the script.
 
-## Checkout instructions: CMSSW = [ dev: CMSSW_10_2_13 ]
+## Checkout instructions: CMSSW = [ dev: CMSSW_10_2_13 ] --> move to [ dev: CMSSW_9_4_13 ]
 
     cd $CMSSW_BASE/src
     git clone git@github.com:LambdaFramework/LambdaNano.git PhysicsTools/NanoAODTools
