@@ -1,7 +1,7 @@
 import os, re, sys
 import commands
 import math, time
-from PhysicsTools.NanoAODTools.postprocessing.modules.datasets import datasets
+from PhysicsTools.NanoAODTools.postprocessing.modules.analysis.datasets import datasets
 from PhysicsTools.NanoAODTools.postprocessing.helpers.colors import *
 
 class batchJob:
@@ -39,10 +39,13 @@ class batchJob:
         
         for i,mod in enumerate(modconfig):
             if 'puWeight' in mod: 
-                self.modules.append( '-I PhysicsTools.NanoAODTools.postprocessing.modules.puWeightProducer %s'%mod )
+                self.modules.append( '-I PhysicsTools.NanoAODTools.postprocessing.modules.common.puWeightProducer %s'%mod )
+            elif 'lepSFProducer' in mod:
+                self.modules.append( '-I PhysicsTools.NanoAODTools.postprocessing.modules.common.lepSFProducer %s'%mod )
             else:
-                self.modules.append( '-I PhysicsTools.NanoAODTools.postprocessing.modules.%s %s'%(mod,mod) if i+1!= len(modconfig) \
-                                         else '-I PhysicsTools.NanoAODTools.postprocessing.analysis.%s %s'%(mod,mod) )
+                self.modules.append( '-I PhysicsTools.NanoAODTools.postprocessing.modules.analysis.%s %s'%(mod,mod) )
+                #self.modules.append( '-I PhysicsTools.NanoAODTools.postprocessing.modules.%s %s'%(mod,mod) if i+1!= len(modconfig) \
+                #                         else '-I PhysicsTools.NanoAODTools.postprocessing.analysis.%s %s'%(mod,mod) )
 
         self.slimmer = slimmer
         
