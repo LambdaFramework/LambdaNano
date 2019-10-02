@@ -5,10 +5,8 @@ import commands
 import math, time
 import sys
 from ROOT import TObject, TFile, TH1, TH1F
-#from Analysis.ALPHA.samples import sample
 from array import array
-
-#LUMI        = 12900 # in pb-1
+from PhysicsTools.NanoAODTools.postprocessing.modules.datasets import *
 
 # use the following lists to include/exclude samples to be merged
 
@@ -43,8 +41,28 @@ def nanoHadd(name):
     if len(whitelist)>0 and not name in whitelist: return
     if len(blacklist)>0 and name in blacklist: return
     
-    os.system('python '+os.environ["CMSSW_BASE"]+'/src/PhysicsTools/NanoAODTools/scripts/haddnano.py '+name+'.root '+name+'/*/*.root' )
+    os.system(\
+              'python '+os.environ["CMSSW_BASE"]+'/src/PhysicsTools/NanoAODTools/scripts/haddnano.py '+name+'.root '+name+'/*/*.root' \
+              if 'CMSSW_BASE' in os.environ else \
+              'python '+os.environ['NANOAODTOOLS_BASE']+'/scripts/haddnano.py '+name+'.root '+name+'/*/*.root' \
+    )
+    
+    #Add weight
+    era=args.folder.split('-')[0]
+    files = TFile('%s.root' %name,"UPDATE")
+    if 'Run' in name:
+        weight = 1.
+    else:
+        mc = list(filter(lambda x : x.filename()==name, datasets[era]['mc']))[0]
+        nevents = files.Get('Events').GetEntries('counter==1')
+        xs = float(mc.xsec()) * float(mc.kfactor())
+        weight = float(datasets[era]['lumi']) * xs / nevents
 
+    tree = files.Get("Events")
+    tree.SetWeight(weight)
+    tree.AutoSave()
+    
+pass
 
 subdirs = [x for x in os.listdir(args.folder) if os.path.isdir(os.path.join(args.folder, x))]
 

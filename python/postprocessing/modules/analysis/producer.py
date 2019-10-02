@@ -47,6 +47,7 @@ class Producer(Module):
         self.br_scalar = [ ibranch for ibranch in br_all if ibranch.dimen()==0 ]
         self.br_vector = [ ibranch for ibranch in br_all if ibranch.dimen()==1 ]
         ##scalar
+        self.out.branch('counter', 'I')
         for ibranch in self.br_scalar:
             self.out.branch("%s"%ibranch.name(), "%s"%ibranch._type())
         ##vector
@@ -57,6 +58,7 @@ class Producer(Module):
         pass
     def analyze(self, event):
         """process event, return True (go to next module) or False (fail, go to next event)"""
+        self.out.fillBranch('counter' , 1)
         self.events+=1
         if self.debug: print " === No. %s EVENT Begin === " % self.events
         ########################################

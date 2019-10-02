@@ -6,7 +6,7 @@ ROOT.PyConfig.IgnoreCommandLineOptions = True
 from PhysicsTools.NanoAODTools.postprocessing.framework.datamodel import Collection 
 from PhysicsTools.NanoAODTools.postprocessing.framework.eventloop import Module
 
-class lepSFProducer(Module):
+class lepSFproducer(Module):
     def __init__(self, muonSelectionTag, electronSelectionTag):
         if muonSelectionTag=="LooseWP_2016":
             mu_f=["Mu_Trg.root","Mu_ID.root","Mu_Iso.root"]
@@ -30,11 +30,6 @@ class lepSFProducer(Module):
             if library not in ROOT.gSystem.GetLibraries():
                 print("Load Library '%s'" % library.replace("lib", ""))
                 ROOT.gSystem.Load(library)
-
-        if "/LeptonEfficiencyCorrectorCppWorker_cc.so" not in ROOT.gSystem.GetLibraries():
-            print "Load C++ Worker"
-            ROOT.gROOT.ProcessLine(".L %s/src/PhysicsTools/NanoAODTools/src/LeptonEfficiencyCorrectorCppWorker.cc+" % os.environ['CMSSW_BASE'])
-        pass
 
     def beginJob(self):
         self._worker_mu = ROOT.LeptonEfficiencyCorrectorCppWorker(self.mu_f,self.mu_h)
@@ -65,5 +60,4 @@ class lepSFProducer(Module):
 
 # define modules using the syntax 'name = lambda : constructor' to avoid having them loaded when not needed
 
-lepSFproducer = lambda : lepSFProducer( "LooseWP_2016", "GPMVA90_2016")
-
+lepSFProducer = lambda : lepSFproducer( "LooseWP_2016", "GPMVA90_2016")
