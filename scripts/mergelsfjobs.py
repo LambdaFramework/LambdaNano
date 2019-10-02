@@ -48,15 +48,15 @@ def nanoHadd(name):
     )
     
     #Add weight
+    era=args.folder.split('-')[0]
     files = TFile('%s.root' %name,"UPDATE")
     if 'Run' in name:
         weight = 1.
     else:
-        mc = list(filter(lambda x : x.filename()==name, datasets['Run2_2016_v4']['mc']))[0]
-        #nevents = file.Get("counter/c_nEvents").GetBinContent(1)
-        nevents = float(mc.nevent())
+        mc = list(filter(lambda x : x.filename()==name, datasets[era]['mc']))[0]
+        nevents = files.Get('Events').GetEntries('counter==1')
         xs = float(mc.xsec()) * float(mc.kfactor())
-        weight = float(datasets['Run2_2016_v4']['lumi']) * xs / nevents
+        weight = float(datasets[era]['lumi']) * xs / nevents
 
     tree = files.Get("Events")
     tree.SetWeight(weight)
