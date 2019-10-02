@@ -26,6 +26,7 @@ class Dataset():
 
 datasets ={
     'Run2_2016_v4': {
+        'lumi' : 35800. , #pb-1
         'cert' : 'Cert_271036-284044_13TeV_23Sep2016ReReco_Collisions16_JSON.txt',
         'data' : {
             Dataset('data_obs' , 'SingleElectronRun2016B_ver1-Nano14Dec2018_ver1-v1' , 1422819 , 1.0 , 1.0),
@@ -147,13 +148,13 @@ datasets ={
             Dataset('ST' , 'ST_tW_top_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M2T4-v1' , 992024 , 38.09 , 1.0),
             
             #WZ
-            #Dataset('WZ' , 'WZ_TuneCUETP8M1_13TeV-pythia8-v1' , 1000000 , 23.43 , 1.0),
-            #Dataset('WZ' , 'WZ_TuneCUETP8M1_13TeV-pythia8_ext1-v1' , 2997571 , 23.43 , 1.0),
-            Dataset('WZ' , 'WZTo1L1Nu2Q_13TeV_amcatnloFXFX_madspin_pythia8-v1' , 24285386 , 10.73 , 1.0),
-            Dataset('WZ' , 'WZTo2L2Q_13TeV_amcatnloFXFX_madspin_pythia8-v1' , 26517272 , 5.606 , 1.0),
-            Dataset('WZ' , 'WZTo3LNu_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8-v1' , 11928707 , 4.679 , 1.0),
-            #Dataset('WZ' , 'WZTo3LNu_TuneCUETP8M1_13TeV-powheg-pythia8-v1' , 1993200 , 4.679 , 1.0),
-            #Dataset('WZ' , 'WZTo3LNu_TuneCUETP8M1_13TeV-powheg-pythia8_ext1-v1' , 18000000 , 4.42965 , 1.0), #CHECK XS
+            #Dataset('VZ' , 'WZ_TuneCUETP8M1_13TeV-pythia8-v1' , 1000000 , 23.43 , 1.0),
+            #Dataset('VZ' , 'WZ_TuneCUETP8M1_13TeV-pythia8_ext1-v1' , 2997571 , 23.43 , 1.0),
+            Dataset('VZ' , 'WZTo1L1Nu2Q_13TeV_amcatnloFXFX_madspin_pythia8-v1' , 24285386 , 10.73 , 1.0),
+            Dataset('VZ' , 'WZTo2L2Q_13TeV_amcatnloFXFX_madspin_pythia8-v1' , 26517272 , 5.606 , 1.0),
+            Dataset('VZ' , 'WZTo3LNu_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8-v1' , 11928707 , 4.679 , 1.0),
+            #Dataset('VZ' , 'WZTo3LNu_TuneCUETP8M1_13TeV-powheg-pythia8-v1' , 1993200 , 4.679 , 1.0),
+            #Dataset('VZ' , 'WZTo3LNu_TuneCUETP8M1_13TeV-powheg-pythia8_ext1-v1' , 18000000 , 4.42965 , 1.0), #CHECK XS
             
             #WW
             #Dataset('WW' , 'WW_TuneCUETP8M1_13TeV-pythia8-v1' , 994012 , 64.3 , 1.0),
@@ -166,10 +167,10 @@ datasets ={
             Dataset('WW' , 'WWTo4Q_13TeV-powheg-v1' , 1998400 , 45.2 , 1.0),
             
             #ZZ
-            #Dataset('ZZ' , 'ZZ_TuneCUETP8M1_13TeV-pythia8-v1' , 990064 , 10.16 , 1.0),
-            #Dataset('ZZ' , 'ZZ_TuneCUETP8M1_13TeV-pythia8_ext1-v1' , 998034 , 10.16 , 1.0),
-            Dataset('ZZ' , 'ZZTo2L2Nu_13TeV_powheg_pythia8-v1' , 8931750 , 0.5644 , 1.0),
-            Dataset('ZZ' , 'ZZTo2L2Q_13TeV_amcatnloFXFX_madspin_pythia8-v1' , 15462693 , 3.222 , 1.0),
+            #Dataset('VZ' , 'ZZ_TuneCUETP8M1_13TeV-pythia8-v1' , 990064 , 10.16 , 1.0),
+            #Dataset('VZ' , 'ZZ_TuneCUETP8M1_13TeV-pythia8_ext1-v1' , 998034 , 10.16 , 1.0),
+            Dataset('VZ' , 'ZZTo2L2Nu_13TeV_powheg_pythia8-v1' , 8931750 , 0.5644 , 1.0),
+            Dataset('VZ' , 'ZZTo2L2Q_13TeV_amcatnloFXFX_madspin_pythia8-v1' , 15462693 , 3.222 , 1.0),
             
             ##TTV
             Dataset('ttV' , 'ttHToNonbb_M125_TuneCUETP8M2_ttHtranche3_13TeV-powheg-pythia8-v1' , 3981250 , 0.5638 , 1.0),
@@ -206,6 +207,9 @@ datasets ={
             Dataset('tZq' , 'tZq_ll_4f_13TeV-amcatnlo-pythia8_ext1-v1' , 13656784 , 0.0758 , 1.0),
             
             Dataset('VH' , 'VHToNonbb_M125_13TeV_amcatnloFXFX_madspin_pythia8-v1' , 1007898 , 2.127 , 1.0),
+            Dataset('Whww' ,"Wminushwwlvjj_M125_Madspin_Skim",  300000  ,  0.0069905587717  ,  1.0  ),
+            Dataset('Whww' ,"Wplushwwlvjj_M125_Madspin_Skim",  300000  ,  0.0110211512166  ,  1.0  ),
+
             },
         #'test' : {
         #    Dataset('data_obs' , 'SingleElectronRun2016B_ver2-Nano14Dec2018_ver2-v1' , 246440440 , 1.0 , 1.0),
@@ -214,6 +218,7 @@ datasets ={
         #    },
         },
     'Run2_2017_v2' : {
+        'lumi' : 41500. , # pb-1
         'cert' : 'Cert_294927-306462_13TeV_EOY2017ReReco_Collisions17_JSON.txt',
         'data' : {
             Dataset('data_obs' , 'SingleElectronRun2017B-31Mar2018-v1' , 60537490 , 1.0 , 1.0),
@@ -307,10 +312,10 @@ datasets ={
             #Dataset('ST' , 'ST_tW_top_5f_inclusiveDecays_TuneCP5_13TeV-powheg-pythia8-v2' , 7485152 , 34.91 , 1.0),
             #Dataset('ST' , 'ST_tW_top_5f_inclusiveDecays_TuneCP5_PSweights_13TeV-powheg-pythia8-v1' , 7660001 , 34.91 , 1.0),
             
-            #Dataset('WZ' , 'WZ_TuneCP5_13TeV-pythia8-v1' , 3928630 , 27.6 , 1.0),
-            Dataset('WZ' , 'WZTo1L1Nu2Q_13TeV_amcatnloFXFX_madspin_pythia8-v2' , 19017449 , 10.73 , 1.0),
-            Dataset('WZ' , 'WZTo2L2Q_13TeV_amcatnloFXFX_madspin_pythia8-v1' , 27582164 , 5.606 , 1.0),
-            Dataset('WZ' , 'WZTo3LNu_TuneCP5_13TeV-amcatnloFXFX-pythia8-v1' , 10881896 , 5.052 , 1.0),
+            #Dataset('VZ' , 'WZ_TuneCP5_13TeV-pythia8-v1' , 3928630 , 27.6 , 1.0),
+            Dataset('VZ' , 'WZTo1L1Nu2Q_13TeV_amcatnloFXFX_madspin_pythia8-v2' , 19017449 , 10.73 , 1.0),
+            Dataset('VZ' , 'WZTo2L2Q_13TeV_amcatnloFXFX_madspin_pythia8-v1' , 27582164 , 5.606 , 1.0),
+            Dataset('VZ' , 'WZTo3LNu_TuneCP5_13TeV-amcatnloFXFX-pythia8-v1' , 10881896 , 5.052 , 1.0),
             
             #Dataset('WW' , 'WW_TuneCP5_13TeV-pythia8-v1' , 7791498 , 75.8 , 1.0),
             #Dataset('WW' , 'WW_TuneCP5_13TeV-pythia8-v2' , 7765828 , 75.8 , 1.0),
@@ -322,10 +327,10 @@ datasets ={
             #Dataset('WW' , 'WWTo2L2Nu_NNPDF31_TuneCP5_13TeV-powheg-pythia8-v1' , 1915563 , 10.48 , 1.0),                         #check this xsec, using 2016
             #Dataset('WW' , 'WWTo4Q_NNPDF31_TuneCP5_PSweights_13TeV-powheg-pythia8_ext1-v1' , 1976360 , 47.73 , 1.0),
             
-            #Dataset('ZZ' , 'ZZ_TuneCP5_13TeV-pythia8-v1' , 1949768 , 12.14 , 1.0),
-            #Dataset('ZZ' , 'ZZ_TuneCP5_13TeV-pythia8-v2' , 1925931 , 12.14 , 1.0),
-            Dataset('ZZ' , 'ZZTo2L2Nu_13TeV_powheg_pythia8-v1' , 8744768 , 0.5644 , 1.0),
-            Dataset('ZZ' , 'ZZTo2L2Q_13TeV_amcatnloFXFX_madspin_pythia8-v1' , 27840918 , 3.222 , 1.0),
+            #Dataset('VZ' , 'ZZ_TuneCP5_13TeV-pythia8-v1' , 1949768 , 12.14 , 1.0),
+            #Dataset('VZ' , 'ZZ_TuneCP5_13TeV-pythia8-v2' , 1925931 , 12.14 , 1.0),
+            Dataset('VZ' , 'ZZTo2L2Nu_13TeV_powheg_pythia8-v1' , 8744768 , 0.5644 , 1.0),
+            Dataset('VZ' , 'ZZTo2L2Q_13TeV_amcatnloFXFX_madspin_pythia8-v1' , 27840918 , 3.222 , 1.0),
             
             Dataset('ttV' , 'ttHToNonbb_M125_TuneCP5_13TeV-powheg-pythia8-v1' , 7669336 , 0.5638 , 1.0),
             #Dataset('ttV' , 'ttHToNonbb_M125_TuneCP5_13TeV-powheg-pythia8_ext1-v2' , 8241489 , 0.5638 , 1.0),
@@ -376,11 +381,12 @@ datasets ={
             Dataset('VH' , 'VHToNonbb_M125_13TeV_amcatnloFXFX_madspin_pythia8-v2' , 918508 , 2.127 , 1.0),
             
             ##Signal
-            Dataset('Wm' ,"Wminushwwlvjj_M125_Madspin_Skim",  300000  ,  0.0069905587717  ,  1.0  ),
-            Dataset('Wp' ,"Wplushwwlvjj_M125_Madspin_Skim",  300000  ,  0.0110211512166  ,  1.0  ),
+            Dataset('Whww' ,"Wminushwwlvjj_M125_Madspin_Skim",  300000  ,  0.0069905587717  ,  1.0  ),
+            Dataset('Whww' ,"Wplushwwlvjj_M125_Madspin_Skim",  300000  ,  0.0110211512166  ,  1.0  ),
             },
         },
     'Run2_2018_v4' : {
+        'lumi' : 68000. , #pb-1
         'cert' : 'Cert_314472-325175_13TeV_17SeptEarlyReReco2018ABC_PromptEraD_Collisions18_JSON.txt',
         'data' : {
             Dataset('data_obs' , 'SingleMuonRun2018A-Nano14Dec2018-v1' , 241608232 , 1.0 , 1.0),
