@@ -53,9 +53,9 @@ if __name__ == "__main__":
     if len(args) < 2 and not options.batch :
 	 parser.print_help()
          print YELLOW+"For running in batch, example:"+ENDC
-         print YELLOW+"python scripts/postproc.py --batch --dryrun -w WH_SS -l Run2_2016_v4 -o test -c \"( (Muon_pt[0]>5 && Muon_mediumId[0]>0) || (Electron_pt[0]>15 && Electron_cutBased[0]>0) )\" -bi scripts/slimming-in.txt -bo scripts/slimming-out.txt"+ENDC
+         print YELLOW+"python scripts/postproc.py --batch --dryrun -w WH_SS -l Run2_2016_v4 -o test -c \"( (Muon_pt[0]>5 && Muon_mediumId[0]>0) || (Electron_pt[0]>15 && Electron_cutBased[0]>0) )\" --bi scripts/slimming-in.txt --bo scripts/slimming-out.txt"+ENDC
          print YELLOW+"For running locally"+ENDC
-         print YELLOW+"python scripts/postproc.py test/ test/WWW_4F_TuneCUETP8M1_13TeV-amcatnlo-pythia8.root -c \"Muon_pt[0]>30\" -bi scripts/slimming-in.txt -bo scripts/slimming-out.txt"+ENDC
+         print YELLOW+"python scripts/postproc.py test/ test/WWW_4F_TuneCUETP8M1_13TeV-amcatnlo-pythia8.root -c \"Muon_pt[0]>30\" --bi scripts/slimming-in.txt --bo scripts/slimming-out.txt"+ENDC
          sys.exit(1)
     if options.batch:
         outdir=[] ; args = []
