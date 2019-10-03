@@ -14,8 +14,7 @@ if __name__ == "__main__":
     parser.add_option("-s"       , "--postfix"          , dest="postfix"   , type="string" , default=None, help="Postfix which will be appended to the file name (default: _Friend for friends, _Skim for skims)")
     parser.add_option("-J"       , "--json"             , dest="json"      , type="string" , default=None, help="Select events using this JSON file")
     parser.add_option("-c"       , "--cut"              , dest="cut"       , type="string" , default="", help="Cut string")
-    parser.add_option("-b"       , "--branch-selection" , dest="branchsel" , type="string" , default='%s/src/PhysicsTools/NanoAODTools/scripts/slimming.txt' \
-                          %os.environ['CMSSW_BASE'] if 'CMSSW_BASE' in os.environ else '%s/scripts/slimming.txt' %os.getcwd(), help="Branch selection")
+    parser.add_option("-b"       , "--branch-selection" , dest="branchsel" , type="string" , default="", help="Branch selection")
     parser.add_option('--bs'     , '--base'             , dest='base'      , type="string" , default='%s/src/PhysicsTools/NanoAODTools/' \
                           %os.environ['CMSSW_BASE'] if 'CMSSW_BASE' in os.environ else os.getcwd() , action='store' , help="Workin directory")
 
@@ -54,9 +53,9 @@ if __name__ == "__main__":
     if len(args) < 2 and not options.batch :
 	 parser.print_help()
          print YELLOW+"For running in batch, example:"+ENDC
-         print YELLOW+"python scripts/postproc.py --batch --dryrun -w WH_SS -l Run2_2016_v4 -o test -c \"( (Muon_pt[0]>5 && Muon_mediumId[0]>0) || (Electron_pt[0]>15 && Electron_cutBased[0]>0) )\""+ENDC
+         print YELLOW+"python scripts/postproc.py --batch --dryrun -w WH_SS -l Run2_2016_v4 -o test -c \"( (Muon_pt[0]>5 && Muon_mediumId[0]>0) || (Electron_pt[0]>15 && Electron_cutBased[0]>0) )\" --bi scripts/slimming-in.txt --bo scripts/slimming-out.txt"+ENDC
          print YELLOW+"For running locally"+ENDC
-         print YELLOW+"python scripts/postproc.py test/ test/WWW_4F_TuneCUETP8M1_13TeV-amcatnlo-pythia8.root -c \"Muon_pt[0]>30\""+ENDC
+         print YELLOW+"python scripts/postproc.py test/ test/WWW_4F_TuneCUETP8M1_13TeV-amcatnlo-pythia8.root -c \"Muon_pt[0]>30\" --bi scripts/slimming-in.txt --bo scripts/slimming-out.txt"+ENDC
          sys.exit(1)
     if options.batch:
         outdir=[] ; args = []
