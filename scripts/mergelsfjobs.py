@@ -6,7 +6,7 @@ import math, time
 import sys
 from ROOT import TObject, TFile, TH1, TH1F
 from array import array
-from PhysicsTools.NanoAODTools.postprocessing.modules.datasets import *
+from PhysicsTools.NanoAODTools.postprocessing.modules.analysis.datasets import *
 
 # use the following lists to include/exclude samples to be merged
 
