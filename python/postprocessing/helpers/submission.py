@@ -6,62 +6,64 @@ from PhysicsTools.NanoAODTools.postprocessing.helpers.colors import *
 
 class batchJob:
     def __init__(self, queue, maxlsftime, eventspersec, lsfoutput, base):
-        self.queue        = queue
-        self.maxlsftime  = maxlsftime
-        self.eventspersec = eventspersec
-        self.lsfoutput    = lsfoutput
-        self.base         = base
+        self._queue        = queue
+        self._maxlsftime  = maxlsftime
+        self._eventspersec = eventspersec
+        self._lsfoutput    = lsfoutput
+        self._base         = base
 
-    def register(self, samplelist , cutter, modconfig , slimmer ):
+    def register(self, samplelist , cutter, modconfig , slimmer , slimmerin , slimmerout ):
         
         if '2016' in samplelist:
-            self.dirdata='Run2016'
-            self.dirmc='Summer16'
+            self._dirdata='Run2016'
+            self._dirmc='Summer16'
         elif '2017' in samplelist:
-            self.dirdata='Run2017'
-            self.dirmc='Fall17'
+            self._dirdata='Run2017'
+            self._dirmc='Fall17'
         elif '2018' in samplelist:
-            self.dirdata='Run2018'
-            self.dirmc='Autumn18'
+            self._dirdata='Run2018'
+            self._dirmc='Autumn18'
 
-        self.jsoner = '%s/python/postprocessing/data/json/%s' %( self.base, datasets[samplelist]['cert'] )
-        if self.jsoner.split('.')[1:][0]!='txt': raise Exception('ERROR: Json file is not correctly loaded!')
-        self.samplelistData = list(datasets[samplelist]['data'])
-        self.samplelistMC = list(datasets[samplelist]['mc'])
+        self._jsoner = '%s/python/postprocessing/data/json/%s' %( self._base, datasets[samplelist]['cert'] )
+        if self._jsoner.split('.')[1:][0]!='txt': raise Exception('ERROR: Json file is not correctly loaded!')
+        self._samplelistData = list(datasets[samplelist]['data'])
+        self._samplelistMC = list(datasets[samplelist]['mc'])
         if 'test' in datasets[samplelist]:
-            self.samplelists = list(datasets[samplelist]['test'])
+            self._samplelists = list(datasets[samplelist]['test'])
         else:
-            self.samplelists = self.samplelistData + self.samplelistMC
+            self._samplelists = self._samplelistData + self._samplelistMC
             
-        self.cutter = cutter
+        self._cutter = cutter
 
-        self.modules=[]
+        self._modules=[]
         
         for i,mod in enumerate(modconfig):
             if 'puWeight' in mod: 
-                self.modules.append( '-I PhysicsTools.NanoAODTools.postprocessing.modules.common.puWeightProducer %s'%mod )
+                self._modules.append( '-I PhysicsTools.NanoAODTools.postprocessing.modules.common.puWeightProducer %s'%mod )
             elif 'lepSFProducer' in mod:
-                self.modules.append( '-I PhysicsTools.NanoAODTools.postprocessing.modules.common.lepSFProducer %s'%mod )
+                self._modules.append( '-I PhysicsTools.NanoAODTools.postprocessing.modules.common.lepSFProducer %s'%mod )
             else:
-                self.modules.append( '-I PhysicsTools.NanoAODTools.postprocessing.modules.analysis.%s %s'%(mod,mod) )
+                self._modules.append( '-I PhysicsTools.NanoAODTools.postprocessing.modules.analysis.%s %s'%(mod,mod) )
                 #self.modules.append( '-I PhysicsTools.NanoAODTools.postprocessing.modules.%s %s'%(mod,mod) if i+1!= len(modconfig) \
                 #                         else '-I PhysicsTools.NanoAODTools.postprocessing.analysis.%s %s'%(mod,mod) )
 
-        self.slimmer = slimmer
+        self._slimmer = slimmer
+        self._slimmerin = slimmerin
+        self._slimmerout = slimmerout
         
     def submit(self, dryrun=False):
         #1 job/1 dataset, possibly create job contains multiple root file
         var=0            
-        for l in self.samplelists:
+        for l in self._samplelists:
             #tag=l.split("/")[-1].split('.')[0]
-            file=open(os.path.expandvars( self.base + 'python/postprocessing/data/filelists/Legnaro_T2/%s/' %(self.dirdata if 'Run' in l.filename() else self.dirmc) +l.filename()+'.txt' ),'r')            
+            file=open(os.path.expandvars( self._base + 'python/postprocessing/data/filelists/Legnaro_T2/%s/' %(self._dirdata if 'Run' in l.filename() else self._dirmc) +l.filename()+'.txt' ),'r')            
             filelist = file.readlines()
-            splitting= max(int(float(l.nevent())/(self.maxlsftime*3600*self.eventspersec)),1)
+            splitting= max(int(float(l.nevent())/(self._maxlsftime*3600*self._eventspersec)),1)
             njobs    = int(len(filelist)/splitting)+1
             sublists = [filelist[i:i+njobs] for i in range(0, len(filelist), njobs)]
             print WARNING+'--> Splitting',l.filename(),'in',len(sublists),'chunk(s) of approximately',njobs,'files each'+ENDC
             
-            lfold = self.base + self.lsfoutput+'/'+l.filename()
+            lfold = self._base + self._lsfoutput+'/'+l.filename()
             os.system('mkdir '+lfold)
             #if lfold.find('lustre')!= -1: outputbase = ""
             #else: outputbase = options.base
@@ -90,20 +92,20 @@ class batchJob:
                     fout.write('eval `scram runtime -sh`\n')
                     fout.write('ls\n')
                     fout.write('echo "running"\n')
-                    fout.write('python %s/scripts/postproc.py ./ %s/list.txt --cut=\"%s\" --branch-selection=%s ' %( self.base , lsubfold ,self.cutter, self.slimmer ))
-                    if 'Run' in l.filename(): fout.write('--json=%s ' %(self.jsoner))
-                    for i,moder in enumerate(self.modules): 
+                    fout.write('python %s/scripts/postproc.py ./ %s/list.txt --cut=\"%s\" --bi %s/%s --bo /%s/%s ' %( self._base , lsubfold ,self._cutter, self._base, self._slimmerin, self._base, self._slimmerout ))
+                    if 'Run' in l.filename(): fout.write('--json=%s ' %(self._jsoner))
+                    for i,moder in enumerate(self._modules): 
                         #remove module does nothing to the DATA
                         if 'Run' in l.filename() and 'lepSF' in moder: continue;
                         if 'Run' in l.filename() and 'puWeight' in moder: continue;
-                        fout.write('%s\n'%moder if i+1==len(self.modules) else '%s '%moder )
+                        fout.write('%s\n'%moder if i+1==len(self._modules) else '%s '%moder )
                     fout.write('exit $?\n') 
                     fout.write('echo ""\n')
                 os.system('chmod 755 job.sh')
     
                 ########## SEND JOB ON LSF QUEUE ##########
                 if not dryrun:
-                    os.system('bsub -q '+ self.queue +' -o logs < job.sh')
+                    os.system('bsub -q '+ self._queue +' -o logs < job.sh')
                     #print 'bsub -q '+options.queue+' -o logs < job.sh'
                     #print 'filelist ' + l + ' - job nr ' + str(x).zfill(4) + ' -> submitted'
                 var+=1

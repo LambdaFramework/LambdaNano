@@ -14,7 +14,7 @@ if __name__ == "__main__":
     parser.add_option("-s"       , "--postfix"          , dest="postfix"   , type="string" , default=None, help="Postfix which will be appended to the file name (default: _Friend for friends, _Skim for skims)")
     parser.add_option("-J"       , "--json"             , dest="json"      , type="string" , default=None, help="Select events using this JSON file")
     parser.add_option("-c"       , "--cut"              , dest="cut"       , type="string" , default="", help="Cut string")
-    parser.add_option("-b"       , "--branch-selection" , dest="branchsel" , type="string" , default="", help="Branch selection")
+    parser.add_option("-b"       , "--branch-selection" , dest="branchsel" , type="string" , default=None, help="Branch selection")
     parser.add_option('--bs'     , '--base'             , dest='base'      , type="string" , default='%s/src/PhysicsTools/NanoAODTools/' \
                           %os.environ['CMSSW_BASE'] if 'CMSSW_BASE' in os.environ else os.getcwd() , action='store' , help="Workin directory")
 
@@ -126,7 +126,7 @@ if __name__ == "__main__":
         
         #making batch script, every variable is fed externally to postproc.py
         bj = batchJob( options.queue , options.maxlsftime , options.eventspersec , '%s-%s'%(options.samplelists,options.lsfoutput) , options.base )
-        bj.register( options.samplelists, options.cut , workflow["%s_%s" %(options.workflow,options.samplelists.split('_')[1])] , options.branchsel )
+        bj.register( options.samplelists, options.cut , workflow["%s_%s" %(options.workflow,options.samplelists.split('_')[1])] , options.branchsel , options.branchsel_in , options.branchsel_out )
         bj.submit(options.dryrun)
     elif options.batch and (options.workflow=='' or options.samplelists!=''):
         raise Exception('workflow or samplelists are empty, please specify workflow AND samplelist')
