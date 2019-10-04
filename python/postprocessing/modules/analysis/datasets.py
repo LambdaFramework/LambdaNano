@@ -207,15 +207,15 @@ datasets ={
             Dataset('tZq' , 'tZq_ll_4f_13TeV-amcatnlo-pythia8_ext1-v1' , 13656784 , 0.0758 , 1.0),
             
             Dataset('VH' , 'VHToNonbb_M125_13TeV_amcatnloFXFX_madspin_pythia8-v1' , 1007898 , 2.127 , 1.0),
-            Dataset('Whww' ,"Wminushwwlvjj_M125_Madspin_Skim",  300000  ,  0.0069905587717  ,  1.0  ),
-            Dataset('Whww' ,"Wplushwwlvjj_M125_Madspin_Skim",  300000  ,  0.0110211512166  ,  1.0  ),
+            #Dataset('Whww' ,"Wminushwwlvjj_M125_Madspin_Skim",  300000  ,  0.0069905587717  ,  1.0  ),
+            #Dataset('Whww' ,"Wplushwwlvjj_M125_Madspin_Skim",  300000  ,  0.0110211512166  ,  1.0  ),
 
             },
-        'test' : {
-            Dataset('data_obs' , 'SingleElectronRun2016B_ver2-Nano14Dec2018_ver2-v1' , 246440440 , 1.0 , 1.0),
-            Dataset('VVV' , 'WWW_4F_TuneCUETP8M1_13TeV-amcatnlo-pythia8-v1' , 240000 , 0.2086 , 1.0),
-            Dataset('ttV' , 'TTZToLLNuNu_M-10_TuneCUETP8M1_13TeV-amcatnlo-pythia8_ext3-v1' , 5934228 , 0.2529 , 1.0),
-            },
+        #'test' : {
+        #    Dataset('data_obs' , 'SingleElectronRun2016B_ver2-Nano14Dec2018_ver2-v1' , 246440440 , 1.0 , 1.0),
+        #    Dataset('VVV' , 'WWW_4F_TuneCUETP8M1_13TeV-amcatnlo-pythia8-v1' , 240000 , 0.2086 , 1.0),
+        #    Dataset('ttV' , 'TTZToLLNuNu_M-10_TuneCUETP8M1_13TeV-amcatnlo-pythia8_ext3-v1' , 5934228 , 0.2529 , 1.0),
+        #    },
         },
     'Run2_2017_v2' : {
         'lumi' : 41500. , # pb-1
