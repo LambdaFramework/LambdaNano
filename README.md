@@ -7,9 +7,9 @@ Tools for working with NanoAOD (requiring only python + root, not CMSSW)
 
   Rewritten lambdaframework, more consistent with postprocesser definition with plotter.
 
- - [ ] Postprocesser interface (SiewYan)
- - [ ] Chain of steps , specify which module is running (SiewYan+Matteo)
- - [ ] Production, the correct ntuple use (SiewYan+Matteo)
+ - [x] Postprocesser interface (SiewYan)
+ - [x] Chain of steps , specify which module is running (SiewYan+Matteo)
+ - [x] Production, the correct ntuple use (SiewYan+Matteo)
  - [ ] Collection of module:
     - [ ] Lepton maker (jet cleaning+WP compute) (SiewYan)
     - [ ] Muon maker (jet cleaning+WP compute) (Matteo)
@@ -19,7 +19,8 @@ Tools for working with NanoAOD (requiring only python + root, not CMSSW)
     - [ ] Derived/analysis-specific Variable compute (need to declare in variables.py) (SiewYan + Matteo)
     - [ ] Trigger maker ? (SiewYan+Matteo)
  - [ ] Data folder hosting variable, SF, WP (SiewYan)
- - [ ] Plotting (kinda taking care of...) (SiewYan)
+ - [x] Plotting (kinda taking care of...) (SiewYan)
+    - [ ] Augmenting to RDataFrame
  - [ ] Making datacard (Matteo)
  - [ ] Using combine limit (SiewYan)
 
