@@ -10,7 +10,7 @@ Tools for working with NanoAOD (requiring only python + root, not CMSSW)
  - [x] Postprocesser interface (SiewYan)
  - [x] Chain of steps , specify which module is running (SiewYan+Matteo)
  - [x] Production, the correct ntuple use (SiewYan+Matteo)
- - [ ] Collection of module:
+ - [x] Collection of module:
     - [ ] Lepton maker (jet cleaning+WP compute) (SiewYan)
     - [ ] Muon maker (jet cleaning+WP compute) (Matteo)
     - [ ] Electron Maker (jet cleaning+WP compute) (SiewYan)
@@ -20,7 +20,7 @@ Tools for working with NanoAOD (requiring only python + root, not CMSSW)
     - [ ] Trigger maker ? (SiewYan+Matteo)
  - [ ] Data folder hosting variable, SF, WP (SiewYan)
  - [x] Plotting (kinda taking care of...) (SiewYan)
-    - [ ] Augmenting to RDataFrame
+    - [x] Augmenting to RDataFrame
  - [ ] Making datacard (Matteo)
  - [ ] Using combine limit (SiewYan)
 
