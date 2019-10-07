@@ -24,7 +24,8 @@ Tools for working with NanoAOD (requiring only python + root, not CMSSW)
  - [ ] Making datacard (Matteo)
  - [ ] Using combine limit (SiewYan)
 
-## Checkout instructions: standalone
+## Checkout instructions: 
+### standalone
 
 You need to setup ```python 2.7``` and a recent ROOT version first.
 
@@ -37,12 +38,30 @@ Repeat only the last command at the beginning of every session.
 
 Please never commit neither the build directory, nor the empty init.py files created by the script.
 
-## Checkout instructions: CMSSW = [ dev: CMSSW_10_2_13 ] --> move to [ dev: CMSSW_9_4_13 ]
+### CMSSW env: CMSSW = ~~[ dev: CMSSW_10_2_13 ]~~ --> move to [ dev: CMSSW_9_4_13 ]
 
     cd $CMSSW_BASE/src
     git clone git@github.com:LambdaFramework/LambdaNano.git PhysicsTools/NanoAODTools
     cd PhysicsTools/NanoAODTools
     cmsenv
     scram b
+    
+### Checkout LambPlot package for plotting
 
+    # Standalone
+    cd NanoAODTools/python
+    git clone git@github.com:LambdaFramework/LambPlot.git
+    # or checkout dfdev to use RDataFrame, ITS FAST
+    # git clone git@github.com:LambdaFramework/LambPlot.git -b dfdev
+    
+    # CMSSW
+    cd $CMSSW_BASE/src/PhysicsTools/NanoAODTools/python
+    git clone git@github.com:LambdaFramework/LambPlot.git
+    # or checkout dfdev to use RDataFrame, ITS FAST
+    # git clone git@github.com:LambdaFramework/LambPlot.git -b dfdev
+    
 ## General instructions to run the post-processing step
+
+The postprocessing script sit in ``scripts`` folder, please consult the output by
+
+    python scripts/postproc.py
