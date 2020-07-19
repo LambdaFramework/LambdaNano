@@ -72,7 +72,7 @@ class skimmer:
             p=PostProcessor(
                 outputDir='%s/skimmed/%s/' %(os.getcwd(),isample) ,
                 inputFiles=self.samples[isample] ,
-                cut="1==1",
+                cut="mll>12 && Lepton_pt[0]>25 && Lepton_pt[1]>20 && bVeto && PuppiMET_pt > 30",
                 branchsel="%s/scripts/slimming-in.txt" %os.getcwd() ,
                 modules=[ whssConstr() ] ,
                 compression="LZMA:9",
