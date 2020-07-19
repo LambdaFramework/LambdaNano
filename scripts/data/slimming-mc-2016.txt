@@ -5,7 +5,6 @@ keep luminosityBlock
 keep run
 keep genWeight
 keep event
-keep Pileup*
 keep PV*
 keep baseW
 keep Xsec

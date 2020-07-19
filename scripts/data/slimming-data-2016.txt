@@ -3,12 +3,8 @@ drop *
 ## Global
 keep luminosityBlock
 keep run
-keep genWeight
 keep event
-keep Pileup*
 keep PV*
-keep baseW
-keep Xsec
 
 ## Trigger
 # https://github.com/latinos/LatinoAnalysis/blob/master/NanoGardener/python/data/TrigMaker_cfg.py#L2100-L2141
@@ -21,10 +17,6 @@ keepmatch HLT_IsoMu24
 keepmatch HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_DZ
 keepmatch HLT_Ele27_WPTight_Gsf
 keepmatch HLT_Ele25_eta2p1_WPTight_Gsf
-
-# GEN
-keep gen_*
-keep Gen_ZGstar*
 
 # RECO
 keep Lepton_*
