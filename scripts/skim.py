@@ -6,6 +6,9 @@ from importlib import import_module
 from PhysicsTools.NanoAODTools.postprocessing.framework.postprocessor import PostProcessor
 from whss import whssConstr
 
+from multiprocessing import Process
+import multiprocessing
+
 class skimmer:
 
     def __init__(self):
@@ -55,7 +58,9 @@ class skimmer:
             "HWplusJ_HToTauTau_M125",
             "HWminusJ_HToTauTau_M125"
         ]
-
+        
+        dummy = [ "ZZZ" , "WZZ" , "WWW" , "ZZTo2L2Q" ]
+        #fnames = dummy
         fnames= mc + data
         
         for i in fnames:
@@ -63,36 +68,32 @@ class skimmer:
             self.samples[i] = [ x.strip('\n') for x in sample_files.readlines() ]
             sample_files.close()
     
-    def run(self):
+    def run(self,infiles):
     
-        for isample in self.samples:
-            if not os.path.isdir( '%s/skimmed/%s/' %(os.getcwd(),isample) ): os.mkdir( '%s/skimmed/%s/' %(os.getcwd(),isample) )
-
-            print(self.samples[isample])
-            p=PostProcessor(
-                outputDir='%s/skimmed/%s/' %(os.getcwd(),isample) ,
-                inputFiles=self.samples[isample] ,
-                cut="mll>12 && Lepton_pt[0]>25 && Lepton_pt[1]>20 && bVeto && PuppiMET_pt > 30",
-                branchsel="%s/scripts/slimming-in.txt" %os.getcwd() ,
-                modules=[ whssConstr() ] ,
-                compression="LZMA:9",
-                friend=False,
-                postfix=None,
-                jsonInput=None,
-                noOut=False,
-                justcount=False,
-                provenance=False,
-                haddFileName=None,
-                fwkJobReport=False,
-                histFileName=None,
-                histDirName=None,
-                outputbranchsel="%s/scripts/slimming-out.txt" %os.getcwd() ,
-                maxEntries=None,
-                firstEntry=0,
-                prefetch=False,
-                longTermCache=False
-            )
-            p.run()
+        p=PostProcessor(
+            outputDir='%s/skimmed/%s/' %(os.getcwd(),isample) ,
+            inputFiles=infiles ,
+            cut="mll>12 && Lepton_pt[0]>25 && Lepton_pt[1]>20 && Sum$(CleanJet_pt > 20. && abs(CleanJet_eta) < 2.5 && Jet_btagDeepB[CleanJet_jetIdx] > 0.1522) == 0 && PuppiMET_pt > 30",
+            branchsel="%s/scripts/slimming-in.txt" %os.getcwd() ,
+            modules=[ whssConstr() ] ,
+            compression="LZMA:9",
+            friend=False,
+            postfix=None,
+            jsonInput=None,
+            noOut=False,
+            justcount=False,
+            provenance=False,
+            haddFileName=None,
+            fwkJobReport=False,
+            histFileName=None,
+            histDirName=None,
+            outputbranchsel="%s/scripts/slimming-out.txt" %os.getcwd() ,
+            maxEntries=None,
+            firstEntry=0,
+            prefetch=False,
+            longTermCache=False
+        )
+        p.run()
 
 if __name__ == "__main__" :
     
@@ -105,4 +106,16 @@ if __name__ == "__main__" :
 
     skim = skimmer()
     skim.initialization()
-    skim.run()
+
+    procs = []
+    print "Number of cpu : ", multiprocessing.cpu_count()
+    for isample in skim.samples:
+        filelist = skim.samples[isample]
+        if not os.path.isdir( '%s/skimmed/%s/' %(os.getcwd(),isample) ): os.mkdir( '%s/skimmed/%s/' %(os.getcwd(),isample) )
+        print(filelist)
+        proc = Process(target=skim.run, args=(filelist,))
+        procs.append(proc)
+        proc.start()
+        #skim.run(filelist)
+
+    for proc in procs: proc.join()

@@ -33,7 +33,7 @@ keep Muon_*
 keep Electron_*
 keep MET_*
 keep PuppiMET_*
-
+keepmatch Jet_btagDeepB
 keepmatch nLepton
 keepmatch nCleanJet
 keepmatch nMuon
@@ -62,5 +62,4 @@ keepmatch mlljj30_whss
 keepmatch WlepPt_whss
 keepmatch WlepMt_whss
 keepmatch mll
-keepmatch bVeto
 keepmatch mjj
