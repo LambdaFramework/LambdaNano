@@ -1,4 +1,6 @@
 from WMCore.Configuration import Configuration
+from CRABClient.UserUtilities import config, getUsernameFromSiteDB
+
 config = Configuration()
 config.section_("General")
 config.General.requestName = 'NanoPost1'
@@ -30,4 +32,3 @@ config.section_("Site")
 config.Site.storageSite = "T2_IT_Legnaro"
 config.Site.whitelist = ['T3_US_FNALLPC']
 config.Site.ignoreGlobalBlacklist = True
-
