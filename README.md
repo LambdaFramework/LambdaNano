@@ -7,7 +7,7 @@ Tools for working with NanoAOD (requiring only python + root, not CMSSW)
 You need to setup python 2.7 and a recent ROOT version first.
 
     git clone git@github.com:LambdaFramework/LambdaNano.git LambdaNano 
-    cd NanoAODTools
+    cd LambdaNano
     bash standalone/env_standalone.sh build
     source standalone/env_standalone.sh
 
