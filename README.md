@@ -1,11 +1,12 @@
-# nanoAOD-tools
+# LambdaNano (nanoAOD-tools)
+taken from https://github.com/cms-nanoAOD/nanoAOD-tools and modify for personal use.
 Tools for working with NanoAOD (requiring only python + root, not CMSSW)
 
 ## Checkout instructions: standalone
 
 You need to setup python 2.7 and a recent ROOT version first.
 
-    git clone https://github.com/cms-nanoAOD/nanoAOD-tools.git NanoAODTools
+    git clone https://github.com/cms-nanoAOD/nanoAOD-tools.git LambdaNano 
     cd NanoAODTools
     bash standalone/env_standalone.sh build
     source standalone/env_standalone.sh
@@ -21,7 +22,8 @@ Please never commit neither the build directory, nor the empty init.py files cre
     cd PhysicsTools/NanoAODTools
     cmsenv
     scram b
-
+    
+<!---
 ## General instructions to run the post-processing step
 
 The script to run the post-processing step is `scripts/nano_postproc.py`.
@@ -87,4 +89,4 @@ python scripts/nano_postproc.py outDir /eos/cms/store/user/andrey/f.root -I Phys
 ```
 This module has the same structure of its producer as `exampleProducer`, but in addition it utilizes a C++ code to calculate the mht variable, `src/mhtjuProducerCppWorker.cc`. This code is loaded in the `__init__` method of the producer.
 
-
+--->
