@@ -61,8 +61,8 @@ class skimmer:
         
         dummy = [ "ZZZ" , "WZZ" , "WWW" , "ZZTo2L2Q" ]
         
-        #fnames= data + mc
-        fnames = ['Run2016_SingleMuon',]
+        fnames= data + mc
+        #fnames = ['Run2016_SingleMuon',]
         
         for i in fnames:
             sample_files = open( "%s/scripts/filelists/%s.txt" %(os.getcwd(),i) , "r" )
