@@ -61,7 +61,8 @@ class skimmer:
         
         dummy = [ "ZZZ" , "WZZ" , "WWW" , "ZZTo2L2Q" ]
         
-        fnames= data + mc
+        #fnames= data + mc
+        fnames = ['Run2016_SingleMuon',]
         
         for i in fnames:
             sample_files = open( "%s/scripts/filelists/%s.txt" %(os.getcwd(),i) , "r" )
@@ -76,7 +77,7 @@ class skimmer:
             outputDir='%s/skimmed/%s/' %(os.getcwd(),isample) ,
             inputFiles=infiles ,
             cut="mll>12 && Lepton_pt[0]>25 && Lepton_pt[1]>20 && Sum$(CleanJet_pt > 20. && abs(CleanJet_eta) < 2.5 && Jet_btagDeepB[CleanJet_jetIdx] > 0.1522) == 0 && PuppiMET_pt > 30",
-            branchsel= "%s/scripts/data/slimming-mc-2016.txt" %os.getcwd() if isMC else "%s/scripts/data/slimming-data-2016.txt" %os.getcwd() ,
+            branchsel= "%s/scripts/data/slimming-2016.txt" %os.getcwd(),
             modules=[ whssConstr() ] ,
             compression="LZMA:9",
             friend=False,
@@ -89,7 +90,7 @@ class skimmer:
             fwkJobReport=False,
             histFileName=None,
             histDirName=None,
-            outputbranchsel= "%s/scripts/data/slimming-mc-2016.txt" %os.getcwd() if isMC else "%s/scripts/data/slimming-data-2016.txt" %os.getcwd() ,
+            outputbranchsel= "%s/scripts/data/slimming-2016.txt" %os.getcwd(),
             maxEntries=None,
             firstEntry=0,
             prefetch=False,
@@ -99,8 +100,8 @@ class skimmer:
 
 if __name__ == "__main__" :
     
-    if os.getcwd().split('/')[-1] != 'NanoAODTools' :
-        print "Please run the scripts from NanoAODTools folder."
+    if os.getcwd().split('/')[-1] != 'LambdaNano' :
+        print "Please run the scripts from LambdaNano folder."
         sys.exit()
         
     if not os.path.isdir('%s/skimmed' %os.getcwd()): os.mkdir('%s/skimmed' %os.getcwd())
