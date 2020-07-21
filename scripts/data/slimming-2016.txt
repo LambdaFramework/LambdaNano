@@ -37,6 +37,15 @@ keepmatch topGenPt
 keepmatch antitopGenPt
 keepmatch GenLepMatch2l
 keepmatch Lepton_promptgenmatched
+keepmatch PhotonGen_isPrompt
+keepmatch PhotonGen_pt
+keepmatch PhotonGen_eta
+keepmatch GenPart_pdgId
+keepmatch GenPart_pt
+keepmatch GenPart_eta
+keepmatch GenPart_phi
+keepmatch lhe_mW1
+keepmatch lhe_mW2
 
 # RECO
 keepmatch Lepton_pdgId
@@ -161,6 +170,7 @@ keepmatch mjj
 keepmatch mtw2
 keepmatch mth
 keepmatch mtw
+keepmatch nllW
 
 keepmatch LepCut2l__ele_cut_WP_Tight80X__mu_cut_Tight80x
 keepmatch LepCut2l__ele_cut_WP_Tight80X_SS__mu_cut_Tight80x
