@@ -4,7 +4,7 @@ import ROOT
 ROOT.PyConfig.IgnoreCommandLineOptions = True
 from importlib import import_module
 from PhysicsTools.NanoAODTools.postprocessing.framework.postprocessor import PostProcessor
-from whss import whssConstr
+#from PhysicsTools.NanoAODTools.postprocessing.modules.analysis.WHSS.whss import whssConstr
 
 from multiprocessing import Process
 import multiprocessing, time
@@ -89,7 +89,7 @@ class skimmer:
             inputFiles=infiles ,
             cut="mll>12 && Lepton_pt[0]>25 && Lepton_pt[1]>20 && Sum$(CleanJet_pt > 20. && abs(CleanJet_eta) < 2.5 && Jet_btagDeepB[CleanJet_jetIdx] > 0.1522) == 0 && PuppiMET_pt > 30",
             branchsel= "%s/scripts/data/slimming-2016.txt" %os.getcwd(),
-            modules=[ whssConstr() ] ,
+            modules=[ ] ,
             compression="LZMA:9",
             friend=False,
             postfix=None,
