@@ -11,8 +11,12 @@ import multiprocessing, time
 
 class skimmer:
 
-    def __init__(self):
+    def __init__(self, dataset_ , outfolder_ ):
+        self.dataset_ = dataset_
+        self.outfolder_ = outfolder_
         self.samples={}
+        
+        if not os.path.isdir('%s/%s' %( os.getcwd() , self.outfolder_ ) ): os.mkdir('%s/%s' %( os.getcwd() , self.outfolder_ ) )
 
     def initialization(self):
 
@@ -60,10 +64,17 @@ class skimmer:
         ]
         
         dummy = [ "ZZZ" , "WZZ" , "WWW" , "ZZTo2L2Q" ]
-        
-        fnames= data + mc
-        #fnames = ['Run2016_SingleMuon',]
-        
+
+        if self.dataset_ == 0 :
+            fnames = data + mc
+        elif self.dataset_ == 1 :
+            fnames = mc
+        elif self.dataset_ == 2 :
+            fnames = data
+        else :
+            fnames = dummy # testing
+
+        print("Running on : " if self.dataset_ < 3 else "Running on dummy : ", fnames)
         for i in fnames:
             sample_files = open( "%s/scripts/filelists/%s.txt" %(os.getcwd(),i) , "r" )
             self.samples[i] = [ x.strip('\n') for x in sample_files.readlines() ]
@@ -74,7 +85,7 @@ class skimmer:
         isMC = False if 'Run' in infiles[0].split('/')[-1] else True
         
         p=PostProcessor(
-            outputDir='%s/skimmed/%s/' %(os.getcwd(),isample) ,
+            outputDir='%s/%s/%s/' %( os.getcwd() , self.outfolder_ , isample ) ,
             inputFiles=infiles ,
             cut="mll>12 && Lepton_pt[0]>25 && Lepton_pt[1]>20 && Sum$(CleanJet_pt > 20. && abs(CleanJet_eta) < 2.5 && Jet_btagDeepB[CleanJet_jetIdx] > 0.1522) == 0 && PuppiMET_pt > 30",
             branchsel= "%s/scripts/data/slimming-2016.txt" %os.getcwd(),
@@ -99,16 +110,28 @@ class skimmer:
         p.run()
 
 if __name__ == "__main__" :
+
+    from optparse import OptionParser
+    parser = OptionParser(usage="%prog [options] -d dataset -o outputfolder")
+
+    usage = "usage: %prog [options]"
+    parser.add_option("-d", "--dataset", action="store", type="int", dest="dataset", default=None , help="specify which dataset to run, 0 : all ; 1 : mc ; 2 : data ; >3 : dummy" )
+    parser.add_option("-o", "--outfolder", action="store", type="string", dest="outfolder", default="skimmed" , help="name of the output folder [default: skimmed]")
+    (options, args) = parser.parse_args()
+
+    options.outfolder = options.outfolder if options.dataset < 3 else "dummy"
     
     if os.getcwd().split('/')[-1] != 'LambdaNano' :
         print "Please run the scripts from LambdaNano folder."
         sys.exit()
-        
-    if not os.path.isdir('%s/skimmed' %os.getcwd()): os.mkdir('%s/skimmed' %os.getcwd())
+    
+    if options.dataset == None :
+        parser.print_help()
+        sys.exit()
 
     start_time = time.time()
-    
-    skim = skimmer()
+
+    skim = skimmer( options.dataset , options.outfolder )
     skim.initialization()
 
     procs = []
