@@ -44,8 +44,6 @@ keepmatch GenPart_pdgId
 keepmatch GenPart_pt
 keepmatch GenPart_eta
 keepmatch GenPart_phi
-keepmatch lhe_mW1
-keepmatch lhe_mW2
 
 # RECO
 keepmatch Lepton_pdgId
@@ -138,6 +136,7 @@ keepmatch PuppiMET_phi
 keepmatch MET_pt
 keepmatch MET_phi
 keepmatch Jet_btagDeepB
+keepmatch Jet_btagSF_shape
 keepmatch nLepton
 keepmatch nCleanJet
 keepmatch nMuon
