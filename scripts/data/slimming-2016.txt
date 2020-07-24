@@ -179,3 +179,8 @@ keepmatch fakeW2l_ele_mva_90p_Iso2016_tthmva_70_mu_cut_Tight80x_tthmva_80
 keepmatch fakeW2l_ele_mva_90p_Iso2016_mu_cut_Tight80x
 keepmatch PrefireWeight
 keepmatch SFweight2l
+
+# on-the-fly compute
+keepmatch isbVeto
+keepmatch vbtagSF
+keepmatch ttHMVA_SF_2l
