@@ -1,10 +1,11 @@
 drop *
 
 ## Global
-keep luminosityBlock
-keep run
-keep event
+keepmatch luminosityBlock
+keepmatch run
+keepmatch event
 keep PV*
+keepmatch run_period
 
 ## Trigger
 ## 2016
@@ -61,7 +62,7 @@ keepmatch Lepton_phi
 #keepmatch Lepton_isTightMuon_cut_Tight80x
 keepmatch Lepton_genmatched
 keepmatch Lepton_promptgenmatched
-keepmatch Lepton_RecoSF
+#keepmatch Lepton_RecoSF
 #keepmatch Lepton_tightElectron_mva_90p_Iso2016_IdIsoSF
 #keepmatch Lepton_tightElectron_mva_90p_Iso2016_TotSF
 #keepmatch Lepton_tightElectron_cut_WP_Tight80X_SS_IdIsoSF
@@ -137,12 +138,12 @@ keepmatch MET_pt
 keepmatch MET_phi
 keepmatch Jet_btagDeepB
 keepmatch Jet_btagSF_shape
-keepmatch Jet_pt
-keepmatch Jet_eta
-keepmatch Jet_phi
-keepmatch Jet_puId
-keepmatch Jet_jetId
-keepmatch Jet_genJetIdx
+#keepmatch Jet_pt
+#keepmatch Jet_eta
+#keepmatch Jet_phi
+#keepmatch Jet_puId
+#keepmatch Jet_jetId
+#keepmatch Jet_genJetIdx
 keepmatch nLepton
 keepmatch nCleanJet
 keepmatch nMuon

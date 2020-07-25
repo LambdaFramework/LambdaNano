@@ -55,10 +55,10 @@ class pujetIdSFProducerCpp(Module):
     def analyze(self, event):
         """process event, return True (go to next module) or False (fail, go to next event)"""
         if not self.isMC : return False
-        
         if event._tree._ttreereaderversion > self._ttreereaderversion: # do this check at every event, as other modules might have read further branches
             self.initReaders(event._tree)
         # do NOT access other branches in python between the check/call to initReaders and the call to C++ worker code
+        
         output = self.worker.evaluate()
         
         self.out.fillBranch("PUJetIdSF", output )

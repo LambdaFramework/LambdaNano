@@ -17,9 +17,17 @@ class skimmer:
         self.dataset_ = dataset_
         self.outfolder_ = outfolder_
         self.samples={}
-        
+        self.modules = [ lepSF() , pujetIdSF() , bVetoer() ]
+
         if not os.path.isdir('%s/%s' %( os.getcwd() , self.outfolder_ ) ): os.mkdir('%s/%s' %( os.getcwd() , self.outfolder_ ) )
         
+        pass
+
+    def _load(self, basename ):
+        if "/%s_cc.so" %basename not in ROOT.gSystem.GetLibraries():
+            print "Load C++ %s.cc worker module" %basename
+            base = os.getenv("NANOAODTOOLS_BASE")
+            ROOT.gROOT.ProcessLine(".L %s/src/%s.cc+O" %(base,basename) )
         pass
 
     def initialization(self):
@@ -69,31 +77,31 @@ class skimmer:
         
         dummy = [ "ZZZ" , "WZZ" , "WWW" , "ZZTo2L2Q" , "ST_s-channel" ]
         #dummy = [ "ZZTo2L2Q" ]
-
+        
         if self.dataset_ == 0 :
-            fnames = data + mc
+            fnames = data + mc # no, dont run this
+            self.modules = []
         elif self.dataset_ == 1 :
             fnames = mc
         elif self.dataset_ == 2 :
-            fnames = data
-        else :
+            fnames = data ; self.modules = []
+        else :    
             fnames = dummy # testing
+
+        # load libraries only once
+        if self.dataset_ == 1 or self.dataset_ > 2 :
+            self._load("lepSFProducerCpp")
+            self._load("pujetIdSFProducerCpp")
         
         print("Running on : " if self.dataset_ < 3 else "Running on dummy : ", fnames)
+        
         for i in fnames:
             sample_files = open( "%s/scripts/filelists/%s.txt" %(os.getcwd(),i) , "r" )
             self.samples[i] = [ x.strip('\n') for x in sample_files.readlines() ]
             sample_files.close()
         pass
     
-    def load(self, basename ):
-        if "/%s_cc.so" %basename not in ROOT.gSystem.GetLibraries():
-            print "Load C++ %s.cc worker module" %basename
-            base = os.getenv("NANOAODTOOLS_BASE")
-            ROOT.gROOT.ProcessLine(".L %s/src/%s.cc+O" %(base,basename) )
-        pass
-    
-    def run( self , infiles , supercuts , moduleLists ):
+    def run( self , infiles , supercuts ):
 
         # data species
         isMC = False if 'Run' in infiles[0].split('/')[-1] else True
@@ -102,8 +110,8 @@ class skimmer:
             outputDir='%s/%s/%s/' %( os.getcwd() , self.outfolder_ , isample ) ,
             inputFiles=infiles ,
             cut=supercuts,
-            branchsel= "%s/scripts/data/slimming-2016.txt" %os.getcwd(),
-            modules= moduleLists ,
+            branchsel= "%s/scripts/data/slimming-2016-in.txt" %os.getcwd(),
+            modules= self.modules ,
             compression="LZMA:9",
             friend=False,
             postfix=None,
@@ -115,7 +123,7 @@ class skimmer:
             fwkJobReport=False,
             histFileName=None,
             histDirName=None,
-            outputbranchsel= "%s/scripts/data/slimming-2016.txt" %os.getcwd(),
+            outputbranchsel = "%s/scripts/data/slimming-2016-out.txt" %os.getcwd(),
             maxEntries=None,
             firstEntry=0,
             prefetch=False,
@@ -150,23 +158,13 @@ if __name__ == "__main__" :
     presel="mll>12 && Lepton_pt[0]>25 && Lepton_pt[1]>20 && PuppiMET_pt > 30"
     skim = skimmer( options.dataset , options.outfolder )
     skim.initialization()
-
-    # module                                                                                                                                                                                            
-    modules = [
-        lepSF() ,
-        pujetIdSF() ,
-        bVetoer()
-    ]
-
-    skim.load("lepSFProducerCpp")
-    skim.load("pujetIdSFProducerCpp")
     
     procs = []
     print "Number of cpu : ", multiprocessing.cpu_count()
+    
     for isample in skim.samples:
         filelist = skim.samples[isample]
-        
-        proc = Process(target=skim.run, args=(filelist,presel,modules ))
+        proc = Process(target=skim.run, args=(filelist,presel,))
         procs.append(proc)
         proc.start()
 

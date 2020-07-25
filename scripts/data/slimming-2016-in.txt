@@ -1,0 +1,50 @@
+drop *
+
+keepmatch run_period
+
+# RECO
+keepmatch Lepton_pdgId
+keepmatch Lepton_electronIdx
+keepmatch Lepton_muonIdx
+keepmatch Lepton_pt
+keepmatch Lepton_eta
+keepmatch Lepton_phi
+
+keepmatch Muon_phi
+keepmatch Muon_pt
+keepmatch Muon_eta
+keepmatch Muon_mvaTTH
+keepmatch Muon_charge
+keepmatch Muon_jetIdx
+keepmatch Muon_pdgId
+keepmatch Muon_tightCharge
+#keepmatch Muon_looseId
+#keepmatch Muon_mediumId
+#keepmatch Muon_mediumPromptId
+keepmatch Muon_genPartIdx
+keepmatch Muon_genPartFlav
+
+keepmatch Electron_eta
+keepmatch Electron_phi
+keepmatch Electron_pt
+keepmatch Electron_mvaTTH
+keepmatch Electron_jetIdx
+keepmatch Electron_pdgId
+
+keepmatch CleanJet_jetIdx
+keepmatch CleanJet_pt
+keepmatch CleanJet_eta
+keepmatch CleanJet_phi
+
+#keepmatch Jet_btagDeepB
+#keepmatch Jet_btagSF_shape
+#keepmatch Jet_pt
+#keepmatch Jet_eta
+#keepmatch Jet_phi
+#keepmatch Jet_puId
+#keepmatch Jet_jetId
+#keepmatch Jet_genJetIdx
+keepmatch nLepton
+keepmatch nCleanJet
+keepmatch nMuon
+keepmatch nElectron
