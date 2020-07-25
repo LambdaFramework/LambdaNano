@@ -6,6 +6,7 @@ from importlib import import_module
 from PhysicsTools.NanoAODTools.postprocessing.framework.postprocessor import PostProcessor
 from PhysicsTools.NanoAODTools.postprocessing.modules.analysis.WHSS.bVetoProducer import bVetoer
 from PhysicsTools.NanoAODTools.postprocessing.modules.analysis.WHSS.lepSFProducerCpp import lepSF
+from PhysicsTools.NanoAODTools.postprocessing.modules.analysis.WHSS.pujetIdSFProducerCpp import pujetIdSF 
 
 from multiprocessing import Process
 import multiprocessing, time
@@ -66,8 +67,8 @@ class skimmer:
             "HWminusJ_HToTauTau_M125"
         ]
         
-        #dummy = [ "ZZZ" , "WZZ" , "WWW" , "ZZTo2L2Q" ]
-        dummy = [ "DYJetsToLL_M-50-LO_ext2" ]
+        dummy = [ "ZZZ" , "WZZ" , "WWW" , "ZZTo2L2Q" , "ST_s-channel" ]
+        #dummy = [ "ZZTo2L2Q" ]
 
         if self.dataset_ == 0 :
             fnames = data + mc
@@ -83,17 +84,18 @@ class skimmer:
             sample_files = open( "%s/scripts/filelists/%s.txt" %(os.getcwd(),i) , "r" )
             self.samples[i] = [ x.strip('\n') for x in sample_files.readlines() ]
             sample_files.close()
-
-        ### Compile only once
-        if "/lepSFProducerCpp_cc.so" not in ROOT.gSystem.GetLibraries():
-            print "Load C++ lepSFProducerCpp.cc worker module"
-            base = os.getenv("NANOAODTOOLS_BASE")
-            ROOT.gROOT.ProcessLine(".L %s/src/lepSFProducerCpp.cc+O"%base)
-            
         pass
     
-    def run( self , infiles , supercuts ):
+    def load(self, basename ):
+        if "/%s_cc.so" %basename not in ROOT.gSystem.GetLibraries():
+            print "Load C++ %s.cc worker module" %basename
+            base = os.getenv("NANOAODTOOLS_BASE")
+            ROOT.gROOT.ProcessLine(".L %s/src/%s.cc+O" %(base,basename) )
+        pass
+    
+    def run( self , infiles , supercuts , moduleLists ):
 
+        # data species
         isMC = False if 'Run' in infiles[0].split('/')[-1] else True
         
         p=PostProcessor(
@@ -101,7 +103,7 @@ class skimmer:
             inputFiles=infiles ,
             cut=supercuts,
             branchsel= "%s/scripts/data/slimming-2016.txt" %os.getcwd(),
-            modules= [ lepSF() ], #[ bVetoer() , lepSF() ] ,
+            modules= moduleLists ,
             compression="LZMA:9",
             friend=False,
             postfix=None,
@@ -145,17 +147,26 @@ if __name__ == "__main__" :
     start_time = time.time()
 
     ############################################################################
-    #presel="mll>12 && Lepton_pt[0]>25 && Lepton_pt[1]>20 && Sum$(CleanJet_pt > 20. && abs(CleanJet_eta) < 2.5 && Jet_btagDeepB[CleanJet_jetIdx] > 0.1522) == 0 && PuppiMET_pt > 30"
     presel="mll>12 && Lepton_pt[0]>25 && Lepton_pt[1]>20 && PuppiMET_pt > 30"
     skim = skimmer( options.dataset , options.outfolder )
     skim.initialization()
 
+    # module                                                                                                                                                                                            
+    modules = [
+        lepSF() ,
+        pujetIdSF() ,
+        bVetoer()
+    ]
+
+    skim.load("lepSFProducerCpp")
+    skim.load("pujetIdSFProducerCpp")
+    
     procs = []
     print "Number of cpu : ", multiprocessing.cpu_count()
     for isample in skim.samples:
         filelist = skim.samples[isample]
-        #if not os.path.isdir( '%s/skimmed/%s/' %(os.getcwd(),isample) ): os.mkdir( '%s/skimmed/%s/' %(os.getcwd(),isample) )
-        proc = Process(target=skim.run, args=(filelist,presel,))
+        
+        proc = Process(target=skim.run, args=(filelist,presel,modules ))
         procs.append(proc)
         proc.start()
 

@@ -137,6 +137,12 @@ keepmatch MET_pt
 keepmatch MET_phi
 keepmatch Jet_btagDeepB
 keepmatch Jet_btagSF_shape
+keepmatch Jet_pt
+keepmatch Jet_eta
+keepmatch Jet_phi
+keepmatch Jet_puId
+keepmatch Jet_jetId
+keepmatch Jet_genJetIdx
 keepmatch nLepton
 keepmatch nCleanJet
 keepmatch nMuon
@@ -182,5 +188,6 @@ keepmatch SFweight2l
 
 # on-the-fly compute
 keepmatch isbVeto
-keepmatch vbtagSF
+keepmatch vbVetoSF
 keepmatch ttHMVA_SF_2l
+keepmatch PUJetIdSF
