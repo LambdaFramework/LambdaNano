@@ -8,7 +8,7 @@ from PhysicsTools.NanoAODTools.postprocessing.modules.analysis.WHSS.bVetoProduce
 from PhysicsTools.NanoAODTools.postprocessing.modules.analysis.WHSS.lepSFProducerCpp import lepSF
 from PhysicsTools.NanoAODTools.postprocessing.modules.analysis.WHSS.pujetIdSFProducerCpp import pujetIdSF 
 
-from multiprocessing import Process
+from multiprocessing import Process, Pool, Queue, Manager
 import multiprocessing, time
 
 class skimmer:
@@ -75,8 +75,9 @@ class skimmer:
             "HWminusJ_HToTauTau_M125"
         ]
         
-        dummy = [ "ZZZ" , "WZZ" , "WWW" , "ZZTo2L2Q" , "ST_s-channel" ]
-        #dummy = [ "ZZTo2L2Q" ]
+        #dummy = [ "ZZZ" , "WZZ" , "WWW" , "ZZTo2L2Q" , "ST_s-channel" ]
+        #dummy = [ "TTTo2L2Nu" , "ZZTo4L" ]
+        dummy = [ "TTTo2L2Nu" ]
         
         if self.dataset_ == 0 :
             fnames = data + mc # no, dont run this
@@ -132,6 +133,37 @@ class skimmer:
         p.run()
         pass
 
+    
+## Parallelism helper
+def putQueue( func , arg1 ,arg2 , queue ):
+    queue.put( func(arg1,arg2) )
+    pass
+def readQueue( nbatch , queue ):
+    print "Processing the ", nbatch  ,"th batch of files"
+    queue.get()
+    pass
+
+def parallalizedByFiles( filelist , presel, q, target , nsplit=20 ):
+
+    print "Total number of files : ", len(filelist)
+    print "Total number of files per jobs : ", nsplit
+    
+    sublist=[] ; counter=0 ; njobs=0
+    for i, ifile in enumerate(filelist):
+        counter+=1 ; sublist.append(ifile)
+        ## number of file perjobs                                                                                                                                                                   
+        if counter == nsplit or i+1 == len(filelist) :
+            Process(target=putQueue, args=( target , sublist , presel, q)).start()
+            # reset
+            njobs+=1 ; counter=0 ; sublist=[]
+            
+    print "Total number of jobs : ", njobs
+    procs = []
+    for j in range(njobs): procs.append(p.apply_async( readQueue , (j+1 , q) ))
+    [ r.get() for r in procs ]
+    
+    pass
+
 if __name__ == "__main__" :
 
     from optparse import OptionParser
@@ -159,17 +191,63 @@ if __name__ == "__main__" :
     skim = skimmer( options.dataset , options.outfolder )
     skim.initialization()
     
-    procs = []
     print "Number of cpu : ", multiprocessing.cpu_count()
+
+    # number of task/process
+    nTask = 20
+
+    # Parallelism
+    if options.dataset == 1 : # mc
+        procs = []
+        for isample in skim.samples:
+            # TTbar is a big file , parallizedByFile
+            if isample== "TTTo2L2Nu" : continue
+            filelist = skim.samples[isample]
+            proc = Process(target=skim.run, args=(filelist,presel,))
+            procs.append(proc) ; proc.start()
+
+        [ r.join() for r in procs  ]
+        
+        ##
+        if "TTTo2L2Nu" in skim.samples:
+            m = Manager() ; q = m.Queue() ; p = Pool(12)
+            for ittbar in skim.samples["TTTo2L2Nu"] : parallalizedByFiles( ittbar , presel, q , skim.run , round(float(len(filelist))/nTask) )
     
-    for isample in skim.samples:
-        filelist = skim.samples[isample]
-        proc = Process(target=skim.run, args=(filelist,presel,))
-        procs.append(proc)
-        proc.start()
+    elif options.dataset == 2 : # data
+    
+        m = Manager() ; q = m.Queue() ; p = Pool(12)
+        for isample in skim.samples:
+            filelist = skim.samples[isample]
+            parallalizedByFiles( filelist , presel, q , skim.run , round(float(len(filelist))/nTask) )
+    elif options.dataset == 0 : # run all
 
-    for proc in procs: proc.join()
+        procs = []
+        for isample in skim.samples:
+            # TTbar is a big file , parallizedByFile
+            if isample== "TTTo2L2Nu" : continue
+            if "Run" in isample : continue
+            filelist = skim.samples[isample]
+            proc = Process(target=skim.run, args=(filelist,presel,))
+            procs.append(proc) ; proc.start()
 
+        [ r.join() for r in procs  ]
+
+        m = Manager() ; q = m.Queue() ; p = Pool(12)
+
+        if "TTTo2L2Nu" in skim.samples:
+            for ittbar in skim.samples["TTTo2L2Nu"] : parallalizedByFiles( ittbar , presel, q , skim.run , round(float(len(filelist))/nTask) )
+
+        for isample in skim.samples:
+            if "Run" not in isample : continue
+            filelist = skim.samples[isample]
+            parallalizedByFiles( filelist , presel, q , skim.run , round(float(len(filelist))/20) )
+    else:
+        m = Manager() ; q = m.Queue() ; p = Pool(12)
+        for isample in skim.samples:
+            filelist = skim.samples[isample]
+            parallalizedByFiles( filelist , presel, q , skim.run , round(float(len(filelist))/nTask) )
+        
+    
     print("--- %s seconds ---" % (time.time() - start_time))
     print("--- %s minutes ---" % ( (time.time() - start_time)/60. ))
     print("--- %s hours ---" % ( (time.time() - start_time)/3600. ))
