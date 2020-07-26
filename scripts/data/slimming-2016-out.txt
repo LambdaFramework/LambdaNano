@@ -192,3 +192,7 @@ keepmatch isbVeto
 keepmatch vbVetoSF
 keepmatch ttHMVA_SF_2l
 keepmatch PUJetIdSF
+
+# drop all variation for now
+#drop *Up
+#drop *Down

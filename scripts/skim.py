@@ -139,7 +139,7 @@ def putQueue( func , arg1 ,arg2 , queue ):
     queue.put( func(arg1,arg2) )
     pass
 def readQueue( nbatch , queue ):
-    print "Processing the ", nbatch  ,"th batch of files"
+    print "Processing the ", nbatch  ,"th batch of files "
     queue.get()
     pass
 
@@ -198,10 +198,12 @@ if __name__ == "__main__" :
 
     # Parallelism
     if options.dataset == 1 : # mc
+        
         procs = []
         for isample in skim.samples:
-            # TTbar is a big file , parallizedByFile
-            if isample== "TTTo2L2Nu" : continue
+            # TTbar and DY-M-50 is a big file , parallizedByFile
+            if 'TTTo2L2Nu' in isample : continue
+            if 'DYJetsToLL_M-50-LO' in isample : continue
             filelist = skim.samples[isample]
             proc = Process(target=skim.run, args=(filelist,presel,))
             procs.append(proc) ; proc.start()
@@ -209,9 +211,11 @@ if __name__ == "__main__" :
         [ r.join() for r in procs  ]
         
         ##
-        if "TTTo2L2Nu" in skim.samples:
+        if "TTTo2L2Nu" or "DYJetsToLL_M-50-LO_ext2" in skim.samples:
             m = Manager() ; q = m.Queue() ; p = Pool(12)
-            for ittbar in skim.samples["TTTo2L2Nu"] : parallalizedByFiles( ittbar , presel, q , skim.run , round(float(len(filelist))/nTask) )
+            for isample in [ "TTTo2L2Nu" , "DYJetsToLL_M-50-LO_ext2" ]:
+                filelist = skim.samples[isample]
+                parallalizedByFiles( filelist , presel, q , skim.run , round(float(len(filelist))/nTask) )
     
     elif options.dataset == 2 : # data
     
@@ -220,27 +224,7 @@ if __name__ == "__main__" :
             filelist = skim.samples[isample]
             parallalizedByFiles( filelist , presel, q , skim.run , round(float(len(filelist))/nTask) )
     elif options.dataset == 0 : # run all
-
-        procs = []
-        for isample in skim.samples:
-            # TTbar is a big file , parallizedByFile
-            if isample== "TTTo2L2Nu" : continue
-            if "Run" in isample : continue
-            filelist = skim.samples[isample]
-            proc = Process(target=skim.run, args=(filelist,presel,))
-            procs.append(proc) ; proc.start()
-
-        [ r.join() for r in procs  ]
-
-        m = Manager() ; q = m.Queue() ; p = Pool(12)
-
-        if "TTTo2L2Nu" in skim.samples:
-            for ittbar in skim.samples["TTTo2L2Nu"] : parallalizedByFiles( ittbar , presel, q , skim.run , round(float(len(filelist))/nTask) )
-
-        for isample in skim.samples:
-            if "Run" not in isample : continue
-            filelist = skim.samples[isample]
-            parallalizedByFiles( filelist , presel, q , skim.run , round(float(len(filelist))/20) )
+        pass
     else:
         m = Manager() ; q = m.Queue() ; p = Pool(12)
         for isample in skim.samples:
