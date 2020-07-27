@@ -76,8 +76,16 @@ class skimmer:
         ]
         
         #dummy = [ "ZZZ" , "WZZ" , "WWW" , "ZZTo2L2Q" , "ST_s-channel" ]
+        dummy = [
+            "GluGluHToWWTo2L2NuPowheg_M125",
+            "VBFHToWWTo2L2Nu_M125",
+            "HZJ_HToWW_M125",
+            "ggZH_HToWW_M125",
+            "HWplusJ_HToWW_M125",
+            "HWminusJ_HToWW_M125",
+        ]
         #dummy = [ "TTTo2L2Nu" , "ZZTo4L" ]
-        dummy = [ "TTTo2L2Nu" ]
+        #dummy = [ "TTTo2L2Nu" ]
         
         if self.dataset_ == 0 :
             fnames = data + mc # no, dont run this
@@ -124,7 +132,7 @@ class skimmer:
             fwkJobReport=False,
             histFileName=None,
             histDirName=None,
-            outputbranchsel = "%s/scripts/data/slimming-2016-out.txt" %os.getcwd(),
+            outputbranchsel = "%s/scripts/data/slimming-2016-in.txt" %os.getcwd(),
             maxEntries=None,
             firstEntry=0,
             prefetch=False,
