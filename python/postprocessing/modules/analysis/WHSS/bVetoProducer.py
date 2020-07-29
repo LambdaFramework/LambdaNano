@@ -26,7 +26,7 @@ class bVeto_Producer(Module):
         pass
     def analyze(self, event):
         """process event, return True (go to next module) or False (fail, go to next event)"""
-        if not self.isMC : return True
+        #if not self.isMC : return True
         
         cleanjets = Collection(event, "CleanJet")
         
@@ -35,7 +35,9 @@ class bVeto_Producer(Module):
         #btagSF=1.
         for ijet in filter( self.jetSel , cleanjets) :
             jetIdx = ijet.jetIdx
-            if jetIdx < 0 : print("ijet.jetIdx < 0"); sys.exit()
+            if jetIdx < 0 :
+                print("ijet.jetIdx < 0")
+                continue;
             if event.Jet_btagDeepB[jetIdx] > 0.1522: nbveto+=1
             #btagSF = ROOT.TMath.Log(event.Jet_btagSF_shape[jetIdx])
             

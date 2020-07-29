@@ -154,7 +154,7 @@ def readQueue( nbatch , queue ):
 def parallalizedByFiles( filelist , presel, q, target , nsplit=20 ):
 
     print "Total number of files : ", len(filelist)
-    print "Total number of files per jobs : ", nsplit
+    print "Total number of files per jobs : ", round(nsplit)
     
     sublist=[] ; counter=0 ; njobs=0
     for i, ifile in enumerate(filelist):
@@ -232,13 +232,19 @@ if __name__ == "__main__" :
             filelist = skim.samples[isample]
             parallalizedByFiles( filelist , presel, q , skim.run , round(float(len(filelist))/nTask) )
     elif options.dataset == 0 : # run all
-        pass
+        
+        procs = []
+        m = Manager() ; q = m.Queue() ; p = Pool(12)
+        for isample in skim.samples:
+            print("isample : ", isample)
+            filelist = skim.samples[isample]
+            parallalizedByFiles( filelist , presel, q , skim.run , round(float(len(filelist))/nTask) )
+            
     else:
         m = Manager() ; q = m.Queue() ; p = Pool(12)
         for isample in skim.samples:
             filelist = skim.samples[isample]
-            parallalizedByFiles( filelist , presel, q , skim.run , round(float(len(filelist))/nTask) )
-        
+            parallalizedByFiles( filelist , presel, q , skim.run , round(float(len(filelist))/nTask) )    
     
     print("--- %s seconds ---" % (time.time() - start_time))
     print("--- %s minutes ---" % ( (time.time() - start_time)/60. ))
