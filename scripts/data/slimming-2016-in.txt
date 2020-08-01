@@ -10,21 +10,23 @@ keepmatch run_period
 ## Trigger
 ## 2016
 # https://github.com/latinos/LatinoAnalysis/blob/master/NanoGardener/python/data/TrigMaker_cfg.py#L2100-L2141
-keepmatch HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL
-keepmatch HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL
-keepmatch HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL
-keepmatch HLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL
-keepmatch HLT_IsoTkMu24
-keepmatch HLT_IsoMu24
-keepmatch HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_DZ
-keepmatch HLT_Ele27_WPTight_Gsf
-keepmatch HLT_Ele25_eta2p1_WPTight_Gsf
+#keepmatch HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL
+#keepmatch HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL
+#keepmatch HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL
+#keepmatch HLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL
+#keepmatch HLT_IsoTkMu24
+#keepmatch HLT_IsoMu24
+#keepmatch HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_DZ
+#keepmatch HLT_Ele27_WPTight_Gsf
+#keepmatch HLT_Ele25_eta2p1_WPTight_Gsf
 keepmatch Trigger_ElMu
 keepmatch Trigger_sngMu
 keepmatch Trigger_sngEl
-keepmatch TriggerEffWeight_sngEl
-keepmatch TriggerEffWeight_sngMu
-keepmatch TriggerEffWeight_ElMu
+keepmatch Trigger_dblMu
+keepmatch Trigger_dblEl
+#keepmatch TriggerEffWeight_sngEl
+#keepmatch TriggerEffWeight_sngMu
+#keepmatch TriggerEffWeight_ElMu
 keepmatch TriggerEffWeight_2l
 
 # GEN
@@ -88,11 +90,12 @@ keepmatch Muon_dzErr
 keepmatch Muon_eta
 keepmatch Muon_jetRelIso
 keepmatch Muon_mass
-keepmatch Muon_miniPFRelIso_all
-keepmatch Muon_miniPFRelIso_chg
+#keepmatch Muon_miniPFRelIso_all
+#keepmatch Muon_miniPFRelIso_chg
 keepmatch Muon_pfRelIso03_all
-keepmatch Muon_pfRelIso03_chg
+#keepmatch Muon_pfRelIso03_chg
 keepmatch Muon_pfRelIso04_all
+#keepmatch Muon_pfRelIso04_chg
 keepmatch Muon_phi
 keepmatch Muon_pt
 keepmatch Muon_mvaTTH
@@ -115,7 +118,7 @@ keepmatch Electron_jetRelIso
 keepmatch Electron_mass
 #keepmatch Electron_mvaSpring16GP
 #keepmatch Electron_mvaSpring16HZZ
-#keepmatch Electron_pfRelIso03_all
+keepmatch Electron_pfRelIso03_all
 #keepmatch Electron_pfRelIso03_chg
 keepmatch Electron_phi
 keepmatch Electron_pt
@@ -198,6 +201,10 @@ keepmatch isbVeto
 keepmatch vbVetoSF
 keepmatch ttHMVA_SF_2l
 keepmatch PUJetIdSF
+keepmatch Lepton_dz
+keepmatch Lepton_dxy
+keepmatch mjjL1
+keepmatch mjjL2
 
 keepmatch METFilter_DATA
 

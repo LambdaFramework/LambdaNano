@@ -6,7 +6,8 @@ from importlib import import_module
 from PhysicsTools.NanoAODTools.postprocessing.framework.postprocessor import PostProcessor
 from PhysicsTools.NanoAODTools.postprocessing.modules.analysis.WHSS.bVetoProducer import bVetoer
 from PhysicsTools.NanoAODTools.postprocessing.modules.analysis.WHSS.lepSFProducerCpp import lepSF
-from PhysicsTools.NanoAODTools.postprocessing.modules.analysis.WHSS.pujetIdSFProducerCpp import pujetIdSF 
+from PhysicsTools.NanoAODTools.postprocessing.modules.analysis.WHSS.pujetIdSFProducerCpp import pujetIdSF
+from PhysicsTools.NanoAODTools.postprocessing.modules.analysis.WHSS.aliasProducer import alias
 
 from multiprocessing import Process, Pool, Queue, Manager
 import multiprocessing, time
@@ -17,7 +18,7 @@ class skimmer:
         self.dataset_ = dataset_
         self.outfolder_ = outfolder_
         self.samples={}
-        self.modules = [ lepSF() , pujetIdSF() , bVetoer() ]
+        self.modules = [ lepSF() , pujetIdSF() , bVetoer() , alias() ]
 
         if not os.path.isdir('%s/%s' %( os.getcwd() , self.outfolder_ ) ): os.mkdir('%s/%s' %( os.getcwd() , self.outfolder_ ) )
         
@@ -33,10 +34,16 @@ class skimmer:
     def initialization(self):
 
         data = [
-            'Run2016_SingleMuon',
-            'Run2016_SingleElectron',
-            'Run2016_SingleMuon_fake',
-            'Run2016_SingleElectron_fake'
+            #'Run2016_SingleMuon',
+            #'Run2016_SingleElectron',
+            #'Run2016_DoubleMuon',
+            'Run2016_DoubleEG',
+            #'Run2016_MuonEG', # issue  
+            #'Run2016_SingleMuon_fake',
+            #'Run2016_SingleElectron_fake',
+            #'Run2016_DoubleMuon_fake',
+            'Run2016_DoubleEG_fake',
+            #'Run2016_MuonEG_fake'
         ]
 
         mc = [
@@ -77,24 +84,24 @@ class skimmer:
         
         #dummy = [ "ZZZ" , "WZZ" , "WWW" , "ZZTo2L2Q" , "ST_s-channel" ]
         dummy = [
-            "GluGluHToWWTo2L2NuPowheg_M125",
-            "VBFHToWWTo2L2Nu_M125",
-            "HZJ_HToWW_M125",
-            "ggZH_HToWW_M125",
-            "HWplusJ_HToWW_M125",
-            "HWminusJ_HToWW_M125",
+            'Run2016_MuonEG',
+            'Run2016_MuonEG_fake'
         ]
         #dummy = [ "TTTo2L2Nu" , "ZZTo4L" ]
         #dummy = [ "TTTo2L2Nu" ]
+
+        #data module
+        dataMod = [ bVetoer() , alias() ]
         
         if self.dataset_ == 0 :
             fnames = data + mc # no, dont run this
-            self.modules = []
+            self.modules = dataMod
         elif self.dataset_ == 1 :
             fnames = mc
         elif self.dataset_ == 2 :
-            fnames = data ; self.modules = []
-        else :    
+            fnames = data ; self.modules = dataMod
+        else :
+            if any('Run' in x for x in dummy) : self.modules = dataMod
             fnames = dummy # testing
 
         # load libraries only once
@@ -241,10 +248,22 @@ if __name__ == "__main__" :
             parallalizedByFiles( filelist , presel, q , skim.run , round(float(len(filelist))/nTask) )
             
     else:
-        m = Manager() ; q = m.Queue() ; p = Pool(12)
+        procs = []
         for isample in skim.samples:
             filelist = skim.samples[isample]
-            parallalizedByFiles( filelist , presel, q , skim.run , round(float(len(filelist))/nTask) )    
+            for ifile in filelist:
+                if 'MuonEG_Run2016H' not in ifile: continue
+                proc = Process(target=skim.run, args=([ifile],presel,))
+                procs.append(proc) ; proc.start()
+            [ r.join() for r in procs  ]
+
+        #procs = []
+        #m = Manager() ; q = m.Queue() ; p = Pool(12)
+        #for isample in skim.samples:
+        #    print("isample : ", isample)
+        #    filelist = skim.samples[isample]
+        #    parallalizedByFiles( filelist , presel, q , skim.run , round(float(len(filelist))/nTask) )
+
     
     print("--- %s seconds ---" % (time.time() - start_time))
     print("--- %s minutes ---" % ( (time.time() - start_time)/60. ))

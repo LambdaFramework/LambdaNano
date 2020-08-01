@@ -18,7 +18,7 @@ class bVeto_Producer(Module):
         self.out = wrappedOutputTree
         self.out.branch( "isbVeto" , "I" )
         self.out.branch( "vbVetoSF" , "F" )
-        if any (x in inputFile.GetName() for x in ['SingleMuon','SingleElectron','DoubleMuon']):
+        if any (x in inputFile.GetName() for x in [ 'SingleMuon' , 'SingleElectron' , 'DoubleMuon' , 'DoubleEG' , 'MuonEG' ]):
             print "Looking at DATA"
             self.isMC = False    
         pass
@@ -41,8 +41,7 @@ class bVeto_Producer(Module):
             if event.Jet_btagDeepB[jetIdx] > 0.1522: nbveto+=1
             #btagSF = ROOT.TMath.Log(event.Jet_btagSF_shape[jetIdx])
             
-        btagSF = sum( map(lambda y : ROOT.TMath.Log(event.Jet_btagSF_shape[y.jetIdx]) , filter( self.jetSel , cleanjets )))
-        
+        btagSF = sum( map(lambda y : ROOT.TMath.Log(event.Jet_btagSF_shape[y.jetIdx]) , filter( self.jetSel , cleanjets ))) if self.isMC else 0.
         
         self.out.fillBranch( "isbVeto" , 1 if nbveto == 0 else 0 )
         self.out.fillBranch( "vbVetoSF" , ROOT.TMath.Exp(btagSF) )
