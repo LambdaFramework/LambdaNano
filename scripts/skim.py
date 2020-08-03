@@ -34,14 +34,14 @@ class skimmer:
     def initialization(self):
 
         data = [
-            #'Run2016_SingleMuon',
-            #'Run2016_SingleElectron',
-            #'Run2016_DoubleMuon',
+            'Run2016_SingleMuon',
+            'Run2016_SingleElectron',
+            'Run2016_DoubleMuon',
             'Run2016_DoubleEG',
             #'Run2016_MuonEG', # issue  
-            #'Run2016_SingleMuon_fake',
-            #'Run2016_SingleElectron_fake',
-            #'Run2016_DoubleMuon_fake',
+            'Run2016_SingleMuon_fake',
+            'Run2016_SingleElectron_fake',
+            'Run2016_DoubleMuon_fake',
             'Run2016_DoubleEG_fake',
             #'Run2016_MuonEG_fake'
         ]
@@ -209,7 +209,7 @@ if __name__ == "__main__" :
     print "Number of cpu : ", multiprocessing.cpu_count()
 
     # number of task/process
-    nTask = 20
+    nTask = 30
 
     # Parallelism
     if options.dataset == 1 : # mc
@@ -252,7 +252,7 @@ if __name__ == "__main__" :
         for isample in skim.samples:
             filelist = skim.samples[isample]
             for ifile in filelist:
-                if 'MuonEG_Run2016H' not in ifile: continue
+                if 'MuonEG_Run2016B' not in ifile: continue
                 proc = Process(target=skim.run, args=([ifile],presel,))
                 procs.append(proc) ; proc.start()
             [ r.join() for r in procs  ]
