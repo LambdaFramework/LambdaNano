@@ -40,6 +40,19 @@ variables['Ele2_dxy'] = { 'name' : 'Electron_dxy[Lepton_electronIdx[1]]' ,
                          'fold' : 3
 }
 
+
+variables['Ele1_sip3d'] = { 'name' : 'Electron_sip3d[Lepton_electronIdx[0]]' ,
+                          'range' : ( 100 , 0 , 10 ),
+                         'xaxis' : 'Lepton1 electron sip3d',
+                         'fold' : 3
+}
+
+variables['Ele2_sip3d'] = { 'name' : 'Electron_sip3d[Lepton_electronIdx[1]]' ,
+                          'range' : ( 100 , 0 , 10 ),
+                         'xaxis' : 'Lepton2 electron sip3d',
+                         'fold' : 3
+}
+
 ##########################
 
 variables['Mu1_dz'] = { 'name' : 'Muon_dz[Lepton_muonIdx[0]]' ,
@@ -65,6 +78,19 @@ variables['Mu2_dxy'] = { 'name' : 'Muon_dxy[Lepton_muonIdx[1]]' ,
                          'xaxis' : 'Lepton2 muon dxy [cm]',
                          'fold' : 3
 }
+
+variables['Mu1_sip3d'] = { 'name' : 'Muon_sip3d[Lepton_muonIdx[0]]' ,
+                          'range' : ( 100 , 0 , 10 ),
+                         'xaxis' : 'Lepton1 muon sip3d',
+                         'fold' : 3
+}
+
+variables['Mu2_sip3d'] = { 'name' : 'Muon_sip3d[Lepton_muonIdx[1]]' ,
+                          'range' : ( 100 , 0 , 10 ),
+                         'xaxis' : 'Lepton2 muon sip3d',
+                         'fold' : 3
+}
+
 ####################################
 
 variables['MinMjjl'] = { 'name' : 'TMath::Min(mjjL1,mjjL2)' ,

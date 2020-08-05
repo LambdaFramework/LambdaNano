@@ -15,7 +15,7 @@ except NameError:
 ###### Tree base directory for the site ######
 ##############################################
 
-mcDirectory = '/home/shoh/works/workbench/WHSS/analysis/LambdaNano/skimmed'
+mcDirectory = '/home/shoh/works/workbench/WHSS/analysis/LambdaNano/skimmed-2016'
 dataDirectory = mcDirectory
 fakeDirectory = mcDirectory
 

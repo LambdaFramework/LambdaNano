@@ -61,8 +61,7 @@ data        = [ 'DATA' ]
 sign        = [ x for x in groupPlot if groupPlot[x]['isSignal'] == 1 ]
 back        = [ x for x in groupPlot if groupPlot[x]['isSignal'] == 0 ]
 #back.remove("Fake")
-#BLIND       = True if options.blind else False
-BLIND = False
+BLIND       = True if options.blind else False
 SIGNAL      = 1. #500. # rescaling factor 1/35800
 RATIO       = 4 if not BLIND else 0 #4 # default=4 # 0: No ratio plot; !=0: ratio between the top and bottom pads
 POISSON     = False

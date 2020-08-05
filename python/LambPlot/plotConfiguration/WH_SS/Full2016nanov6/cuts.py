@@ -47,9 +47,10 @@ cuts['SSemu'] = 'nCleanJet>=2 && nLepton>=2 \
 # Muon_pfRelIso03_all[Lepton_muonIdx[0]]<0.1
 cuts['SSmumu'] = 'nCleanJet>=2 && nLepton>=2 \
 && ((Lepton_pdgId[0]*Lepton_pdgId[1]==13*13)||(Lepton_pdgId[0]*Lepton_pdgId[1]==-13*-13)) \
-&& Muon_pt[Lepton_muonIdx[0]]>27 && Muon_pt[Lepton_muonIdx[1]]>15 \
-&& Muon_pfRelIso03_all[Lepton_muonIdx[0]]<0.1 \
 '
+#&& Muon_pt[Lepton_muonIdx[0]]>27 && Muon_pt[Lepton_muonIdx[1]]>15 \
+#&& Muon_pfRelIso03_all[Lepton_muonIdx[0]]<0.1 \
+#'
 
 #&& Sum( abs(Lepton_pdgId)==11 && abs(Electron_dz[Lepton_electronIdx])<0.5 && Electron_pfRelIso03_all[Lepton_electronIdx]<0.15 && Electron_pt[Lepton_electronIdx]>15 )==0 \
 #&& ((Lepton_pdgId[0]*Lepton_pdgId[1]==13*13)||(Lepton_pdgId[0]*Lepton_pdgId[1]==-13*-13)) \

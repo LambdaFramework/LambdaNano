@@ -19,7 +19,7 @@ def nanoGetSampleFiles(inputDir , sample , isFake=False):
 
     if 'Run' not in sample:
         inputDir = inputDir+'/'+sample
-    elif 'Run' in sample :
-        inputDir = inputDir+'/Run2016_'+sample.split('_')[0] if not isFake else inputDir+'/Run2016_'+sample.split('_')[0]+'_fake/'
+    else:
+        inputDir = inputDir+'/'+sample.split('_')[0] if not isFake else inputDir+'/'+sample.split('_')[0]+'_fake/'
         
     return [ inputDir+'/'+x for x in os.listdir(inputDir) if 'nanoLatino_'+sample+'__' in x ]
