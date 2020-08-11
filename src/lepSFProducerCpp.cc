@@ -73,8 +73,7 @@ lepSFProducerCpp::lepSFProducerCpp( const char* year, const unsigned int nLepton
   h_SF_ele_ttHMVA_ = h_SF_ele_ttHMVA;
   h_SF_ele_ttHMVA_err_ = h_SF_ele_ttHMVA_err;
   h_SF_ele_ttHMVA_sys_ = h_SF_ele_ttHMVA_sys;
-
-  //std::cout<<"len(h_SF_ele_): "<<h_SF_ele_.size()<<std::endl;
+  
   // muon
   std::vector<TH2D> h_SF_mu_Id {};
   std::vector<TH2D> h_SF_mu_Id_err {};
@@ -278,7 +277,7 @@ std::tuple<double, double, double> lepSFProducerCpp::GetSF(int flavor, double et
     if(eta_temp > eta_max){eta_temp = eta_max;}
     if(pt_temp < pt_min){pt_temp = pt_min;}
     if(pt_temp > pt_max){pt_temp = pt_max;}
-
+    
     SF = h_SF_ele_ttHMVA_[run_period].GetBinContent(h_SF_ele_ttHMVA_[run_period].FindBin(eta_temp, pt_temp));
     SF_err = h_SF_ele_ttHMVA_err_[run_period].GetBinContent(h_SF_ele_ttHMVA_err_[run_period].FindBin(eta_temp, pt_temp));
     SF_sys = h_SF_ele_ttHMVA_sys_[run_period].GetBinContent(h_SF_ele_ttHMVA_sys_[run_period].FindBin(eta_temp, pt_temp));
@@ -373,23 +372,35 @@ double lepSFProducerCpp::evaluate(){
   std::vector<double> SF_do {};
 
   for(unsigned i=0;i<nLeptons_;i++){
-
     if(TMath::Abs(Lepton_pdgId->At(i)) == 11){
-
       std::list<std::string> SF_path = SF_files_map_["electron"][working_point_][year_]["wpSF"];
       std::list<std::string> SF_path_ttHMVA = SF_files_map_["electron"][working_point_][year_]["ttHMVA"];
 
-      std::tuple<double, double, double> res = GetSF(11, Lepton_eta->At(i), Lepton_pt->At(i), SF_path.size()==1 ? 0 : *run_period->Get() - 1, "Id");
-      std::tuple<double, double, double> res_ttHMVA = GetSF(11, Lepton_eta->At(i), Lepton_pt->At(i), SF_path_ttHMVA.size()==1 ? 0 : *run_period->Get() - 1, "ttHMVA");
-
+      int run_period__; std::string years = year_;
+      std::tuple<double, double, double> res;
+      std::tuple<double, double, double> res_ttHMVA;
+      if( years.find("2017") != std::string::npos ){
+	int runp = *run_period->Get();	
+	if (runp <= 2){
+	  run_period__ = runp-1;
+	}
+	else{
+	  run_period__ = runp-2;
+	}
+	res = GetSF(11, Lepton_eta->At(i), Lepton_pt->At(i), SF_path.size()==1 ? 0 : run_period__ , "Id");
+	res_ttHMVA = GetSF(11, Lepton_eta->At(i), Lepton_pt->At(i), SF_path_ttHMVA.size()==1 ? 0 : run_period__ , "ttHMVA");
+      }
+      else{
+	res = GetSF(11, Lepton_eta->At(i), Lepton_pt->At(i), SF_path.size()==1 ? 0 : *run_period->Get() - 1, "Id");
+	res_ttHMVA = GetSF(11, Lepton_eta->At(i), Lepton_pt->At(i), SF_path_ttHMVA.size()==1 ? 0 : *run_period->Get() - 1, "ttHMVA");
+      }
+      
       SF_vect.push_back(std::get<0>(res)*std::get<0>(res_ttHMVA));
       SF_err_vect.push_back(TMath::Sqrt(TMath::Power(std::get<1>(res), 2) + TMath::Power(std::get<2>(res), 2)
 					+ TMath::Power(std::get<1>(res_ttHMVA), 2) + TMath::Power(std::get<2>(res_ttHMVA), 2) ));
 
     }
-
     else if(TMath::Abs(Lepton_pdgId->At(i)) == 13){
-
       std::list<std::string> SF_path_id = SF_files_map_["muon"][working_point_][year_]["idSF"];
       std::list<std::string> SF_path_iso = SF_files_map_["muon"][working_point_][year_]["isoSF"];
 
@@ -410,9 +421,8 @@ double lepSFProducerCpp::evaluate(){
 								       + (TMath::Power(std::get<1>(res_ttHMVA), 2) + TMath::Power(std::get<2>(res_ttHMVA), 2))/SF_ttHMVA/SF_ttHMVA )
 			    );
     }
-
-  }
-
+    
+  } // end of for loops
   double SF = 1.;
   double SF_err = 0.;
 
