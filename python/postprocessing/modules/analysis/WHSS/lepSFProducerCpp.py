@@ -64,8 +64,8 @@ class lepSFProducerCpp(Module):
 
 # define modules using the syntax 'name = lambda : constructor' to avoid having them loaded when not needed
 
-lepSF = lambda : lepSFProducerCpp(
-    year = '2016' ,
-    nlep = 2 ,
-    sf = 'total_SF'
-)
+#lepSF = lambda : lepSFProducerCpp(
+#    year = '2016' ,
+#    nlep = 2 ,
+#    sf = 'total_SF'
+#)

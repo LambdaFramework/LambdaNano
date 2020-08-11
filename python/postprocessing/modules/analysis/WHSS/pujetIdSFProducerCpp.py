@@ -5,7 +5,10 @@ ROOT.PyConfig.IgnoreCommandLineOptions = True
 from PhysicsTools.NanoAODTools.postprocessing.framework.eventloop import Module
 
 class pujetIdSFProducerCpp(Module):
-    def __init__(self , puidSFSource , year , wp ):
+    def __init__(self , year , wp ):
+        
+        puidSFSource = '%s/python/postprocessing/data/latino/scale_factor/RunII_JetPUID/PUID_81XTraining_EffSFandUncties.root' %os.getenv("NANOAODTOOLS_BASE")
+        
         if "/pujetIdSFProducerCpp_cc.so" not in ROOT.gSystem.GetLibraries():
             print "Load C++ pujetIdSFProducerCpp worker module"
             base = os.getenv("NANOAODTOOLS_BASE")
@@ -66,8 +69,7 @@ class pujetIdSFProducerCpp(Module):
 
 # define modules using the syntax 'name = lambda : constructor' to avoid having them loaded when not needed
 
-pujetIdSF = lambda : pujetIdSFProducerCpp(
-    puidSFSource = '%s/python/postprocessing/data/latino/scale_factor/RunII_JetPUID/PUID_81XTraining_EffSFandUncties.root' %os.getenv("NANOAODTOOLS_BASE"),
-    year = '2016' ,
-    wp = 'loose',
-)
+#pujetIdSF = lambda : pujetIdSFProducerCpp(
+#    year = '2016' ,
+#    wp = 'loose',
+#)
