@@ -10,7 +10,7 @@ from ROOT import TStyle, TCanvas, TPad
 from ROOT import TLegend, TLatex, TText, TLine, TBox
 from ROOT.std import vector
 import PhysicsTools.NanoAODTools.LambPlot.Utils.color as col
-import PhysicsTools.NanoAODTools.LambPlot.analyses.whss as plt
+import PhysicsTools.NanoAODTools.LambPlot.scripts.whss as plt
 
 #########################################
 samples = plt.cfg.getModule('samples')
@@ -79,7 +79,11 @@ def makeHisto( df_ , var_ , cut_ , weights_ , isample_ ):
     ## Make histogram from column
     range_ = variables[var_]['range']
     if len(range_)==3:
-        hists = df_.Histo1D( ROOT.RDF.TH1DModel( var_ , ' ; ' + variables[var_]['xaxis'] + ' ; Events' , range_[0] , range_[1], range_[2] ) , var_ , "weights" )
+        if '[' and ']' in variables[var_]['xaxis']:
+            ylabel = 'Events / %s %s' %( float(range_[2]-range_[1])/float(range_[0]) , variables[var_]['xaxis'].split(' ')[-1].strip('[').strip(']') )
+        else:
+            ylabel = 'Events / %s' %( float(range_[2]-range_[1])/float(range_[0]) )
+        hists = df_.Histo1D( ROOT.RDF.TH1DModel( var_ , ' ; ' + variables[var_]['xaxis'] + ' ; '+ ylabel , range_[0] , range_[1], range_[2] ) , var_ , "weights" )
     else:
         hists = df_.Histo1D( ROOT.RDF.TH1DModel( var_ , ' ; ' + variables[var_]['xaxis'] + ' ; Events' , len(range_[0])-1 , np.asarray(range_[0],'d') ) , var_ , "weights" )
                             
@@ -369,14 +373,19 @@ def printTable(hist , pathout , txtname , sign=[] ):
     print >>f, "-"*80
     print >>f, "Sample                  Events          Entries         %"
     print >>f, "-"*80
+    ## data and backgrounds
     for i, s in enumerate(['DATA']+samplelist+['BkgSum'] if 'DATA' in hist.keys() else samplelist+['BkgSum']):
-        if i==1 or s=="DATA" or i==len(samplelist)+1: print >>f, "-"*80
+        if i == len(samplelist): print >>f, "-"*80
         print >>f, "%-20s" % s, "\t%-10.2f" % hist[s].Integral(), "\t%-10.0f" % (hist[s].GetEntries()-2), "\t%-10.2f" % (100.*hist[s].Integral()/hist['BkgSum'].Integral()) if hist['BkgSum'].Integral() > 0 else 0
+        if s=="DATA" : print >>f, "-"*80
+    ###
     print >>f, "-"*80
+    ## signal
     for i, s in enumerate(sign):
+        demonimator = math.sqrt( float(hist['BkgSum'].Integral()) + float(hist[s].Integral()) )
         if not groupList[s]['plot']: continue
         #print "%-20s" % s, "\t%-10.2f" % hist[s].Integral(), "\t%-10.0f" % (hist[s].GetEntries()-2), "\t%-10.2f" % 100.*hist[s].GetEntries()/float(hist[s].GetOption()) if float(hist[s].GetOption()) > 0 else 0, "%"
-        print >>f, "%-20s" % s, "\t%-10.2f" % hist[s].Integral(), "\t%-10.0f" % (hist[s].GetEntries()-2), "\t%-10.2f" % (hist[s].GetEntries()) if float(hist[s].GetEntries()) > 0 else 0
+        print >>f, "%-20s" % s, "\t%-10.2f" % hist[s].Integral(), "\t%-10.0f" % (hist[s].GetEntries()-2), "\t%-10.2f (S/sqrt(S+BkgSum))" % ( float(hist[s].Integral()) / demonimator if hist[s].Integral() > 0 else 0 ) 
     print >>f, "-"*80
 
     f.close()
@@ -387,6 +396,23 @@ def printTable(hist , pathout , txtname , sign=[] ):
     
 pass
 
+def printTable_signal( histlist , pathout , txtname , sign ):
+
+    groupList = plt.cfg.getGroupPlot()
+    f = open( '%s/%s' %(pathout,txtname) ,'w')
+    print >>f, txtname
+    print >>f, "-"*80
+    print >>f, "Sample                  Events          Entries         %"
+    print >>f, "-"*80
+    for i, s in enumerate(sign+['Higgs']):
+        if i==len(sign): print >>f, "-"*80
+        print >>f, "%-20s" % s, "\t%-10.2f" % histlist[s].Integral(), "\t%-10.0f" % (histlist[s].GetEntries()-2), "\t%-10.2f" %(100.*histlist[s].Integral()/histlist['Higgs'].Integral()) if histlist['Higgs'].Integral() > 0 else 0
+    print >>f, "-"*80
+
+    f.close()
+    fcheck = open( '%s/%s' %(pathout,txtname) ,'r')
+    print(fcheck.read())
+    fcheck.close()
 
 ####### OTHER
 

@@ -94,12 +94,20 @@ variables['Mu2_sip3d'] = { 'name' : 'Muon_sip3d[Lepton_muonIdx[1]]' ,
 ####################################
 
 variables['MinMjjl'] = { 'name' : 'TMath::Min(mjjL1,mjjL2)' ,
-                         'range' : ( 40 , 0. , 200. ),
+                         #'range' : ( 40 , 0. , 200. ),
+                         'range' : ( 50 , 0. , 500. ),
                          'xaxis' : 'Min(mjjl1,mjjl2) [GeV/c2]',
                          'fold' : 3
 }
 
 variables['mlljj20_whss']  = {   'name': 'mlljj20_whss',
+                        #'range' : ( 40 , 0. , 200. ),
+                        'range' : ( 50 , 0. , 500. ),
+                        'xaxis' : 'mlljj20_whss [GeV]',
+			'fold' : 3
+                        }
+
+variables['mlljj20_whss_bin1']  = {   'name': 'mlljj20_whss',
                         'range' : ([60.,70.,80.,90.,100.,110.,120.,130.,140.,150.,160.,170.,180.,190.,200.,250.,300.],),
                         'xaxis' : 'mlljj20_whss [GeV]',
                         'fold' : 3
@@ -135,11 +143,11 @@ variables['ZH3l_dphilmetj']  = {  'name': 'ZH3l_dphilmetj*(CleanJet_pt[1]>30)',
                          'fold' : 3
                         }
 
-variables['WH3l_ZVeto']  = {   'name': 'WH3l_ZVeto',            #   variable name    
-                        'range' : (20,0,100),    #   variable range
-                        'xaxis' : 'WH3l_ZVeto',  #   x axis name
-                         'fold' : 0
-                        }
+#variables['WH3l_ZVeto']  = {   'name': 'WH3l_ZVeto',            #   variable name    
+#                        'range' : (20,0,100),    #   variable range
+#                        'xaxis' : 'WH3l_ZVeto',  #   x axis name
+#                         'fold' : 0
+#                        }
 
 variables['puppimet']  = {
                         'name': 'PuppiMET_pt',    
