@@ -9,20 +9,13 @@ from ROOT import TFile, TChain, TTree, TCut, TH1, TH1F, TH2F, THStack, TGraph, T
 from ROOT import TStyle, TCanvas, TPad
 from ROOT import TLegend, TLatex, TText, TLine, TBox
 
-#from Analysis.ALPHA.drawUtils import *
-#from Analysis.ALPHA.variables import *
-#from Analysis.ALPHA.selections_bb import *
-#from Analysis.ALPHA.samples import sample
+from PhysicsTools.NanoAODTools.LambPlot.Utils.configs import Config
+import PhysicsTools.NanoAODTools.LambPlot.Utils.color as col
+from PhysicsTools.NanoAODTools.LambPlot.Utils.drawLambda import *
+import importlib
 
-cwd=os.getcwd()
-sys.path.append(cwd+"/Utils/")
-
-from drawLambda import *
-from variables import *
-from selections_SSLep import *
-from samplesVH import sample
-
-import collections
+from collections import OrderedDict
+ROOT.EnableImplicitMT(12)
 
 ########## SETTINGS ##########
 
@@ -32,182 +25,43 @@ parser = optparse.OptionParser(usage)
 parser.add_option("-v", "--variable", action="store", type="string", dest="variable", default="")
 parser.add_option("-c", "--cut", action="store", type="string", dest="cut", default="")
 parser.add_option("-r", "--region", action="store", type="string", dest="region", default="")
-parser.add_option("-a", "--all", action="store_true", default=False, dest="all")
 parser.add_option("-b", "--bash", action="store_true", default=False, dest="bash")
-parser.add_option("-B", "--blind", action="store_true", default=False, dest="blind")
-parser.add_option("-f", "--final", action="store_true", default=False, dest="final")
-parser.add_option("-u", "--User_cutflow", action="store", type="string", dest="cutflow", default="")
+parser.add_option("-z", "--backgrounds", action="append", type="string", default=[], dest="backgrounds" )
+parser.add_option("-l", "--cutfile",  dest="cutfile", type="string", default=None)
+parser.add_option("-y", "--year", action="store", type="string", dest="year", default="2016")
+
 (options, args) = parser.parse_args()
 if options.bash: gROOT.SetBatch(True)
 
+cfg = Config(options.year)
+samples = cfg.getModule('samples')
+variables = cfg.getModule('variables')
+groupPlot = cfg.getModule('groupPlot')
+
+base=os.environ['NANOAODTOOLS_BASE']
+
 ########## SETTINGS ##########
 
-gStyle.SetOptStat(0)
+#NTUPLEDIR   = "/Users/shoh/Projects/CMS/PhD/Analysis/SSL/datav8-skim/"
+LUMI        = cfg.lumi()
+sign        = [ x for x in groupPlot if groupPlot[x]['isSignal'] == 1 ]
+#back        = [ x for x in groupPlot if groupPlot[x]['isSignal'] == 0 ] if len(options.backgrounds)==0 else options.backgrounds
+back = [ 'Fake' , 'WZ' , 'VgS' ]
 
-#NTUPLEDIR   = "/lustre/cmswork/hoh/CMSSW_8_0_12/src/Analysis/ALPHA/Prod_v03/"
-NTUPLEDIR   = "/Users/shoh/Projects/CMS/PhD/Analysis/SSL/datav8-skim/"
-LUMI        = 12900 # in pb-1 --> ????
-SIGNAL      = 1.
-RATIO       = 4 # 0: No ratio plot; !=0: ratio between the top and bottom pads
-BLIND       = False
-POISSON     = False
-jobs        = []
-verbal = True
-########## SAMPLES ##########
-#data = ["data_obs"]
-data = []
-back        = [ "ttV" , "VV" , "TTbar-SL", "ST", "TTbar-DiLep", "WJetsToLNu" , "DYJetsToLL" ]
-sign = []
+# for fake
+cacheList=[
+    "Fake_mm",
+    "Fake_em",
+    "Fake_ee",
+    "Lepton_pt",
+    "Lepton_pdgId",
+    "Lepton_eta",
+    "nCleanJet",
+    "nLepton",
+    "CleanJet_pt",
+    "CleanJet_eta"
+    ]
 ########## ######## ##########
-
-cat1="( ( nJets==1 && Jet1.CSV>0.800 ) || ( nJets==2 && ( ( Jet1.CSV>0.800 ) + ( Jet2.CSV>0.800 ) )==1 ) )"
-
-cat2="( Jet2.pt>50 && ( ( nJets==2 && ( ( Jet1.CSV>0.800 ) + ( Jet2.CSV>0.800 ) )==2 ) || ( nJets==3 && ( ( Jet1.CSV>0.800 ) + ( Jet2.CSV>0.800 ) + ( Jet3.CSV>0.800 ) )==2  ) ))"
-
-CutFlow={
-    "Signal" : [selection["triggerMET"],"MEt.pt>200","nJets<4","Jet1.pt>50 && abs(Jet1.eta)<2.5","MinJetMetDPhi>0.5","(abs(MEt.ptCalo-MEt.pt)/MEt.pt)<0.5","nElectrons==0","nMuons==0","nTaus==0","nPhotons==0"
-                ],
-    "SR1" : [selection["triggerMET"],"MEt.pt>200","nJets<4","Jet1.pt>50 && abs(Jet1.eta)<2.5","MinJetMetDPhi>0.5","(abs(MEt.ptCalo-MEt.pt)/MEt.pt)<0.5","nElectrons==0","nMuons==0","nTaus==0","nPhotons==0","cat1"
-             ],
-    "SR2" : [selection["triggerMET"],"MEt.pt>200","nJets<4","Jet1.pt>50 && abs(Jet1.eta)<2.5","MinJetMetDPhi>0.5","(abs(MEt.ptCalo-MEt.pt)/MEt.pt)<0.5","nElectrons==0","nMuons==0","nTaus==0","nPhotons==0","cat2"
-             ],
-}
-
-def projectv2(var, cut, cutflow, weight, samplelist, pd, ntupledir):
-
-    file = {}
-    tree = {}
-    chain = {}
-    hist = {}
-    dummy=[]
-    hist00={}
-    car=[]
-
-    for i, s in enumerate(samplelist):
-        if verbal:
-            print
-            print "Projecting from tree of sample %s" %s
-            print
-            print "Reading samples files"
-            print str(samples[s]['files'])
-            print
-        chain[s] = TChain("ntuple/tree")
-        for j, ss in enumerate(samples[s]['files']):
-            if not 'data' in s or ('data' in s and ss in pd):
-                if verbal: print "Interpreting "
-                if verbal: print str(ntupledir + ss + ".root")
-                chain[s].Add(ntupledir + ss + ".root")
-        if variable[var]['nbins']>0: hist[s] = TH1F(s, ";"+variable[var]['title'], variable[var]['nbins'], variable[var]['min'], variable[var]['max'])
-        else: hist[s] = TH1F(s, ";"+variable[var]['title'], len(variable[var]['bins'])-1, array('f', variable[var]['bins']))
-        hist[s].Sumw2()
-        
-        tmpcut =""
-
-        cutstring = "("+weight+")" + ("*("+tmpcut+")" if len(tmpcut)>0 else "")
-
-        cutsq=""
-        final = []
-        logic=False
-        for value in CutFlow[cutflow]:
-            dummy=hist[s]
-            
-            if len(cutsq)==0:
-                cutsq+=value
-            else:
-                cutsq+=" && "+value
-            if verbal: print (cutsq)
-            chain[s].Project(s, var, cutsq) # histogram name, string, selection
-            dummy.SetOption("%s" % chain[s].GetTree().GetEntriesFast())
-            dummy.Scale(samples[s]['weight'] if dummy.Integral() >= 0 else 0)
-            if not "&&" in cutsq:
-                car.append("MET Trigger")
-            elif ("MinJetMetDPhi" in cutsq and not logic):
-                logic=True
-                car.append("DPhiJMET>0.5")
-            elif(logic):
-                car.append(value)
-            else:
-                car.append(value)
-            car.append(dummy.Clone())
-            final.append(car)
-            #print (final)
-            car=[]
-        hist00[s]=final
-    return hist00
-
-        
-def projectv1(var, cut, cutflow, weight, samplelist, pd, ntupledir):
-    # Create dict                                                                                                                                  
-    file = {}
-    tree = {}
-    chain = {}
-    hist = {}
-    dummy=[]
-    hist0={}
-    car=[]
-
-    #create and fill MC histogram
-    for i, s in enumerate(samplelist):
-        if verbal:
-            print 
-            print "Projecting from tree of sample %s" %s
-            print
-            print "Reading samples files"
-            print str(samples[s]['files'])
-            print
-        chain[s] = TChain("ntuple/tree")
-        #looping on three files
-        for j, ss in enumerate(samples[s]['files']):
-            if not 'data' in s or ('data' in s and ss in pd):
-                if verbal: print "The number of files for", str(samples[s]['files'])
-                if verbal: print str(ntupledir + ss + ".root")
-                chain[s].Add(ntupledir + ss + ".root")
-            #initializing histogram
-            if verbal: print
-        if variable[var]['nbins']>0: hist[s] = TH1F(s, ";"+variable[var]['title'], variable[var]['nbins'], variable[var]['min'], variable[var]['max'])
-        else: hist[s] = TH1F(s, ";"+variable[var]['title'], len(variable[var]['bins'])-1, array('f', variable[var]['bins']))
-        hist[s].Sumw2()
-
-            #tmpcut = cut
-        tmpcut =""
-
-        cutstring = "("+weight+")" + ("*("+tmpcut+")" if len(tmpcut)>0 else "")
-
-        cutsq=""
-        final = []
-        logic=False
-        for value in CutFlow[cutflow]:
-            
-            dummy=hist
-            
-            if len(cutsq)==0:
-                cutsq+=value
-            else:
-                cutsq+=" && "+value
-            if verbal: "cutting on ",s
-            if verbal: print (cutsq)
-            chain[s].Project(s, var, cutsq) # histogram name, string, selection
-            dummy[s].SetOption("%s" % chain[s].GetTree().GetEntriesFast())
-            dummy[s].Scale(samples[s]['weight'] if dummy[s].Integral() >= 0 else 0)
-            #print(dummy[s].Integral())
-            if not "&&" in cutsq:
-                car.append("MET Trigger")
-            elif ("MinJetMetDPhi" in cutsq and not logic):
-                logic=True
-                car.append("DPhiJMET>1.0")
-            elif(logic):
-                car.append(value)
-            else:
-                car.append(value)
-            car.append(dummy[s].Integral())
-            final.append(car)
-            car=[]
-        hist0[s]=final
-    
-    print (hist0)
-    if "HIST" in cut: hist["files"] = file
-    #return hist
-    return hist0
 
 def printTablev1(hist, sign=[]):
     samplelist = [x for x in hist.keys() if not 'data' in x and not 'BkgSum' in x and not x in sign and not x=="files"]
@@ -298,154 +152,103 @@ def printTable_html(hist,sign=[]):
     print '</table>'
     print '</head>'
     print '</html>'
-
-import copy
-def draw_cutflow(cutflow,hist,sign=[]):
-
-    if not 'BkgSum' in hist.keys():
-        hist['BkgSum'] = copy.deepcopy(hist['data_obs']) if 'data_obs' in hist else copy.deepcopy(hist[back[0]])
-        for i in hist['BkgSum']:
-            i[1].Reset("MICES")
-
-    for i, s in enumerate(back):
-        print s
-        count=0
-        for h in hist['BkgSum']:
-            print h
-            print h[1]
-            #print hist[s][count][1]
-            h[1].Add(hist[s][count][1])
-            count+=1
-
-    for h in hist['BkgSum']:
-        h[1].SetMarkerStyle(0)
-
-    # Some style                                                                                                                                  
-    for i, s in enumerate(data):
-        for h in hist[s]:
-            h[1].SetMarkerStyle(20)
-            h[1].SetMarkerSize(1.25)
     
-    for i, s in enumerate(data+back+sign+['BkgSum']):
-        for h in hist[s]:
-            addOverflow(h[1], False) # Add overflow
+if __name__ == "__main__":
 
-#    for (Int_t i=0 ; i< Xbinnum ; i++ ){
-#    h->GetXaxis()->SetBinLabel((i+1),Xbins[i].c_str());
-#  }
+    fake=False
+    cfile = open( options.cutfile ,'r')
+    cutlist = OrderedDict()
+    cutlist['default'] = '1==1'
+    for iline in cfile.readlines():
+        line = iline.strip("\n")
+        cutlist[line.split('$')[0]] = line.split('$')[1]
+    cfile.close()
 
-#    h->SetBinContent(a+1,1,xsec[j]);
-
-    #bkg = THStack("Bkg", ";"+hist['BkgSum'].GetXaxis().GetTitle()+";Events")
-    #for i, s in enumerate(back): bkg.Add(hist[s])
-
-    #lencf=len(CutFlow[cutflow])
-
-    #create TCanvas
-    #c1 = TCanvas("c1", "test", 800, 800)
-    #h = TH1F("h","test", lencf, -0.5 , lencf-0.5);
-    #h.SetFillColor(38)
-    #print (lencf)
-    #for j in range(0,lencf):
-    #    #print(j)
-    #    print(CutFlow[cutflow][j])
-    #    if j==0:
-    #        h.GetXaxis().SetBinLabel(j+1,"MET trigger")
-    #    else:
-    #        h.GetXaxis().SetBinLabel(j+1,CutFlow[cutflow][j])
-
-    #for key in hist.keys():
-    #    #print (key)
-    #    counts=1
-    #    for k in hist[key]:
-    #        print (k)
-    #        print (int(k[1]))
-    #        print counts
-    #        for i in range(1,int(k[1])):
-    #            h.Fill(counts)
-    #        counts=counts+1
-    #h.Draw()
-    #c1.Update()
-    #return c1
-
-def cutflow(var, cut, cutflow, nm1=False, norm=False):
-    ### Preliminary Operations ###
-    if len(var)==0:
-        var="nPV"
+    if 'Fake' in back:
+        back.remove('Fake')
+        fake=True
     
-    # Substitute cut
-    cut=""
-    pd = ""
-    channel = ""
-    plotdir = ""
-    shortcut = cut
+    DF=OrderedDict()
+    for itag in back+sign:
+        print " --> itag : ", itag 
+        DF[itag]=OrderedDict()
+        for isample in groupPlot[itag]['samples']:
+            DF[itag][isample] = OrderedDict() ; isptr= False
+            if 'weights' in samples[isample].keys() :
+                for jsample in samples[isample]['weights'].keys() :
+                    WEIGHTS = '(%s)*(%s)' %( expressAliases(samples[isample]['weight']) , samples[isample]['weights'][jsample] )
+                    if itag not in [ 'Fake' , 'DATA' ]: WEIGHTS = "%s*(%s)" %( str(float(LUMI)/1000.) , WEIGHTS )
+                    filelist = [ x for x in samples[isample]['name'] if os.path.basename(x).split('_',1)[-1].replace('.root','').split('__part')[0] == jsample ]
+                    files = makeVectorList(filelist)
+                    #print " --> Caching in subsamples : ", jsample
+                    DF[itag][isample][jsample] = ROOT.RDataFrame("Events", files).Define( "weight" , WEIGHTS ) #.Cache();
+            else:
+                isptr = True
+                WEIGHTS = expressAliases(samples[isample]['weight'])
+                if itag not in [ 'Fake' , 'DATA' ]: WEIGHTS = "%s*(%s)" %( str(float(LUMI)/1000.) , WEIGHTS )
+                filelist = samples[isample]['name']
+                files = makeVectorList(filelist)
+                #print " --> Caching in samples : ", isample
+                DF[itag][isample] = ROOT.RDataFrame("Events", files).Define( "weight" , WEIGHTS ) #.Cache();
+    ###########################################################
+    df_result= OrderedDict()
     
-    pd = getPrimaryDataset(CutFlow[cutflow][0])
-    if nm1: cut = getNm1Cut(var, cut) # N-1 cuts
-    #if 'Pre' in shortcut and 'Mass' in var: cut += " && (isMC ? 0==0 : ("+var+"<65 || "+var+">135))"
-    #if len(data)>0 and len(pd)==0: raw_input("Warning: Primary Dataset not recognized, continue?")
-    
-    # Determine weight
-    weight = "EventWeight"
-    
-    if verbal:
-        print "Plotting", var, "in", channel, "channel with:"
-        print "  dataset:", pd
-        print "Cutflow type:", cutflow
-        print "  weight :", weight
-        print
-    #print "  cut    :", cut
-        print
-        print "  data+back :", data+back+sign
-    
-    ### Create and fill MC histograms ###
-    if not sign:
-        hist = projectv1(var, cut, cutflow, weight, data+back, pd, NTUPLEDIR)
-        #histcut =  projectv2(var, cut, cutflow, weight, data+back, pd, NTUPLEDIR)
-    else:
-        hist = projectv1(var, cut, cutflow, weight, data+back+sign, pd, NTUPLEDIR)
+    if fake:
+        DF_fake=OrderedDict()
+        DF_fake['Fake']=OrderedDict()
+        # only one fake sample will do
+        for jsample in samples['Fake_em']['weights'].keys() :
+            filelist = [ x for x in samples['Fake_em']['name'] if os.path.basename(x).split('_',1)[-1].replace('.root','').split('__part')[0] == jsample ]
+            files = makeVectorList(filelist) ; commonWeight = samples['Fake_em']['weights'][jsample]
+            DF_fake['Fake'][jsample] = ROOT.RDataFrame("Events", files).Define( 'W1', commonWeight )
+            for ifake in [ 'Fake_mm' , 'Fake_em' , 'Fake_ee' ]:
+                DF_fake['Fake'][jsample] = DF_fake['Fake'][jsample].Define( ifake , 'W1*(%s)' % ( expressAliases(samples[ifake]['weight']) ) )
+            # caching Fake
+            print "caching fake : ", jsample
+            DF_fake['Fake'][jsample] = DF_fake['Fake'][jsample].Cache(cacheList)
+        
+        df_result['Fake'] = OrderedDict()
+        for jsample in DF_fake['Fake']:
+            print "Fake : jsample : ", jsample
+            icutter=[]
+            for i, labcut in enumerate(cutlist) :
+                icut = cutlist[labcut]
+                icutter.append(icut)
+                if i==0: icut_ = icut
+                else: icut_ = ' && '.join(icutter)
+                print "icut_ : ", icut_
+                df_result['Fake'][labcut]=0.
+                for ifake in [ 'Fake_mm' , 'Fake_em' , 'Fake_ee' ]:
+                    print "ifake : ", ifake
+                    df_result['Fake'][labcut] += float(DF_fake['Fake'][jsample].Filter( icut_ ).Sum(ifake).GetValue())
+                
+    #############################################################
 
-    #if verbal: print(histcut)
-    #for i in histcut['VVIncl']:
-    #    print i
-    #    print(i[1].Integral())
-
-    ### Plot ###
-    #if len(data+back)>0:
-    #    out = draw_cutflow(cutflow,histcut,sign)   
-
-
-    #    out = draw(hist, data if not BLIND else [], back, sign, SIGNAL, RATIO, POISSON, variable[var]['log'])
-    #else:
-    #    out = drawSignal(hist, sign)
-    #out[0].cd(1)
-    #drawCMS(LUMI, "Preliminary")
-    #drawRegion(shortcut)
-    #drawAnalysis(channel)
-    #out[0].Update()
-    
-    # Save
-    #pathname = "plots/"+plotdir
-    #if gROOT.IsBatch():
-    #    if not os.path.exists(pathname): os.makedirs(pathname)
-    #    out[0].Print(pathname+"/"+var.replace('.', '_')+".png")
-    #    out[0].Print(pathname+"/"+var.replace('.', '_')+".pdf")
-    
-    ### Other operations ###
-    # Print table
-    #if len(data+back)>0: printTablev1(hist, sign)
-    if len(data+back)>0: 
-        printTable_html(hist,sign)
-        #out=draw_cutflow(cutflow,hist,sign)
-    #out.Update()
-    #out.Print("c1.png")
-    if not gROOT.IsBatch(): raw_input("Press Enter to continue...")
-
-#if options.final:
-#    plotFinal()
-#elif options.all:
-#    plotAll()
-#else:
-cutflow(options.variable, options.cut, options.cutflow)
-
+    for itag in DF:
+        print "itag : ", itag
+        df_result[itag]=OrderedDict()
+        # iterate cut                                                                                                                                                                                       
+        icutter=[]
+        for i, labcut in enumerate(cutlist) :
+            icut = cutlist[labcut]
+            icutter.append(icut)
+            if i==0: icut_ = icut
+            else: icut_ = ' && '.join(icutter)
+            print "icut_ : ", icut_
+            # dict[Fake][Cut1]=number                                                                                                                                                                       
+            df_result[itag][labcut]=0.
+            # Fake_mm/em                                                                                                                                                                                    
+            for isample in DF[itag]:
+                print "isample : ", isample
+                # weighted subsamples                                                                                                                                                                       
+                if isinstance(DF[itag][isample],OrderedDict):
+                    for jsample in DF[itag][isample]:
+                        df_result[itag][labcut] += float(DF[itag][isample][jsample].Filter( icut_ ).Sum('weight').GetValue())
+                else:
+                    df_result[itag][labcut] += float(DF[itag][isample].Filter( icut_ ).Sum('weight').GetValue())
+    print "*"*80
+    for itag in df_result:
+        print itag
+        for icut in df_result[itag]:
+            print "icut : ", icut , " ; events : ", df_result[itag][icut]
 
