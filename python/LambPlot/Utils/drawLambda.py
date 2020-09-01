@@ -90,18 +90,23 @@ def makeHisto( df_ , var_ , cut_ , weights_ , isample_ ):
     return hists
 pass
 
-def sumHistoPtr( histo , name , isPtr ):
+def applyAction( histList ):
     
-    hist={}
-    for i, ihist in enumerate(histo):
-        ##print( 'groupname :', name ,' ; name : ', ihist )
-        ihisto_ = histo[ihist]
-        if i == 0:
-            hist[name] = ihisto_.Clone(name)
-        else:
-            hist[name].Add( ihisto_ if not isPtr else ihisto_.GetPtr() )
-    # TH1D
-    return hist[name]
+    hLists={}
+    for igroup in histList.keys():
+        print "igroup : ", igroup
+        hLists[igroup]={}
+        for j, jsample in enumerate(histList[igroup].keys()):
+            print "jkey : ", jsample
+            if not isinstance( histList[igroup][jsample] , dict ):
+                if j==0: hLists[igroup]= histList[igroup][jsample].Clone(igroup)
+                else: hLists[igroup].Add(histList[igroup][jsample].GetPtr())
+            else:
+                for k, ksample in enumerate(histList[igroup][jsample].keys()):
+                    print "kkey : ", ksample
+                    if j==0: hLists[igroup]= histList[igroup][jsample][ksample].Clone(igroup)
+                    else: hLists[igroup].Add(histList[igroup][jsample][ksample].GetPtr())
+    return hLists
 pass
 
 def ProjectDraw( var, cut, Lumi, samplelist, pd ):
@@ -121,50 +126,42 @@ def ProjectDraw( var, cut, Lumi, samplelist, pd ):
         #if igroup in [ 'Fake', 'DATA' ] : CUT_ =  CUT.replace("isbVeto && ","")
         
         print col.OKGREEN+ "drawLambda::GroupTag : "  , igroup + col.ENDC
-        #histList[igroup]={} ;
-        hists={}
+        histList[igroup]={}
         ##sample tag
         for isample in groupList[igroup]['samples'] :
             print("isample : ", isample)
-            hists[isample] = {} ; isptr= False
-            ## check if weights exist
+            histList[igroup][isample]={}
             if 'weights' in samples[isample].keys() :
-                ## sub-samples tag
-                subhists = {}
                 for jsample in samples[isample]['weights'].keys() :
-                    subhists[jsample]={}
+                    histList[igroup][isample][jsample]={}
                     WEIGHTS = '(%s)*(%s)' %( expressAliases(samples[isample]['weight']) , samples[isample]['weights'][jsample] )
                     #WEIGHTS = '(%s)*(%s)' %( samples[isample]['weight'] , samples[isample]['weights'][jsample] )
                     if igroup not in [ 'Fake' , 'DATA' ]: WEIGHTS = "%s*(%s)" %( str(float(Lumi)/1000.) , WEIGHTS )
                     filelist = [ x for x in samples[isample]['name'] if os.path.basename(x).split('_',1)[-1].replace('.root','').split('__part')[0] == jsample ]
                     files = makeVectorList(filelist)
                     df = ROOT.RDataFrame("Events", files); gROOT.cd()
-                    subhists[jsample] = makeHisto( df , VAR , CUT_ , WEIGHTS , jsample )
-                # Wg = (Wg*w1,Wg*w2)
-                hists[isample] = sumHistoPtr( subhists , isample , True )
+                    histList[igroup][isample][jsample] = makeHisto( df , VAR , CUT_ , WEIGHTS , jsample )
             else:
-                ## all sub-samples share common weights
-                ###print col.OKGREEN+ "drawLambda::Sub-Samples : "  , samples[isample]['weights'].keys() + col.ENDC
-                isptr = True
                 WEIGHTS = expressAliases(samples[isample]['weight'])
                 #WEIGHTS = samples[isample]['weight']
                 if igroup not in [ 'Fake' , 'DATA' ]: WEIGHTS = "%s*(%s)" %( str(float(Lumi)/1000.) , WEIGHTS ) 
                 filelist = samples[isample]['name']
                 files = makeVectorList(filelist)
                 df = ROOT.RDataFrame("Events", files); gROOT.cd()
-                hists[isample] = makeHisto( df , VAR , CUT_ , WEIGHTS , isample )
-            
-        # Vg = sum(Wg,Zq)
-        histList[igroup] = sumHistoPtr( hists , igroup , isptr )
+                histList[igroup][isample] = makeHisto( df , VAR , CUT_ , WEIGHTS , isample )
+
+        pass
+    
+    # apply action
+    histout = applyAction(histList);
+    for ihist in histout.keys():
+        histout[ihist].Sumw2()
+        histout[ihist].SetFillColor(groupList[ihist]['fillcolor'])
+        histout[ihist].SetFillStyle(groupList[ihist]['fillstyle'])
+        histout[ihist].SetLineColor(groupList[ihist]['linecolor'])
+        histout[ihist].SetLineStyle(groupList[ihist]['linestyle'])
         
-        print col.YELLOW + "group tag processed : " , histList.keys() , col.ENDC
-        
-        histList[igroup].Sumw2()
-        histList[igroup].SetFillColor(groupList[igroup]['fillcolor'])
-        histList[igroup].SetFillStyle(groupList[igroup]['fillstyle'])
-        histList[igroup].SetLineColor(groupList[igroup]['linecolor'])
-        histList[igroup].SetLineStyle(groupList[igroup]['linestyle'])
-    return histList
+    return histout
 pass
 
 def draw(hist, data, back, sign, snorm=1, ratio=0, poisson=True, log=False):
@@ -375,7 +372,8 @@ def printTable(hist , pathout , txtname , sign=[] ):
     print >>f, "-"*80
     ## data and backgrounds
     for i, s in enumerate(['DATA']+samplelist+['BkgSum'] if 'DATA' in hist.keys() else samplelist+['BkgSum']):
-        if i == len(samplelist): print >>f, "-"*80
+        #if i == len(samplelist): print >>f, "-"*80
+        if s=="BkgSum" : print >>f, "-"*80
         print >>f, "%-20s" % s, "\t%-10.2f" % hist[s].Integral(), "\t%-10.0f" % (hist[s].GetEntries()-2), "\t%-10.2f" % (100.*hist[s].Integral()/hist['BkgSum'].Integral()) if hist['BkgSum'].Integral() > 0 else 0
         if s=="DATA" : print >>f, "-"*80
     ###
@@ -384,7 +382,6 @@ def printTable(hist , pathout , txtname , sign=[] ):
     for i, s in enumerate(sign):
         demonimator = math.sqrt( float(hist['BkgSum'].Integral()) + float(hist[s].Integral()) )
         if not groupList[s]['plot']: continue
-        #print "%-20s" % s, "\t%-10.2f" % hist[s].Integral(), "\t%-10.0f" % (hist[s].GetEntries()-2), "\t%-10.2f" % 100.*hist[s].GetEntries()/float(hist[s].GetOption()) if float(hist[s].GetOption()) > 0 else 0, "%"
         print >>f, "%-20s" % s, "\t%-10.2f" % hist[s].Integral(), "\t%-10.0f" % (hist[s].GetEntries()-2), "\t%-10.2f (S/sqrt(S+BkgSum))" % ( float(hist[s].Integral()) / demonimator if hist[s].Integral() > 0 else 0 ) 
     print >>f, "-"*80
 
