@@ -53,6 +53,18 @@ variables['Ele2_sip3d'] = { 'name' : 'Electron_sip3d[Lepton_electronIdx[1]]' ,
                          'fold' : 3
 }
 
+variables['Ele1_pfRelIso03_all'] = { 'name' : 'Electron_pfRelIso03_all[Lepton_electronIdx[0]]' ,
+                          'range' : ( 100 , 0 , 2.5 ),
+                         'xaxis' : 'Lepton1 electron pfRelIso03',
+                         'fold' : 3
+}
+
+variables['Ele2_pfRelIso03_all'] = { 'name' : 'Electron_pfRelIso03_all[Lepton_electronIdx[1]]' ,
+                          'range' : ( 100 , 0 , 2.5 ),
+                         'xaxis' : 'Lepton2 electron pfRelIso03',
+                         'fold' : 3
+}
+
 ##########################
 
 variables['Mu1_dz'] = { 'name' : 'Muon_dz[Lepton_muonIdx[0]]' ,
@@ -91,6 +103,30 @@ variables['Mu2_sip3d'] = { 'name' : 'Muon_sip3d[Lepton_muonIdx[1]]' ,
                          'fold' : 3
 }
 
+variables['Mu1_pfRelIso03_all'] = { 'name' : 'Muon_pfRelIso03_all[Lepton_muonIdx[0]]' ,
+                          'range' : ( 100 , 0 , 2.5 ),
+                         'xaxis' : 'Lepton1 muon pfRelIso03',
+                         'fold' : 3
+}
+
+variables['Mu2_pfRelIso03_all'] = { 'name' : 'Muon_pfRelIso03_all[Lepton_muonIdx[1]]' ,
+                          'range' : ( 100 , 0 , 2.5 ),
+                         'xaxis' : 'Lepton2 muon pfRelIso03',
+                         'fold' : 3
+}
+
+variables['Mu1_pfRelIso04_all'] = { 'name' : 'Muon_pfRelIso04_all[Lepton_muonIdx[0]]' ,
+                         'range' : ( 100 , 0 , 2.5 ),
+                         'xaxis' : 'Lepton1 muon pfRelIso04',
+                         'fold' : 3
+}
+
+variables['Mu2_pfRelIso04_all'] = { 'name' : 'Muon_pfRelIso04_all[Lepton_muonIdx[1]]' ,
+                        'range' : ( 100 , 0 , 2.5 ),
+                        'xaxis' : 'Lepton2 muon pfRelIso04',
+                        'fold' : 3
+}
+
 ####################################
 
 variables['MinMjjl'] = { 'name' : 'TMath::Min(mjjL1,mjjL2)' ,
@@ -98,6 +134,12 @@ variables['MinMjjl'] = { 'name' : 'TMath::Min(mjjL1,mjjL2)' ,
                          'range' : ( 50 , 0. , 500. ),
                          'xaxis' : 'Min(mjjl1,mjjl2) [GeV/c2]',
                          'fold' : 3
+}
+
+variables['nJet'] = { 'name' : 'Sum(CleanJet_pt>30)' ,
+                        'range' : ( 15 , 0 , 15 ),
+                        'xaxis' : 'nCleanJet',
+                        'fold' : 3
 }
 
 variables['mlljj20_whss']  = {   'name': 'mlljj20_whss',
@@ -187,13 +229,13 @@ variables['ptll']  = {   'name': 'ptll',
                         'fold' : 0
                         }
 variables['pt1']  = {   'name': 'Lepton_pt[0]',     
-                        'range' : (20,0,100),   
+                        'range' : (100,0,500),   
                         'xaxis' : 'p_{T} 1st lep',
                         'fold'  : 3                         
                         }
 
 variables['pt2']  = {   'name': 'Lepton_pt[1]',     
-                        'range' : (20,0,100),   
+                        'range' : (100,0,500),   
                          'xaxis' : 'p_{T} 2nd lep',
                         'fold'  : 3                         
                         }

@@ -18,10 +18,6 @@ import PhysicsTools.NanoAODTools.LambPlot.Utils.color as col
 from PhysicsTools.NanoAODTools.LambPlot.Utils.drawLambda import *
 import importlib
 
-#if '%s' %os.getcwd().split('/')[-1] != 'LambPlot':
-#    print('EXIT: Please run the plotter in LambPlot folder')
-#    sys.exit()
-
 ########## SETTINGS ##########
 import optparse
 usage = "usage: %prog [options]"
@@ -30,7 +26,7 @@ parser.add_option("-v", "--variable", action="store", type="string", dest="varia
 parser.add_option("-c", "--cut", action="store", type="string", dest="cut", default="")
 parser.add_option("-r", "--region", action="store", type="string", dest="region", default="")
 parser.add_option("-b", "--bash", action="store_true", default=False, dest="bash")
-parser.add_option("-B", "--blind", action="store_true", default=True, dest="blind")
+parser.add_option("-u", "--unblind", action="store_false", default=True, dest="unblind")
 parser.add_option("-s", "--signals", action="store_true", default=False, dest="signal")
 parser.add_option("-z", "--backgrounds", action="append", type="string", default=[], dest="backgrounds" )
 parser.add_option("-x", "--Statebox", action="store_true", default=False, dest="Statebox")
@@ -64,10 +60,12 @@ data        = [ 'DATA' ]
 sign        = [ x for x in groupPlot if groupPlot[x]['isSignal'] == 1 ]
 back        = [ x for x in groupPlot if groupPlot[x]['isSignal'] == 0 ] if len(options.backgrounds)==0 else options.backgrounds
 #back.remove("Fake")
-BLIND       = True #if options.blind else False
+BLIND       = options.unblind
 SIGNAL      = 1. #500. # rescaling factor 1/35800
 RATIO       = 4 if not BLIND else 0 #4 # default=4 # 0: No ratio plot; !=0: ratio between the top and bottom pads
 POISSON     = False
+
+print "BLIND: ", BLIND
 
 def plot(var, cut, norm=False):
 

@@ -19,6 +19,8 @@ cuts['OSmumu'] = 'nCleanJet>=2 && nLepton>=2 && ((Lepton_pdgId[0]*Lepton_pdgId[1
 && mll>30 && ht>100 \
 '
 
+cuts['dummy'] = cuts['OSmumu']
+
 #cuts['OSemu'] = 'nCleanJet>=2 && nLepton>=2 && isbVeto && ((Lepton_pdgId[0]==11&&Lepton_pdgId[1]==-13)||(Lepton_pdgId[0]==-11&&Lepton_pdgId[1]==13)) \
 #&& Electron_pt[Lepton_electronIdx[0]]>24 && Muon_pt[Lepton_muonIdx[1]]>20 \
 #&& Electron_pfRelIso03_all[Lepton_electronIdx[0]]<0.05 && Muon_pfRelIso03_all[Lepton_muonIdx[1]]<0.01 \
@@ -26,7 +28,7 @@ cuts['OSmumu'] = 'nCleanJet>=2 && nLepton>=2 && ((Lepton_pdgId[0]*Lepton_pdgId[1
 #'
 
 # without isolation cuts it capture tau decay
-cuts['OSemu-showoff'] = 'nCleanJet>=2 && nLepton>=2 && ((Lepton_pdgId[0]*Lepton_pdgId[1]==13*-11)||(Lepton_pdgId[0]*Lepton_pdgId[1]==-13*11)) \
+cuts['OSemu-showoff'] = 'Sum(CleanJet_pt>30)>=2 && nLepton>=2 && ((Lepton_pdgId[0]*Lepton_pdgId[1]==13*-11)||(Lepton_pdgId[0]*Lepton_pdgId[1]==-13*11)) \
 && Electron_pt[Lepton_electronIdx[0]]>30 && Muon_pt[Lepton_muonIdx[1]]>20 \
 && mll>15 \
 '
@@ -81,6 +83,11 @@ cuts['VgCR'] = 'nCleanJet>=2 && nLepton>=2 && isbVeto && ( \
 ) \
 '
 
+cuts['SSmumu_ugo'] ='nLepton==2 && Sum(CleanJet_pt>30)<3 \
+&& ((Lepton_pdgId[0]*Lepton_pdgId[1]==13*13)||(Lepton_pdgId[0]*Lepton_pdgId[1]==-13*-13)) \
+&& Muon_pt[Lepton_muonIdx[0]]>25 && Muon_pt[Lepton_muonIdx[1]]>20 \
+&& abs(Muon_eta[Lepton_muonIdx[0]])<2.1 && abs(Muon_eta[Lepton_muonIdx[1]])<2.1 \
+' 
 
 '''
 ## SR 2jets
