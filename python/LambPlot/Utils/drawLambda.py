@@ -90,7 +90,7 @@ def makeHisto( df_ , var_ , cut_ , weights_ , isample_ ):
     return hists
 pass
 
-def applyAction( histList ):
+def applyAction_( histList ):
     
     hLists={}
     for igroup in histList.keys():
@@ -107,6 +107,39 @@ def applyAction( histList ):
                     if j==0: hLists[igroup]= histList[igroup][jsample][ksample].Clone(igroup)
                     else: hLists[igroup].Add(histList[igroup][jsample][ksample].GetPtr())
     return hLists
+pass
+
+def flatten(d):
+    res = []  # Result list
+    if isinstance(d, dict):
+        for key, val in d.items():
+            res.extend(flatten(val))
+    elif isinstance(d, list):
+        res = d        
+    else:
+        raise TypeError("Undefined type for flatten: %s"%type(d))
+    return res
+pass
+
+def sumHist(listin,group):
+    out=[]
+    print "adding histograms for ", group
+    for i, ihist in enumerate(listin):
+        if i==0: out.append(ihist.Clone(group))
+        else: out[0].Add(ihist.GetPtr())
+    return out[0]
+pass
+
+def applyAction(histList,groupList):
+    histout={}
+    for ihist in histList:
+        histout[ihist] = sumHist(flatten(histList[ihist]),ihist)
+        histout[ihist].Sumw2()
+        histout[ihist].SetFillColor(groupList[ihist]['fillcolor'])
+        histout[ihist].SetFillStyle(groupList[ihist]['fillstyle'])
+        histout[ihist].SetLineColor(groupList[ihist]['linecolor'])
+        histout[ihist].SetLineStyle(groupList[ihist]['linestyle'])
+    return histout
 pass
 
 def ProjectDraw( var, cut, Lumi, samplelist, pd ):
@@ -130,17 +163,16 @@ def ProjectDraw( var, cut, Lumi, samplelist, pd ):
         ##sample tag
         for isample in groupList[igroup]['samples'] :
             print("isample : ", isample)
-            histList[igroup][isample]={}
+            histList[igroup][isample]=[]
             if 'weights' in samples[isample].keys() :
                 for jsample in samples[isample]['weights'].keys() :
-                    histList[igroup][isample][jsample]={}
                     WEIGHTS = '(%s)*(%s)' %( expressAliases(samples[isample]['weight']) , samples[isample]['weights'][jsample] )
                     #WEIGHTS = '(%s)*(%s)' %( samples[isample]['weight'] , samples[isample]['weights'][jsample] )
                     if igroup not in [ 'Fake' , 'DATA' ]: WEIGHTS = "%s*(%s)" %( str(float(Lumi)/1000.) , WEIGHTS )
                     filelist = [ x for x in samples[isample]['name'] if os.path.basename(x).split('_',1)[-1].replace('.root','').split('__part')[0] == jsample ]
                     files = makeVectorList(filelist)
                     df = ROOT.RDataFrame("Events", files); gROOT.cd()
-                    histList[igroup][isample][jsample] = makeHisto( df , VAR , CUT_ , WEIGHTS , jsample )
+                    histList[igroup][isample].append( makeHisto( df , VAR , CUT_ , WEIGHTS , jsample ) )
             else:
                 WEIGHTS = expressAliases(samples[isample]['weight'])
                 #WEIGHTS = samples[isample]['weight']
@@ -148,20 +180,11 @@ def ProjectDraw( var, cut, Lumi, samplelist, pd ):
                 filelist = samples[isample]['name']
                 files = makeVectorList(filelist)
                 df = ROOT.RDataFrame("Events", files); gROOT.cd()
-                histList[igroup][isample] = makeHisto( df , VAR , CUT_ , WEIGHTS , isample )
+                histList[igroup][isample].append( makeHisto( df , VAR , CUT_ , WEIGHTS , isample ) )
 
         pass
-    
     # apply action
-    histout = applyAction(histList);
-    for ihist in histout.keys():
-        histout[ihist].Sumw2()
-        histout[ihist].SetFillColor(groupList[ihist]['fillcolor'])
-        histout[ihist].SetFillStyle(groupList[ihist]['fillstyle'])
-        histout[ihist].SetLineColor(groupList[ihist]['linecolor'])
-        histout[ihist].SetLineStyle(groupList[ihist]['linestyle'])
-        
-    return histout
+    return applyAction(histList,groupList)
 pass
 
 def draw(hist, data, back, sign, snorm=1, ratio=0, poisson=True, log=False):
