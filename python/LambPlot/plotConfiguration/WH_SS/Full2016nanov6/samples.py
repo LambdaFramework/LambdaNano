@@ -34,8 +34,6 @@ DataRun = [
 ]
 
 DataSets = ['MuonEG','SingleMuon','SingleElectron','DoubleMuon', 'DoubleEG']
-#DataSets = [ 'SingleMuon' , 'SingleElectron' , 'DoubleMuon' , 'DoubleEG' ]
-#DataSets = [ 'SingleMuon' , 'SingleElectron' , 'DoubleMuon' , 'DoubleEG' ]
 
 DataTrig = {
     'MuonEG'         : ' Trigger_ElMu' ,

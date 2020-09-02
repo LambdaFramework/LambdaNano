@@ -11,6 +11,7 @@ from ROOT import TLegend, TLatex, TText, TLine, TBox
 from ROOT.std import vector
 import PhysicsTools.NanoAODTools.LambPlot.Utils.color as col
 import PhysicsTools.NanoAODTools.LambPlot.scripts.whss as plt
+from collections import OrderedDict
 
 #########################################
 samples = plt.cfg.getModule('samples')
@@ -92,7 +93,7 @@ pass
 
 def applyAction_( histList ):
     
-    hLists={}
+    hLists=OrderedDict()
     for igroup in histList.keys():
         print "igroup : ", igroup
         hLists[igroup]={}
@@ -131,7 +132,7 @@ def sumHist(listin,group):
 pass
 
 def applyAction(histList,groupList):
-    histout={}
+    histout=OrderedDict()
     for ihist in histList:
         histout[ihist] = sumHist(flatten(histList[ihist]),ihist)
         histout[ihist].Sumw2()
@@ -147,7 +148,7 @@ def ProjectDraw( var, cut, Lumi, samplelist, pd ):
     plt.cfg.register(samplelist)
     groupList = plt.cfg.getGroupPlot()
     
-    histList={}
+    histList=OrderedDict()
     VAR = var
     # remove extra space
     CUT = ' '.join(filter( None , selection[cut].split(" ") ))
@@ -239,7 +240,7 @@ def draw(hist, data, back, sign, snorm=1, ratio=0, poisson=True, log=False):
     for i, s in enumerate(sign):
         if 'sublabel' in groupList[s]: n+=1
         if 'subsublabel' in groupList[s]: n+=1
-    leg = TLegend(0.7, 0.9-0.05*n, 0.95, 0.9)
+    leg = TLegend(0.7, 0.9-0.05*n, 0.95, 0.9) ; #leg.SetNColumns(3)
     leg.SetBorderSize(0)
     leg.SetFillStyle(0) #1001
     leg.SetFillColor(0)
@@ -282,7 +283,7 @@ def draw(hist, data, back, sign, snorm=1, ratio=0, poisson=True, log=False):
         if groupList[s]['plot']:
             hist[s].DrawNormalized("SAME, HIST", hist[s].Integral()*snorm) # signals
 
-    bkg.GetYaxis().SetTitleOffset(bkg.GetYaxis().GetTitleOffset()*1) #1.075
+    #bkg.GetYaxis().SetTitleOffset(bkg.GetYaxis().GetTitleOffset()*1.075) #1.075
 
     if 'DATA' in hist:
         #bkg.SetMaximum((3.0 if log else 1.5)*max(bkg.GetMaximum(), hist['DATA'].GetBinContent(hist['DATA'].GetMaximumBin())+hist['DATA'].GetBinError(hist['DATA'].GetMaximumBin())))
@@ -303,11 +304,13 @@ def draw(hist, data, back, sign, snorm=1, ratio=0, poisson=True, log=False):
 
     setHistStyle(bkg, 1.2 if ratio else 1.1)
     setHistStyle( hist['BkgSum'] , 1.2 if ratio else 1.1)
-
+    
     if ratio:
+        #err.GetXaxis().SetTitleOffset(err.GetXaxis().GetTitleOffset()*1)
         c1.cd(2)
         err = hist['BkgSum'].Clone("BkgErr;")
         err.SetTitle("")
+        #err.GetXaxis().SetTitle("give a fuck")
         err.GetYaxis().SetTitle("Data / Bkg")
         for i in range(1, err.GetNbinsX()+1):
             err.SetBinContent(i, 1)
@@ -318,8 +321,9 @@ def draw(hist, data, back, sign, snorm=1, ratio=0, poisson=True, log=False):
         errLine.SetLineWidth(1)
         errLine.SetFillStyle(0)
         errLine.SetLineColor(1)
-        #err.GetXaxis().SetLabelOffset(err.GetXaxis().GetLabelOffset()*5)
-        #err.GetXaxis().SetTitleOffset(err.GetXaxis().GetTitleOffset()*2)
+        #err.GetXaxis().SetLabelOffset(err.GetXaxis().GetLabelOffset()*1)
+        #err.GetXaxis().SetTitleOffset(err.GetXaxis().GetTitleOffset()*1)
+        #err.GetYaxis().SetTitleOffset(err.GetYaxis().GetTitleOffset()*1)
         err.Draw("E2")
         errLine.Draw("SAME, HIST")
         if 'DATA' in hist:
@@ -334,7 +338,7 @@ def draw(hist, data, back, sign, snorm=1, ratio=0, poisson=True, log=False):
             if len(err.GetXaxis().GetBinLabel(1))==0: # Bin labels: not a ordinary plot
                 drawRatio( hist['DATA'] , hist['BkgSum'] )
                 drawKolmogorov( hist['DATA'] , hist['BkgSum'] )
-                drawRelativeYield( hist['DATA'] , hist['BkgSum'] )
+                #drawRelativeYield( hist['DATA'] , hist['BkgSum'] )
         else: res = None
     c1.Update()
 
@@ -488,16 +492,16 @@ def setBotPad(BotPad, r=4):
 pass
 
 def setHistStyle(hist, r=1.1):
-    hist.GetXaxis().SetTitleSize(hist.GetXaxis().GetTitleSize()*r*r)
-    hist.GetYaxis().SetTitleSize(hist.GetYaxis().GetTitleSize()*r*r)
+    hist.GetXaxis().SetTitleSize(hist.GetXaxis().GetTitleSize()*r)
+    hist.GetYaxis().SetTitleSize(hist.GetYaxis().GetTitleSize()*r)
     hist.GetXaxis().SetLabelSize(hist.GetXaxis().GetLabelSize()*r)
     hist.GetYaxis().SetLabelSize(hist.GetYaxis().GetLabelSize()*r)
     hist.GetXaxis().SetLabelOffset(hist.GetXaxis().GetLabelOffset()*r*r*r*r)
-    hist.GetXaxis().SetTitleOffset(hist.GetXaxis().GetTitleOffset()*r)
-    hist.GetYaxis().SetTitleOffset(hist.GetYaxis().GetTitleOffset())
+    #hist.GetXaxis().SetTitleOffset(hist.GetXaxis().GetTitleOffset())
+    #hist.GetYaxis().SetTitleOffset(hist.GetYaxis().GetTitleOffset()) # HERE
     #if hist.GetXaxis().GetTitle().find("GeV") != -1: # and not hist.GetXaxis().IsVariableBinSize()
-    div = (hist.GetXaxis().GetXmax() - hist.GetXaxis().GetXmin()) / hist.GetXaxis().GetNbins() # here
-    hist.GetYaxis().SetTitle("Events / %.1f GeV" % div)
+    #div = (hist.GetXaxis().GetXmax() - hist.GetXaxis().GetXmin()) / hist.GetXaxis().GetNbins() # here
+    #hist.GetYaxis().SetTitle("Events / %.1f GeV" % div)
 pass
 
 def setBotStyle(h, r=4, fixRange=True):
@@ -507,7 +511,7 @@ def setBotStyle(h, r=4, fixRange=True):
     h.GetYaxis().SetLabelSize(h.GetYaxis().GetLabelSize()*(r-1));
     h.GetYaxis().SetNdivisions(505);
     h.GetYaxis().SetTitleSize(h.GetYaxis().GetTitleSize()*(r-1));
-    h.GetYaxis().SetTitleOffset(h.GetYaxis().GetTitleOffset()/(r-1));
+    #h.GetYaxis().SetTitleOffset(h.GetYaxis().GetTitleOffset()/(r-1)); #here
     if fixRange:
         h.GetYaxis().SetRangeUser(0., 2.)
         for i in range(1, h.GetNbinsX()+1):

@@ -27,8 +27,8 @@ cuts['dummy'] = cuts['OSmumu']
 #&& mll>15 \
 #'
 
-# without isolation cuts it capture tau decay
-cuts['OSemu-showoff'] = 'Sum(CleanJet_pt>30)>=2 && nLepton>=2 && ((Lepton_pdgId[0]*Lepton_pdgId[1]==13*-11)||(Lepton_pdgId[0]*Lepton_pdgId[1]==-13*11)) \
+# without isolation cuts it capture tau decay and remember to remove bveto
+cuts['OSemu-showoff'] = 'Sum(CleanJet_pt>30)>=2 && nLepton>=2 && isbVeto && ((Lepton_pdgId[0]*Lepton_pdgId[1]==13*-11)||(Lepton_pdgId[0]*Lepton_pdgId[1]==-13*11)) \
 && Electron_pt[Lepton_electronIdx[0]]>30 && Muon_pt[Lepton_muonIdx[1]]>20 \
 && mll>15 \
 '
