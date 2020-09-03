@@ -283,14 +283,14 @@ signals.append('WH_htt')
 ###########################################
 ################## FAKE ###################
 ###########################################
-'''
+
 samples['Fake'] = {
     'name': [],
-    'weight': 'fakeW' ,#'METFilter_DATA*fakeW',
+    'weight': 'METFilter_DATA*fakeW2l_ele_mva_90p_Iso2016_mu_cut_Tight80x',
     'isData': ['all'],
     'FilesPerJob': 50
 }
-'''
+
 
 samples['Fake_em'] = {
     'name': [],
@@ -324,6 +324,7 @@ for _, sd in DataRun:
         samples['Fake_em']['name'].extend(files)
         samples['Fake_mm']['name'].extend(files)
         samples['Fake_ee']['name'].extend(files)
+        samples['Fake']['name'].extend(files)
 
 for _, sd in DataRun:
     for pd in DataSets:
@@ -332,7 +333,7 @@ for _, sd in DataRun:
         addSampleWeight( samples , 'Fake_em' , pd_name , DataTrig[pd]  )
         addSampleWeight( samples , 'Fake_mm' , pd_name , DataTrig[pd]  )
         addSampleWeight( samples , 'Fake_ee' , pd_name , DataTrig[pd]  )
-
+        addSampleWeight( samples , 'Fake'    , pd_name , DataTrig[pd]  )
 ###########################################
 ################## DATA ###################
 ###########################################

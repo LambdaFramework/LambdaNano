@@ -22,12 +22,19 @@ groupPlot['WW']  = {
                   'samples'  : ['WW', 'ggWW', 'WWewk']
               }
 
-groupPlot['Fake']  = {  
+groupPlot['Fakes']  = {  
                   'nameHR' : 'Non-prompt',
                   'isSignal' : 0,
                   'color': 921,    # kGray + 1
                   #'samples'  : ['Fake']
                   'samples'  : ['Fake_mm','Fake_em']
+              }
+
+groupPlot['Fake']  = {
+                  'nameHR' : 'Non-prompt',
+                  'isSignal' : 0,
+                  'color': 921,    # kGray + 1
+                  'samples'  : ['Fake']
               }
 
 groupPlot['DY']  = {  

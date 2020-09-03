@@ -10,8 +10,8 @@ variables['events']  = {   'name': '1',
                        }
 
 variables['mll'] = { 'name' : 'mll' ,
-                     'range' : ( 40 , 0. , 200. ) ,
-                     'xaxis' : 'mll [GeV/c2]',
+                     'range' : ( 100 , 0. , 500. ) ,
+                     'xaxis' : 'mll [GeV]',
                      'fold' : 3
 }
 

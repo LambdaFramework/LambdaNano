@@ -34,7 +34,7 @@ parser.add_option("-d", "--debug", action="store_true", default=False, dest="deb
 #parser.add_option("-u", "--User_cutflow", action="store_true", dest="cutflow", default=False)
 parser.add_option("-V", "--PrintVar", action="store_true", dest="printVar", default=False)
 #parser.add_option("-m", "--multiprocessing", action="store_true", dest="multiprocessing", default=False)
-parser.add_option("-l", "--logy", action="store_true", dest="logy", default=True)
+parser.add_option("-l", "--logy", action="store_true", dest="logy", default=False)
 parser.add_option("-y", "--year", action="store", type="string", dest="year", default="2016")
 (options, args) = parser.parse_args()
 if options.bash: gROOT.SetBatch(True)
@@ -57,15 +57,20 @@ base=os.environ['NANOAODTOOLS_BASE']
 PLOTDIR     = "%s/plots/Run2_%s" %( os.getcwd() , options.year )
 LUMI        = cfg.lumi() #41860. #35800. # pb-1 Inquire via brilcalc lumi --begin 272007 --end 275376 -u /pb #https://twiki.cern.ch/twiki/bin/viewauth/CMS/PdmV2016Analysis
 data        = [ 'DATA' ]
-sign        = [ x for x in groupPlot if groupPlot[x]['isSignal'] == 1 ]
-back        = [ x for x in groupPlot if groupPlot[x]['isSignal'] == 0 ] if len(options.backgrounds)==0 else options.backgrounds
-#back.remove("Fake")
+#sign        = [ x for x in groupPlot if groupPlot[x]['isSignal'] == 1 ]
+sign = ['Higgs']
+#back        = [ x for x in groupPlot if groupPlot[x]['isSignal'] == 0 ] if len(options.backgrounds)==0 else options.backgrounds
+if len(options.backgrounds)==0:
+    back = [ 'Fake' , 'WZ' , 'ZZ' , 'Vg', 'VgS' , 'VVV' , 'WW' , 'top' , 'DY' , 'Higgs' ]
+    #back.remove("Fake")
+else:
+    back = options.backgrounds
 BLIND       = options.unblind
 SIGNAL      = 1. #500. # rescaling factor 1/35800
 RATIO       = 4 if not BLIND else 0 #4 # default=4 # 0: No ratio plot; !=0: ratio between the top and bottom pads
 POISSON     = False
 
-print "BLIND: ", BLIND
+print "logy : ", options.logy
 
 def plot(var, cut, norm=False):
 
@@ -115,19 +120,25 @@ def plot(var, cut, norm=False):
         out[0].cd(1)
         drawCMS(LUMI, "Simulation")
         drawRegion(cut)
-
+        
+    out[0].Modified()
     out[0].Update()
 
     if gROOT.IsBatch():
-            out[0].Print(pathname+"/"+var.replace('.', '_')+".png")
-            out[0].Print(pathname+"/"+var.replace('.', '_')+".pdf")
+            out[0].Print(pathname+"/"+var.replace('.', '_')+"_lin.png")
+            out[0].Print(pathname+"/"+var.replace('.', '_')+"_lin.pdf")
+            # log
+            out[0].cd(1).SetLogy()
+            out[0].Print(pathname+"/"+var.replace('.', '_')+"_logy.png")
+            out[0].Print(pathname+"/"+var.replace('.', '_')+"_logy.pdf")
+            
     else:
         out[0].Draw()
 
     #if options.all:
-    print col.WARNING+"PURGE OBJECTS IN MEMORY"+col.ENDC
-    for process in Histlist:
-        Histlist[process].Delete()
+    #print col.WARNING+"PURGE OBJECTS IN MEMORY"+col.ENDC
+    #for process in Histlist:
+    #    Histlist[process].Delete()
     pass
 ###########################################
 
@@ -207,9 +218,9 @@ def plot_signal( var, cut, norm=False ):
         c1.Print(pathname+"/"+var.replace('.', '_')+".png")
         c1.Print(pathname+"/"+var.replace('.', '_')+".pdf")
         
-    print col.WARNING+"PURGE OBJECTS IN MEMORY"+col.ENDC
-    for process in histlist:
-        histlist[process].Delete()
+    #print col.WARNING+"PURGE OBJECTS IN MEMORY"+col.ENDC
+    #for process in histlist:
+    #    histlist[process].Delete()
     pass
 
 if __name__ == "__main__":

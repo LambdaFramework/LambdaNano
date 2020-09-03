@@ -233,6 +233,7 @@ def draw(hist, data, back, sign, snorm=1, ratio=0, poisson=True, log=False):
     # Create stack
     #bkg = THStack("Bkg", ";"+hist['BkgSum'].GetXaxis().GetTitle()+";Events")
     bkg = THStack("Bkg", ";"+hist['BkgSum'].GetXaxis().GetTitle()+";"+hist['BkgSum'].GetYaxis().GetTitle())
+    
     for i, s in enumerate(back): bkg.Add(hist[s])
 
     # Legend
@@ -293,8 +294,8 @@ def draw(hist, data, back, sign, snorm=1, ratio=0, poisson=True, log=False):
         bkg.SetMaximum(bkg.GetMaximum()*(3.0 if log else 1.5)) #2.5 ; 1.2
         bkg.SetMinimum(5.e-1 if log else 0.)
     if not log:
-        bkg.GetYaxis().SetNoExponent(1)
-        #bkg.GetYaxis().SetNoExponent(bkg.GetMaximum() < 1.e4)
+        #bkg.GetYaxis().SetNoExponent(1)
+        bkg.GetYaxis().SetNoExponent(bkg.GetMaximum() < 1.e4)
     #    bkg.GetYaxis().SetMoreLogLabels(True)
 
     #set range on stack
@@ -310,7 +311,6 @@ def draw(hist, data, back, sign, snorm=1, ratio=0, poisson=True, log=False):
         c1.cd(2)
         err = hist['BkgSum'].Clone("BkgErr;")
         err.SetTitle("")
-        #err.GetXaxis().SetTitle("give a fuck")
         err.GetYaxis().SetTitle("Data / Bkg")
         for i in range(1, err.GetNbinsX()+1):
             err.SetBinContent(i, 1)
@@ -338,6 +338,7 @@ def draw(hist, data, back, sign, snorm=1, ratio=0, poisson=True, log=False):
             if len(err.GetXaxis().GetBinLabel(1))==0: # Bin labels: not a ordinary plot
                 drawRatio( hist['DATA'] , hist['BkgSum'] )
                 drawKolmogorov( hist['DATA'] , hist['BkgSum'] )
+                if len(sign)!=0: drawSB( hist['BkgSum'] , hist[sign[0]] )
                 #drawRelativeYield( hist['DATA'] , hist['BkgSum'] )
         else: res = None
     c1.Update()
@@ -377,29 +378,30 @@ def drawKolmogorov(data, bkg):
     latex.DrawLatex(0.45, 0.85, "#chi^{2}/ndf = %.2f,   K-S = %.3f" % (data.Chi2Test(bkg, "CHI2/NDF"), data.KolmogorovTest(bkg)))
 pass
 
-def drawRelativeYield(data,bkg):
+def drawSB(bkg,sig):
     latex = TLatex()
     latex.SetNDC()
     latex.SetTextColor(1)
     latex.SetTextFont(62)
     latex.SetTextSize(0.08)
-    latex.DrawLatex(0.75, 0.85, "rel. Yield= %.3f" % ((data.Integral()/bkg.Integral())*100) )
+    # note signal already added as background
+    latex.DrawLatex(0.75, 0.85, "S/sqrt(S+B)= %.3f" % ( ( sig.Integral() / math.sqrt( bkg.Integral() ) ) if sig.Integral() > 0. else 0. ) )
 pass
 
 def printTable(hist , pathout , txtname , sign=[] ):
     
-    groupList = plt.cfg.getGroupPlot()
+    #groupList = plt.cfg.getGroupPlot()
 
     f = open( '%s/%s' %(pathout,txtname) ,'w')
     
-    samplelist = [x for x in hist.keys() if not 'DATA' in x and not 'BkgSum' in x and not x in sign and not x=="files"]
+    #samplelist = [x for x in hist.keys() if not 'DATA' in x and not 'BkgSum' in x and not x in sign and not x=="files"]
+    samplelist = [ x for x in hist.keys() if not 'DATA' in x and not 'BkgSum' in x ]
     print >>f, txtname
     print >>f, "-"*80
     print >>f, "Sample                  Events          Entries         %"
     print >>f, "-"*80
-    ## data and backgrounds
+    ## data and backgrounds 
     for i, s in enumerate(['DATA']+samplelist+['BkgSum'] if 'DATA' in hist.keys() else samplelist+['BkgSum']):
-        #if i == len(samplelist): print >>f, "-"*80
         if s=="BkgSum" : print >>f, "-"*80
         print >>f, "%-20s" % s, "\t%-10.2f" % hist[s].Integral(), "\t%-10.0f" % (hist[s].GetEntries()-2), "\t%-10.2f" % (100.*hist[s].Integral()/hist['BkgSum'].Integral()) if hist['BkgSum'].Integral() > 0 else 0
         if s=="DATA" : print >>f, "-"*80
@@ -407,9 +409,9 @@ def printTable(hist , pathout , txtname , sign=[] ):
     print >>f, "-"*80
     ## signal
     for i, s in enumerate(sign):
-        demonimator = math.sqrt( float(hist['BkgSum'].Integral()) + float(hist[s].Integral()) )
-        if not groupList[s]['plot']: continue
-        print >>f, "%-20s" % s, "\t%-10.2f" % hist[s].Integral(), "\t%-10.0f" % (hist[s].GetEntries()-2), "\t%-10.2f (S/sqrt(S+BkgSum))" % ( float(hist[s].Integral()) / demonimator if hist[s].Integral() > 0 else 0 ) 
+        demonimator = math.sqrt( hist['BkgSum'].Integral() ) # sign is added as backgrounds
+        #if not groupList[s]['plot']: continue
+        print >>f, "%-20s" % s, "\t%-10.2f" % hist[s].Integral(), "\t%-10.0f" % (hist[s].GetEntries()-2), "\t%-10.2f (S/sqrt(S+B))" % ( float(hist[s].Integral()) / demonimator if hist[s].Integral() > 0 else 0 ) 
     print >>f, "-"*80
 
     f.close()

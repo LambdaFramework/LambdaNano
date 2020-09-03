@@ -13,7 +13,7 @@ cuts['OSee'] = 'nCleanJet>=2 && nLepton>=2 && isbVeto && ((Lepton_pdgId[0]*Lepto
 && mll>30 && ht>100 \
 '
 
-cuts['OSmumu'] = 'nCleanJet>=2 && nLepton>=2 && ((Lepton_pdgId[0]*Lepton_pdgId[1]==13*-13)||(Lepton_pdgId[0]*Lepton_pdgId[1]==-13*13)) \
+cuts['OSmumu'] = 'nCleanJet>=2 && nLepton>=2 && isbVeto && ((Lepton_pdgId[0]*Lepton_pdgId[1]==13*-13)||(Lepton_pdgId[0]*Lepton_pdgId[1]==-13*13)) \
 && Muon_pt[Lepton_muonIdx[0]]>25 && Muon_pt[Lepton_muonIdx[1]]>20 \
 && Muon_pfRelIso03_all[Lepton_muonIdx[0]]<0.15 && Muon_pfRelIso03_all[Lepton_muonIdx[1]]<0.15 \
 && mll>30 && ht>100 \
