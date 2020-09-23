@@ -26,10 +26,10 @@ aliases['LepWPCut'] = {
     'expr' : 'LepCut2l__ele_mva_90p_Iso2016__mu_cut_Tight80x',
 }
 
-#aliases['LepWPCut'] = {
-#    'expr': 'LepCut2l__ele_mva_90p_Iso2016__mu_cut_Tight80x*( (abs(Lepton_pdgId[0])==11 || Muon_mvaTTH[Lepton_muonIdx[0]]>0.8) && (abs(Lepton_pdgId[1])==11 || Muon_mvaTTH[Lepton_muonIdx[1]]>0.8) && (abs(Lepton_pdgId[0])==13 || Electron_mvaTTH[Lepton_electronIdx[0]]>0.70) && (abs(Lepton_pdgId[1])==13 || Electron_mvaTTH[Lepton_electronIdx[1]]>0.70))',
-#    'samples': mc + ['DATA']
-#}
+aliases['LepWPCut_tthmva'] = {
+    'expr': 'LepCut2l__ele_mva_90p_Iso2016__mu_cut_Tight80x*( (abs(Lepton_pdgId[0])==11 || Muon_mvaTTH[Lepton_muonIdx[0]]>0.8) && (abs(Lepton_pdgId[1])==11 || Muon_mvaTTH[Lepton_muonIdx[1]]>0.8) && (abs(Lepton_pdgId[0])==13 || Electron_mvaTTH[Lepton_electronIdx[0]]>0.70) && (abs(Lepton_pdgId[1])==13 || Electron_mvaTTH[Lepton_electronIdx[1]]>0.70))',
+    'samples': mc + ['DATA']
+}
 
 #aliases['gstarLow'] = {
 #    'expr': 'Gen_ZGstar_mass >0 && Gen_ZGstar_mass < 4',
@@ -304,6 +304,11 @@ aliases['SFweight'] = {
     #'expr' : 'SFweight2l*ttHMVA_SF_2l*LepWPCut*(isbVeto*vbVetoSF)*PrefireWeight*PUJetIdSF',
     'expr' : 'SFweight2l*LepSF2l__ele_mva_90p_Iso2016__mu_cut_Tight80x*LepWPCut*(isbVeto*vbVetoSF)*PrefireWeight*PUJetIdSF',
     #'expr' : 'SFweight2l*LepSF2l__ele_mva_90p_Iso2016__mu_cut_Tight80x*LepWPCut*PrefireWeight*PUJetIdSF',
+    'samples' : mc
+}
+
+aliases['SFweight_tthmva'] = {
+    'expr' : 'SFweight2l*ttHMVA_SF_2l*LepWPCut_tthmva*(isbVeto*vbVetoSF)*PrefireWeight*PUJetIdSF',
     'samples' : mc
 }
 

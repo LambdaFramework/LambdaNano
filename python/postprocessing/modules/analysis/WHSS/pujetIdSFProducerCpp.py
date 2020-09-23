@@ -32,8 +32,7 @@ class pujetIdSFProducerCpp(Module):
         self.initReaders(inputTree) # initReaders must be called in beginFile
         self.out = wrappedOutputTree
         self.out.branch("PUJetIdSF",  "F");
-        if any (x in inputFile.GetName() for x in ['SingleMuon','SingleElectron','DoubleMuon']):
-            print "Looking at DATA"
+        if any (x in inputFile.GetName() for x in [ 'SingleMuon' , 'SingleElectron' , 'DoubleMuon' , 'DoubleEG' , 'MuonEG' , 'EGamma' ]):
             self.isMC = False
         pass
         

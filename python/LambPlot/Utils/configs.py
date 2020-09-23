@@ -1,10 +1,5 @@
 from PhysicsTools.NanoAODTools.LambPlot.Utils.color import *
 
-#from PhysicsTools.NanoAODTools.LambPlot.plotConfiguration.WH_SS.Full2016nanov6.samples import samples
-#from PhysicsTools.NanoAODTools.LambPlot.plotConfiguration.WH_SS.Full2016nanov6.plot import groupPlot , plot
-
-#from PhysicsTools.NanoAODTools.postprocessing.modules.analysis.datasets import *
-
 import os
 import importlib
 

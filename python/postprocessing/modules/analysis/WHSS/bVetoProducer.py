@@ -5,8 +5,9 @@ ROOT.PyConfig.IgnoreCommandLineOptions = True
 from PhysicsTools.NanoAODTools.postprocessing.framework.datamodel import Collection 
 from PhysicsTools.NanoAODTools.postprocessing.framework.eventloop import Module
 
-class bVeto_Producer(Module):
-    def __init__( self, jetSelection ):
+class bVetoProducer(Module):
+    def __init__( self , year , jetSelection = lambda x : x.pt > 20 and abs(x.eta) < 2.5 ):
+        self.year = year
         self.jetSel  = jetSelection
         self.isMC = True
         pass
@@ -18,39 +19,48 @@ class bVeto_Producer(Module):
         self.out = wrappedOutputTree
         self.out.branch( "isbVeto" , "I" )
         self.out.branch( "vbVetoSF" , "F" )
-        if any (x in inputFile.GetName() for x in [ 'SingleMuon' , 'SingleElectron' , 'DoubleMuon' , 'DoubleEG' , 'MuonEG' ]):
-            print "Looking at DATA"
+        if any (x in inputFile.GetName() for x in [ 'SingleMuon' , 'SingleElectron' , 'DoubleMuon' , 'DoubleEG' , 'MuonEG' , 'EGamma' ]):
             self.isMC = False    
         pass
     def endFile(self, inputFile, outputFile, inputTree, wrappedOutputTree):
         pass
     def analyze(self, event):
         """process event, return True (go to next module) or False (fail, go to next event)"""
-        #if not self.isMC : return True
         
         cleanjets = Collection(event, "CleanJet")
+
+        bWP={
+            '2016' : 0.1522 ,
+            '2017' : 0.1522 ,
+            '2018' : 0.1241
+        }
+
+        bJet_cands = filter( self.jetSel , cleanjets)
+        nbveto=0 ; btagSF=1. ; bReqSF=1.
+        zerojet = True
+        if len(bJet_cands)!=0 :
+            zerojet = True if list(bJet_cands)[0].pt < 30. else False
         
-        #nbveto = len(filter( lambda y : event.Jet_btagDeepB[y.jetIdx] > 0.1522  , filter( self.jetSel , cleanjets )))
-        nbveto=0
-        #btagSF=1.
-        for ijet in filter( self.jetSel , cleanjets) :
+        for ijet in bJet_cands :
             jetIdx = ijet.jetIdx
             if jetIdx < 0 :
                 print("ijet.jetIdx < 0")
                 continue;
-            if event.Jet_btagDeepB[jetIdx] > 0.1522: nbveto+=1
-            #btagSF = ROOT.TMath.Log(event.Jet_btagSF_shape[jetIdx])
-            
-        btagSF = sum( map(lambda y : ROOT.TMath.Log(event.Jet_btagSF_shape[y.jetIdx]) , filter( self.jetSel , cleanjets ))) if self.isMC else 0.
+            if event.Jet_btagDeepB[jetIdx] > bWP[self.year]: nbveto+=1
+
+        btagSF = sum( map(lambda y : ROOT.TMath.Log(event.Jet_btagSF_shape[y.jetIdx]) , bJet_cands ) ) if self.isMC else 1.
+
+        #if self.year=='2017':
+        #    bjcands = filter( lambda x : x.pt > 30 and abs(x.eta)<2.5 , cleanjets )
+        #    bReqSF = sum( map(lambda y : ROOT.TMath.Log(event.Jet_btagSF_shape[y.jetIdx]) , bjcands ) ) if self.isMC else 1.
         
         self.out.fillBranch( "isbVeto" , 1 if nbveto == 0 else 0 )
         self.out.fillBranch( "vbVetoSF" , ROOT.TMath.Exp(btagSF) )
 
-        # preselection
-        #return True if nbveto == 0 else False;
         return True
     pass
 
-bVetoer = lambda : bVeto_Producer(
-    jetSelection = lambda x : x.pt > 20 and abs(x.eta) < 2.5
-)
+#bVetoer = lambda : bVetoProducer(
+#    year = None ,
+#    jetSelection = lambda x : x.pt > 20 and abs(x.eta) < 2.5
+#)

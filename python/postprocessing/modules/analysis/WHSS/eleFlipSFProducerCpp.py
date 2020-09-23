@@ -4,20 +4,20 @@ ROOT.PyConfig.IgnoreCommandLineOptions = True
 
 from PhysicsTools.NanoAODTools.postprocessing.framework.eventloop import Module
 
-class lepSFProducerCpp(Module):
+class eleFlipSFProducerCpp(Module):
     def __init__(self , year , nlep , sf ):
-        if "/lepSFProducerCpp_cc.so" not in ROOT.gSystem.GetLibraries():
-            print "Load C++ lepSFProducerCpp worker module"
+        if "/eleFlipSFProducerCpp_cc.so" not in ROOT.gSystem.GetLibraries():
+            print "Load C++ eleFlipSFProducerCpp worker module"
             base = os.getenv("NANOAODTOOLS_BASE")
             if base:
-                ROOT.gROOT.ProcessLine(".L %s/src/lepSFProducerCpp.cc+O"%base)
+                ROOT.gROOT.ProcessLine(".L %s/src/eleFlipSFProducerCpp.cc+O"%base)
             else:
                 base = "%s/src/PhysicsTools/NanoAODTools"%os.getenv("CMSSW_BASE")
                 ROOT.gSystem.Load("libPhysicsToolsNanoAODTools.so")
-                ROOT.gROOT.ProcessLine(".L %s/interface/lepSFProducerCpp.h"%base)
+                ROOT.gROOT.ProcessLine(".L %s/interface/eleFlipSFProducerCpp.h"%base)
                 
         # Initialization
-        self.worker = ROOT.lepSFProducerCpp( year , nlep , sf )
+        self.worker = ROOT.eleFlipSFProducerCpp( year , nlep , sf )
         
         self.isMC = True
         pass
@@ -28,7 +28,7 @@ class lepSFProducerCpp(Module):
     def beginFile(self, inputFile, outputFile, inputTree, wrappedOutputTree):
         self.initReaders(inputTree) # initReaders must be called in beginFile
         self.out = wrappedOutputTree
-        self.out.branch("ttHMVA_SF_2l",  "F");
+        self.out.branch("flip_ele_SF_2l",  "F");
         if any (x in inputFile.GetName() for x in [ 'SingleMuon' , 'SingleElectron' , 'DoubleMuon' , 'DoubleEG' , 'MuonEG' , 'EGamma' ]):
             self.isMC = False
         pass
@@ -41,11 +41,7 @@ class lepSFProducerCpp(Module):
             tree.valueReader("nLepton") ,
             tree.arrayReader("Lepton_pt") ,
             tree.arrayReader("Lepton_eta") ,
-            tree.arrayReader("Lepton_pdgId") ,
-            tree.valueReader("run_period") ,
-            tree.arrayReader("Lepton_RecoSF") ,
-            tree.arrayReader("Lepton_RecoSF_Up") ,
-            tree.arrayReader("Lepton_RecoSF_Down")
+            tree.arrayReader("Lepton_pdgId")
         ) 
         self._ttreereaderversion = tree._ttreereaderversion # self._ttreereaderversion must be set AFTER all calls to tree.valueReader or tree.arrayReader
 
@@ -59,7 +55,7 @@ class lepSFProducerCpp(Module):
         
         output = self.worker.evaluate()
         
-        self.out.fillBranch("ttHMVA_SF_2l", output )
+        self.out.fillBranch("flip_ele_SF_2l", output )
         return True
 
 # define modules using the syntax 'name = lambda : constructor' to avoid having them loaded when not needed

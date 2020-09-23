@@ -1,6 +1,7 @@
 # variables
+# 0 = not fold (default), 1 = fold underflowbin, 2 = fold overflow bin, 3 = fold underflow and overflow
 
-#variables = {}
+variables = {}
     
 variables['events']  = {   'name': '1',      
                         'range' : (1,0,2),  
@@ -8,7 +9,147 @@ variables['events']  = {   'name': '1',
                         'fold' : 3
                        }
 
+variables['mll'] = { 'name' : 'mll' ,
+                     'range' : ( 100 , 0. , 500. ) ,
+                     'xaxis' : 'mll [GeV]',
+                     'fold' : 3
+}
+
+#############################
+variables['Ele1_dz'] = { 'name' : 'Electron_dz[Lepton_electronIdx[0]]' ,
+                         'range' : ( 100  , -0.05 , 0.05 ), # 10 micron in bin size
+                         'xaxis' : 'Lepton1 electron dz [cm]',
+                         'fold' : 3
+}
+
+variables['Ele2_dz'] = { 'name' : 'Electron_dz[Lepton_electronIdx[1]]' ,
+                         'range' : ( 100  , -0.05 , 0.05 ),
+                         'xaxis' : 'Lepton2 electron dz [cm]',
+                         'fold' : 3
+}
+
+variables['Ele1_dxy'] = { 'name' : 'Electron_dxy[Lepton_electronIdx[0]]' ,
+                          'range' : ( 100  , -0.05 , 0.05 ),
+                         'xaxis' : 'Lepton1 electron dxy [cm]',
+                         'fold' : 3
+}
+
+variables['Ele2_dxy'] = { 'name' : 'Electron_dxy[Lepton_electronIdx[1]]' ,
+                          'range' : ( 100  , -0.05 , 0.05 ),
+                         'xaxis' : 'Lepton2 electron dxy [cm]',
+                         'fold' : 3
+}
+
+
+variables['Ele1_sip3d'] = { 'name' : 'Electron_sip3d[Lepton_electronIdx[0]]' ,
+                          'range' : ( 100 , 0 , 10 ),
+                         'xaxis' : 'Lepton1 electron sip3d',
+                         'fold' : 3
+}
+
+variables['Ele2_sip3d'] = { 'name' : 'Electron_sip3d[Lepton_electronIdx[1]]' ,
+                          'range' : ( 100 , 0 , 10 ),
+                         'xaxis' : 'Lepton2 electron sip3d',
+                         'fold' : 3
+}
+
+variables['Ele1_pfRelIso03_all'] = { 'name' : 'Electron_pfRelIso03_all[Lepton_electronIdx[0]]' ,
+                          'range' : ( 100 , 0 , 2.5 ),
+                         'xaxis' : 'Lepton1 electron pfRelIso03',
+                         'fold' : 3
+}
+
+variables['Ele2_pfRelIso03_all'] = { 'name' : 'Electron_pfRelIso03_all[Lepton_electronIdx[1]]' ,
+                          'range' : ( 100 , 0 , 2.5 ),
+                         'xaxis' : 'Lepton2 electron pfRelIso03',
+                         'fold' : 3
+}
+
+##########################
+
+variables['Mu1_dz'] = { 'name' : 'Muon_dz[Lepton_muonIdx[0]]' ,
+                         'range' : ( 100  , -0.05 , 0.05 ),
+                         'xaxis' : 'Lepton1 muon dz [cm]',
+                         'fold' : 3
+}
+
+variables['Mu2_dz'] = { 'name' : 'Muon_dz[Lepton_muonIdx[1]]' ,
+                         'range' : ( 100  , -0.05 , 0.05 ),
+                         'xaxis' : 'Lepton2 muon dz [cm]',
+                         'fold' : 3
+}
+
+variables['Mu1_dxy'] = { 'name' : 'Muon_dxy[Lepton_muonIdx[0]]' ,
+                         'range' : ( 100  , -0.05 , 0.05 ),
+                         'xaxis' : 'Lepton1 muon dxy [cm]',
+                         'fold' : 3
+}
+
+variables['Mu2_dxy'] = { 'name' : 'Muon_dxy[Lepton_muonIdx[1]]' ,
+                         'range' : ( 100  , -0.05 , 0.05 ),
+                         'xaxis' : 'Lepton2 muon dxy [cm]',
+                         'fold' : 3
+}
+
+variables['Mu1_sip3d'] = { 'name' : 'Muon_sip3d[Lepton_muonIdx[0]]' ,
+                          'range' : ( 100 , 0 , 10 ),
+                         'xaxis' : 'Lepton1 muon sip3d',
+                         'fold' : 3
+}
+
+variables['Mu2_sip3d'] = { 'name' : 'Muon_sip3d[Lepton_muonIdx[1]]' ,
+                          'range' : ( 100 , 0 , 10 ),
+                         'xaxis' : 'Lepton2 muon sip3d',
+                         'fold' : 3
+}
+
+variables['Mu1_pfRelIso03_all'] = { 'name' : 'Muon_pfRelIso03_all[Lepton_muonIdx[0]]' ,
+                          'range' : ( 100 , 0 , 2.5 ),
+                         'xaxis' : 'Lepton1 muon pfRelIso03',
+                         'fold' : 3
+}
+
+variables['Mu2_pfRelIso03_all'] = { 'name' : 'Muon_pfRelIso03_all[Lepton_muonIdx[1]]' ,
+                          'range' : ( 100 , 0 , 2.5 ),
+                         'xaxis' : 'Lepton2 muon pfRelIso03',
+                         'fold' : 3
+}
+
+variables['Mu1_pfRelIso04_all'] = { 'name' : 'Muon_pfRelIso04_all[Lepton_muonIdx[0]]' ,
+                         'range' : ( 100 , 0 , 2.5 ),
+                         'xaxis' : 'Lepton1 muon pfRelIso04',
+                         'fold' : 3
+}
+
+variables['Mu2_pfRelIso04_all'] = { 'name' : 'Muon_pfRelIso04_all[Lepton_muonIdx[1]]' ,
+                        'range' : ( 100 , 0 , 2.5 ),
+                        'xaxis' : 'Lepton2 muon pfRelIso04',
+                        'fold' : 3
+}
+
+####################################
+
+variables['MinMjjl'] = { 'name' : 'TMath::Min(mjjL1,mjjL2)' ,
+                         #'range' : ( 40 , 0. , 200. ),
+                         'range' : ( 50 , 0. , 500. ),
+                         'xaxis' : 'Min(mjjl1,mjjl2) [GeV/c2]',
+                         'fold' : 3
+}
+
+variables['nJet'] = { 'name' : 'Sum(CleanJet_pt>30)' ,
+                        'range' : ( 15 , 0 , 15 ),
+                        'xaxis' : 'nCleanJet',
+                        'fold' : 3
+}
+
 variables['mlljj20_whss']  = {   'name': 'mlljj20_whss',
+                        #'range' : ( 40 , 0. , 200. ),
+                        'range' : ( 50 , 0. , 500. ),
+                        'xaxis' : 'mlljj20_whss [GeV]',
+			'fold' : 3
+                        }
+
+variables['mlljj20_whss_bin1']  = {   'name': 'mlljj20_whss',
                         'range' : ([60.,70.,80.,90.,100.,110.,120.,130.,140.,150.,160.,170.,180.,190.,200.,250.,300.],),
                         'xaxis' : 'mlljj20_whss [GeV]',
                         'fold' : 3
@@ -44,11 +185,11 @@ variables['ZH3l_dphilmetj']  = {  'name': 'ZH3l_dphilmetj*(CleanJet_pt[1]>30)',
                          'fold' : 3
                         }
 
-variables['WH3l_ZVeto']  = {   'name': 'WH3l_ZVeto',            #   variable name    
-                        'range' : (20,0,100),    #   variable range
-                        'xaxis' : 'WH3l_ZVeto',  #   x axis name
-                         'fold' : 0
-                        }
+#variables['WH3l_ZVeto']  = {   'name': 'WH3l_ZVeto',            #   variable name    
+#                        'range' : (20,0,100),    #   variable range
+#                        'xaxis' : 'WH3l_ZVeto',  #   x axis name
+#                         'fold' : 0
+#                        }
 
 variables['puppimet']  = {
                         'name': 'PuppiMET_pt',    
@@ -56,11 +197,11 @@ variables['puppimet']  = {
                         'xaxis' : 'pfmet [GeV]',
                         'fold'  : 3
                         }
-variables['mll']  = {   'name': 'mll',            #   variable name    
-                        'range' : (20, 40,120),    #   variable range
-                        'xaxis' : 'm_{ll} [GeV]',  #   x axis name
-                         'fold' : 0
-                        }
+#variables['mll']  = {   'name': 'mll',            #   variable name    
+#                        'range' : (20, 40,120),    #   variable range
+#                        'xaxis' : 'm_{ll} [GeV]',  #   x axis name
+#                         'fold' : 0
+#                        }
 
 variables['detall']  = {   'name': 'abs(Lepton_eta[0] - Lepton_eta[1])',            #   variable name    
                         'range' : (20,0.,10.),    #   variable range
@@ -88,13 +229,13 @@ variables['ptll']  = {   'name': 'ptll',
                         'fold' : 0
                         }
 variables['pt1']  = {   'name': 'Lepton_pt[0]',     
-                        'range' : (20,0,100),   
+                        'range' : (100,0,500),   
                         'xaxis' : 'p_{T} 1st lep',
                         'fold'  : 3                         
                         }
 
 variables['pt2']  = {   'name': 'Lepton_pt[1]',     
-                        'range' : (20,0,100),   
+                        'range' : (100,0,500),   
                          'xaxis' : 'p_{T} 2nd lep',
                         'fold'  : 3                         
                         }
@@ -113,19 +254,19 @@ variables['eta2']  = {  'name': 'Lepton_eta[1]',
 
 variables['jetpt1']  = {
                         'name': 'CleanJet_pt[0]*(CleanJet_pt[0]>30)',     
-                        'range' : (40,0,200),   
+                        'range' : (60,0,600),   
                         'xaxis' : 'p_{T} 1st jet',
                         'fold' : 2   # 0 = not fold (default), 1 = fold underflowbin, 2 = fold overflow bin, 3 = fold underflow and overflow
                         }
 
 variables['jetpt2']  = {
                         'name': 'CleanJet_pt[1]*(CleanJet_pt[1]>30)',     
-                        'range' : (40,0,200),   
+                        'range' : (60,0,600),   
                         'xaxis' : 'p_{T} 2nd jet',
                         'fold' : 0   # 0 = not fold (default), 1 = fold underflowbin, 2 = fold overflow bin, 3 = fold underflow and overflow
                         }
 
-variables['mjj']  = {  'name': 'mjj*(CleanJet_pt[1]>30)',
+variables['mjj']  = {  'name': 'mjj',
                         'range' : (50,0,400),
                         'xaxis' : 'm_{jj} [GeV]',
                          'fold' : 3
@@ -138,11 +279,6 @@ variables['puppimet']  = {
                         'fold'  : 3
                         } 
 
-variables['mll']  = {   'name': 'mll',            #   variable name    
-                        'range' : (20, 40,120),    #   variable range
-                        'xaxis' : 'm_{ll} [GeV]',  #   x axis name
-                        'fold' : 0
-                       }
 variables['detall']  = {   'name': 'abs(Lepton_eta[0] - Lepton_eta[1])',            #   variable name    
                         'range' : (20,0.,10.),    #   variable range
                         'xaxis' : 'detall',  #   x axis name
@@ -238,7 +374,7 @@ variables['dphijjmet']  = {  'name': 'dphijjmet',
                         }
 
 variables['ht']  = {  'name': 'ht',
-                        'range' : (40,0,200),
+                        'range' : (100,0,1000),
                         'xaxis' : 'ht [GeV]',
                          'fold' : 3
                         }

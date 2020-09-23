@@ -2,7 +2,7 @@
 
 
 
-# groupPlot = {}
+groupPlot = {}
 # 
 # Groups of samples to improve the plots.
 # If not defined, normal plots is used
@@ -21,13 +21,21 @@ groupPlot['WW']  = {
                   'samples'  : ['WW', 'ggWW', 'WWewk']
               }
 
-groupPlot['Fake']  = {  
+groupPlot['Fakes']  = {  
                   'nameHR' : 'Non-prompt',
                   'isSignal' : 0,
                   'color': 921,    # kGray + 1
                   #'samples'  : ['Fake']
                   'samples'  : ['Fake_mm','Fake_em']
               }
+
+groupPlot['Fake']  = {
+                  'nameHR' : 'Non-prompt',
+                  'isSignal' : 0,
+                  'color': 921,    # kGray + 1 
+                  'samples'  : ['Fake']
+              }
+
 
 groupPlot['DY']  = {  
                   'nameHR' : "DY",
@@ -94,8 +102,16 @@ groupPlot['Higgs']  = {
 		  'samples'  : ['ZH_hww', 'ggZH_hww', 'WH_hww', 'qqH_hww', 'ggH_hww','WH_htt','ZH_htt','ggH_htt','qqH_htt']
               }
 
+groupPlot['DATA'] = {
+    'nameHR' : "Data",
+    'isSignal' : 2,
+    'isData'   : 1,
+    'color'    : 1,
+    'samples'  : ['DATA']
+}
 
-#plot = {}
+
+plot = {}
 
 # keys here must match keys in samples.py    
 #     
@@ -345,6 +361,6 @@ plot['DATA']  = {
 
 
 # additional options
-
+legend={}
 legend['lumi'] = 'L = 41.5/fb'
 legend['sqrt'] = '#sqrt{s} = 13 TeV'

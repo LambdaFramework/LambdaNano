@@ -11,7 +11,6 @@ def addSampleWeight(sampleDic,key,Sample,Weight): #samples ; tag ; sample name ;
 
         ## register weights for specific process
         for i,tag in enumerate(templist): sampleDic[key]['weights'][tag] = '(1.)'
-
     sampleDic[key]['weights'][Sample] = '%s*(%s)' %( sampleDic[key]['weights'][Sample] , Weight )
     pass
 

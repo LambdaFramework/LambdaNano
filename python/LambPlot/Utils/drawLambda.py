@@ -159,7 +159,7 @@ def ProjectDraw( var, cut, Lumi, samplelist, pd ):
         if igroup == 'BkgSum' : continue;
         #if igroup in [ 'Fake', 'DATA' ] : CUT_ =  CUT.replace("isbVeto && ","")
         
-        print col.OKGREEN+ "drawLambda::GroupTag : "  , igroup + col.ENDC
+        print col.CYAN+ "drawLambda::GroupTag : "  , igroup + col.ENDC
         histList[igroup]={}
         ##sample tag
         for isample in groupList[igroup]['samples'] :
@@ -246,14 +246,14 @@ def draw(hist, data, back, sign, snorm=1, ratio=0, poisson=True, log=False):
     leg.SetFillStyle(0) #1001
     leg.SetFillColor(0)
     if len(data) > 0:
-        leg.AddEntry( hist[data[0]] , groupList[data[0]]['label'], "pl")
+        #leg.AddEntry( hist[data[0]] , groupList[data[0]]['label'], "pl")
+        leg.AddEntry( hist[data[0]] , '%s [%.1f]' %( groupList[data[0]]['label'] , hist[data[0]].Integral() ) , "pl")
     for i, s in reversed(list(enumerate(['BkgSum']+back))):
-        leg.AddEntry( hist[s] if s=='BkgSum' else hist[s] , groupList[s]['label'], "f")
+        leg.AddEntry( hist[s] if s=='BkgSum' else hist[s] , '%s [%.1f]' %( groupList[s]['label'] , hist[s].Integral() ) , "f")
     for i, s in enumerate(sign):
         if groupList[s]['plot']:
-            #leg.AddEntry(hist[s], samples[s]['label'].replace("m_{#Chi}=1 GeV", ""), "fl")
-            leg.AddEntry( hist[s] if s=='BkgSum' else hist[s] , groupList[s]['label'], "fl")
-            #leg.AddEntry(hist[s], "Scalar Mediator", "")
+            #leg.AddEntry( hist[s] if s=='BkgSum' else hist[s] , groupList[s]['label'], "fl")
+            leg.AddEntry( hist[s] if s=='BkgSum' else hist[s] , '%s [%.1f]' %( groupList[s]['label'] , hist[s].Integral() ) , "fl")
 
             #print samples[s]
             if 'sublabel' in groupList[s]:

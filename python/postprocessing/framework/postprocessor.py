@@ -132,6 +132,20 @@ class PostProcessor :
 
 	    #get input tree
 	    inTree = inFile.Get("Events")
+            if inTree.GetEntries()==0:
+                print "WARNING EMPTY TREE DETECTED FOR : ", fname
+                year=""
+                if '2016' in fname:
+                    year="2016"
+                elif '2017' in fname:
+                    year="2017"
+                elif '2018' in fname:
+                    year="2018"
+                if os.path.exists('%s/skim.log' % os.getenv("NANOAODTOOLS_BASE") ):
+                    os.system( 'echo %s >> %s/skim_%s.log' %( fname , os.getenv("NANOAODTOOLS_BASE") , year ) )
+                else:
+                    os.system( 'echo %s > %s/skim_%s.log' %( fname , os.getenv("NANOAODTOOLS_BASE") , year ) )
+                continue
 	    if inTree == None: inTree = inFile.Get("Friends")
 	    nEntries = min(inTree.GetEntries() - self.firstEntry, self.maxEntries)
 	    totEntriesRead+=nEntries
@@ -143,7 +157,7 @@ class PostProcessor :
 		    if toBeDeleted: os.unlink(ftoread)
 		continue
 	    else:
-		print 'Pre-select %d entries out of %s (%.2f%%)'%(elist.GetN() if elist else nEntries,nEntries,(elist.GetN() if elist else nEntries)/(0.01*nEntries) if nEntries else 0)
+		print 'Pre-select %d entries out of %s (%.2f%%) on root file : %s'%(elist.GetN() if elist else nEntries,nEntries,(elist.GetN() if elist else nEntries)/(0.01*nEntries) if nEntries else 0 , fname)
 		inAddFiles = []
 		inAddTrees = []
 	    for ffname in ffnames:

@@ -26,7 +26,6 @@ groupPlot['Fakes']  = {
                   'nameHR' : 'Non-prompt',
                   'isSignal' : 0,
                   'color': 921,    # kGray + 1
-                  #'samples'  : ['Fake']
                   'samples'  : ['Fake_mm','Fake_em']
               }
 

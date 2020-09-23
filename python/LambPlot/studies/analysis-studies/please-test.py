@@ -5,9 +5,8 @@ from PhysicsTools.NanoAODTools.LambPlot.plotConfiguration.WH_SS.Full2016nanov6.c
 
 base=os.environ['NANOAODTOOLS_BASE']
 
-iyear="2016"
+iyear="2017"
 ivar="nJet"
-ir="dummy"
-
+ir="OSee"
 #test
 os.system( 'python %s/python/LambPlot/scripts/whss.py -v %s -r %s -y %s -z "WZ" -z "VgS"' %( base , ivar , ir , iyear ) )

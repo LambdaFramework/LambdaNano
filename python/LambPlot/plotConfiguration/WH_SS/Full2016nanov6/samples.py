@@ -47,9 +47,13 @@ DataTrig = {
 ############ MC COMMON ##################
 #########################################
 
-# SFweight does not include btag weights
-mcCommonWeightNoMatch = 'XSWeight*SFweight*METFilter_MC'
-mcCommonWeight = 'XSWeight*SFweight*PromptGenLepMatch2l*METFilter_MC'
+# common, DEFAULT= SFweight 
+IDcutMC='SFweight_tthmva' # SFweight
+IDcutDATA='LepWPCut_tthmva' # LepWPcut
+IDcutFAKE='fakeW2l_ele_mva_90p_Iso2016_tthmva_70_mu_cut_Tight80x_tthmva_80' # fakeW2l_ele_mva_90p_Iso2016_mu_cut_Tight80x
+
+mcCommonWeightNoMatch = 'XSWeight*%s*METFilter_MC' %IDcutMC
+mcCommonWeight = 'XSWeight*%s*PromptGenLepMatch2l*METFilter_MC' %IDcutMC
 
 ###########################################
 #############  BACKGROUNDS  ###############
@@ -88,7 +92,7 @@ samples['top'] = {
     #'EventsPerJob': 100000
 }
 
-#addSampleWeight(samples,'top','TTTo2L2Nu','(topGenPt * antitopGenPt > 0.) * (TMath::Sqrt(TMath::Exp(0.0615 - 0.0005 * topGenPt) * TMath::Exp(0.0615 - 0.0005 * antitopGenPt))) + (topGenPt * antitopGenPt <= 0.)')
+addSampleWeight(samples,'top','TTTo2L2Nu','(topGenPt * antitopGenPt > 0.) * (TMath::Sqrt(TMath::Exp(0.0615 - 0.0005 * topGenPt) * TMath::Exp(0.0615 - 0.0005 * antitopGenPt))) + (topGenPt * antitopGenPt <= 0.)')
 ###### WW ########
 
 samples['WW'] = {
@@ -286,7 +290,7 @@ signals.append('WH_htt')
 
 samples['Fake'] = {
     'name': [],
-    'weight': 'METFilter_DATA*fakeW2l_ele_mva_90p_Iso2016_mu_cut_Tight80x',
+    'weight': 'METFilter_DATA*%s' %IDcutFAKE ,
     'isData': ['all'],
     'FilesPerJob': 50
 }
@@ -294,21 +298,21 @@ samples['Fake'] = {
 
 samples['Fake_em'] = {
     'name': [],
-    'weight': 'METFilter_DATA*fakeW2l_ele_mva_90p_Iso2016_mu_cut_Tight80x*( ( (Lepton_pdgId[0]==11 && Lepton_pdgId[1]==13) || (Lepton_pdgId[0]==13 && Lepton_pdgId[1]==11) ) || ( (Lepton_pdgId[0]==-11 && Lepton_pdgId[1]==-13) || (Lepton_pdgId[0]==-13 && Lepton_pdgId[1]==-11) ) )' ,
+    'weight': 'METFilter_DATA*%s*( ( (Lepton_pdgId[0]==11 && Lepton_pdgId[1]==13) || (Lepton_pdgId[0]==13 && Lepton_pdgId[1]==11) ) || ( (Lepton_pdgId[0]==-11 && Lepton_pdgId[1]==-13) || (Lepton_pdgId[0]==-13 && Lepton_pdgId[1]==-11) ) )' %IDcutFAKE ,
     'isData': ['all'],
     'FilesPerJob': 50
 }
 
 samples['Fake_mm'] = {
     'name': [],
-    'weight': 'METFilter_DATA*fakeW2l_ele_mva_90p_Iso2016_mu_cut_Tight80x*( ( Lepton_pdgId[0]==13 && Lepton_pdgId[1]==13 ) || ( Lepton_pdgId[0]==-13 && Lepton_pdgId[1]==-13 ) )' ,
+    'weight': 'METFilter_DATA*%s*( ( Lepton_pdgId[0]==13 && Lepton_pdgId[1]==13 ) || ( Lepton_pdgId[0]==-13 && Lepton_pdgId[1]==-13 ) )' %IDcutFAKE ,
     'isData': ['all'],
     'FilesPerJob': 50
 }
 
 samples['Fake_ee'] = {
     'name': [],
-    'weight': 'METFilter_DATA*fakeW2l_ele_mva_90p_Iso2016_mu_cut_Tight80x*( ( Lepton_pdgId[0]==11 && Lepton_pdgId[1]==11 ) || ( Lepton_pdgId[0]==-11 && Lepton_pdgId[1]==-11 ) )' ,
+    'weight': 'METFilter_DATA*%s*( ( Lepton_pdgId[0]==11 && Lepton_pdgId[1]==11 ) || ( Lepton_pdgId[0]==-11 && Lepton_pdgId[1]==-11 ) )' %IDcutFAKE ,
     'isData': ['all'],
     'FilesPerJob': 50
 }
@@ -340,7 +344,7 @@ for _, sd in DataRun:
 
 samples['DATA'] = {
   'name': [],
-  'weight': 'METFilter_DATA*LepWPCut',
+  'weight': 'METFilter_DATA*%s' %IDcutDATA,
   'isData': ['all'],
   'FilesPerJob': 50
 }

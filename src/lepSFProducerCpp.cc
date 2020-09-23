@@ -33,7 +33,7 @@ lepSFProducerCpp::lepSFProducerCpp( const char* year, const unsigned int nLepton
                                                              base + "/python/postprocessing/data/latino/scale_factor/Full2017v7/egammaEffi_passingMVA102Xwp90isoHWWiso0p06_2017RunCD.txt",
                                                              base + "/python/postprocessing/data/latino/scale_factor/Full2017v7/egammaEffi_passingMVA102Xwp90isoHWWiso0p06_2017RunE.txt",
                                                              base + "/python/postprocessing/data/latino/scale_factor/Full2017v7/egammaEffi_passingMVA102Xwp90isoHWWiso0p06_2017RunF.txt" } ;
-
+  
   SF_files_map["electron"]["TightObjWP"]["2017"]["ttHMVA"] = { base + "/python/postprocessing/data/latino/scale_factor/Full2017v7/egammaEffi_TightHWW_ttHMVA_0p7_SFs_2017RunB.txt",
 							       base + "/python/postprocessing/data/latino/scale_factor/Full2017v7/egammaEffi_TightHWW_ttHMVA_0p7_SFs_2017RunCD.txt",
 							       base + "/python/postprocessing/data/latino/scale_factor/Full2017v7/egammaEffi_TightHWW_ttHMVA_0p7_SFs_2017RunE.txt",
@@ -365,17 +365,17 @@ std::tuple<double, double, double> lepSFProducerCpp::GetSF(int flavor, double et
 }
 
 double lepSFProducerCpp::evaluate(){
-
+  
   std::vector<double> SF_vect {};
   std::vector<double> SF_err_vect {};
   std::vector<double> SF_up {};
   std::vector<double> SF_do {};
-
+  
   for(unsigned i=0;i<nLeptons_;i++){
     if(TMath::Abs(Lepton_pdgId->At(i)) == 11){
       std::list<std::string> SF_path = SF_files_map_["electron"][working_point_][year_]["wpSF"];
       std::list<std::string> SF_path_ttHMVA = SF_files_map_["electron"][working_point_][year_]["ttHMVA"];
-
+      
       int run_period__; std::string years = year_;
       std::tuple<double, double, double> res;
       std::tuple<double, double, double> res_ttHMVA;
@@ -398,20 +398,19 @@ double lepSFProducerCpp::evaluate(){
       SF_vect.push_back(std::get<0>(res)*std::get<0>(res_ttHMVA));
       SF_err_vect.push_back(TMath::Sqrt(TMath::Power(std::get<1>(res), 2) + TMath::Power(std::get<2>(res), 2)
 					+ TMath::Power(std::get<1>(res_ttHMVA), 2) + TMath::Power(std::get<2>(res_ttHMVA), 2) ));
-
     }
     else if(TMath::Abs(Lepton_pdgId->At(i)) == 13){
       std::list<std::string> SF_path_id = SF_files_map_["muon"][working_point_][year_]["idSF"];
       std::list<std::string> SF_path_iso = SF_files_map_["muon"][working_point_][year_]["isoSF"];
-
+      
       std::tuple<double, double, double> res_id = GetSF(13, Lepton_eta->At(i), Lepton_pt->At(i), SF_path_id.size()==1 ? 0 : *run_period->Get() - 1, "Id");
       std::tuple<double, double, double> res_iso = GetSF(13, Lepton_eta->At(i), Lepton_pt->At(i), SF_path_iso.size()==1 ? 0 : *run_period->Get() - 1, "Iso");
       std::tuple<double, double, double> res_ttHMVA = GetSF(13, Lepton_eta->At(i), Lepton_pt->At(i), SF_path_iso.size()==1 ? 0 : *run_period->Get() - 1, "ttHMVA");
-
+      
       double SF_id = std::get<0>(res_id);
       double SF_iso = std::get<0>(res_iso);
       double SF_ttHMVA = std::get<0>(res_ttHMVA);
-
+      
       SF_vect.push_back(SF_id * SF_iso * SF_ttHMVA);
       // SF_err_vect.push_back((SF_id * SF_iso) * TMath::Sqrt( TMath::Power(std::get<1>(res_id)/SF_id, 2) + TMath::Power(std::get<1>(res_iso)/SF_iso, 2) )); // Old formula for debugging
       SF_err_vect.push_back(
@@ -425,16 +424,15 @@ double lepSFProducerCpp::evaluate(){
   } // end of for loops
   double SF = 1.;
   double SF_err = 0.;
-
+  
   // Calculate product of IsIso_SFs for all leptons in the event --> central value of SF to be returned
   for(auto x : SF_vect) SF *= x;
-
+ 
   // Now for the variations, these also have to account for the recoSF
   for(unsigned int i=0;i<nLeptons_;i++){
     SF_up.push_back( ((SF_vect[i] * Lepton_RecoSF->At(i)) + TMath::Sqrt(TMath::Power(SF_err_vect[i], 2) + TMath::Power(Lepton_RecoSF_Up->At(i) - Lepton_RecoSF->At(i), 2) ))/(SF_vect[i] * Lepton_RecoSF->At(i)) );
     SF_do.push_back( ((SF_vect[i] * Lepton_RecoSF->At(i)) - TMath::Sqrt(TMath::Power(SF_err_vect[i], 2) + TMath::Power(Lepton_RecoSF_Down->At(i) - Lepton_RecoSF->At(i), 2) ))/(SF_vect[i] * Lepton_RecoSF->At(i)) );
   }
-
   if(requested_SF_.compare("total_SF") == 0) { return SF; }
   else if(requested_SF_.compare("single_SF_up") == 0) { return requested_lepton_<SF_vect.size() ? SF_up[requested_lepton_] : 1.; }
   else if(requested_SF_.compare("single_SF_down") == 0) { return requested_lepton_<SF_vect.size() ? SF_do[requested_lepton_] : 1.; }

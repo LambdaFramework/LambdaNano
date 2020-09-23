@@ -75,6 +75,7 @@ print "logy : ", options.logy
 def plot(var, cut, norm=False):
 
     #PD = getPrimaryDataset(selection[cut])
+    plotdir=""
     if cut in selection: plotdir = cut
     pathname = PLOTDIR+"/analysis/"+plotdir
     if not os.path.exists(pathname): os.system('mkdir -p %s'%pathname)
