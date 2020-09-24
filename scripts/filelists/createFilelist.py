@@ -12,7 +12,7 @@ dirlist=OrderedDict({
     '2017' : {
         'MCdir'	: "/media/shoh/02A1ACF427292FC0/nanov5/Fall2017_102X_nAODv5_Full2017v6/MCl1loose2017v6__MCCorr2017v6__l2loose__l2tightOR2017v6" ,
         'DATAdir' : "/media/shoh/02A1ACF427292FC0/nanov5/Run2017_102X_nAODv5_Full2017v6/DATAl1loose2017v6__l2loose__l2tightOR2017v6" ,
-        'FAKEdir' : "/media/shoh/02A1ACF427292FC0/nanov5/Run2017_102X_nAODv5_Full2017v6/DATAl1loose2017v6__l2loose__l2tightOR2017v6"
+        'FAKEdir' : "/media/shoh/02A1ACF427292FC0/nanov5/Run2017_102X_nAODv5_Full2017v6_ForNewWPs/DATAl1loose2017v6__l2loose__fakeW"
     },
     '2018' : {
         'MCdir' : "/media/shoh/02A1ACF427292FC0/nanov5/Autumn18_102X_nAODv6_Full2018v6/MCl1loose2018v6__MCCorr2018v6__l2loose__l2tightOR2018v6" ,
