@@ -3,8 +3,9 @@
 import os
 from collections import OrderedDict
 
-base="/lustre/cmsdata/hoh/latino"
-#base="/media/shoh/02A1ACF427292FC0/nanov5"
+base="/media/shoh/02A1ACF427292FC0/nanov5"
+
+if os.getcwd().split('/')[1] == 'lustre' : base="/lustre/cmsdata/hoh/latino"
 
 dirlist=OrderedDict({
     '2016' : {
@@ -26,7 +27,7 @@ dirlist=OrderedDict({
 
 for ilist in dirlist:
     year=ilist ; MCdir=dirlist[ilist]['MCdir'] ; DATAdir=dirlist[ilist]['DATAdir'] ; FAKEdir=dirlist[ilist]['FAKEdir']
-    if year=="2016": continue
+
     if os.path.isdir('%s/%s' %( os.getcwd() , year ) ):
         os.system('rm -r %s/%s' %( os.getcwd() , year ))
     
