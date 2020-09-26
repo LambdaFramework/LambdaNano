@@ -17,14 +17,15 @@ import random
 
 class skimmer:
 
-    def __init__(self, dataset_ , outfolder_ , year_ ):
-        self.dataset_ = dataset_
-        self.outfolder_ = outfolder_
-        self.year_ = year_
+    def __init__(self, dataset_ , outfolder_ , year_ , presel_ = "mll>12 && Lepton_pt[0]>25 && Lepton_pt[1]>20 && PuppiMET_pt > 30" ):
+        self.dataset = dataset_
+        self.outfolder = outfolder_
+        self.year = year_
+        self.presel = presel_
         self.samples={}
         self.modules = []
 
-        if not os.path.isdir('%s/%s' %( os.getcwd() , self.outfolder_ ) ): os.mkdir('%s/%s' %( os.getcwd() , self.outfolder_ ) )
+        if not os.path.isdir('%s/%s' %( os.getcwd() , self.outfolder ) ): os.mkdir('%s/%s' %( os.getcwd() , self.outfolder ) )
 
         pass
 
@@ -39,47 +40,47 @@ class skimmer:
         if not os.environ['NANOAODTOOLS_BASE']:
             print("ERROR: NANOAODTOOLS_BASE not set"); sys.exit();
 
-        theList = map( lambda x: x.split('.')[0] , os.listdir( '%s/scripts/filelists/%s' %( os.environ["NANOAODTOOLS_BASE"] , self.year_ ) ) )
+        theList = map( lambda x: x.split('.')[0] , os.listdir( '%s/scripts/filelists/%s' %( os.environ["NANOAODTOOLS_BASE"] , self.year ) ) )
         data = [ x for x in theList if any(y in x for y in [ 'Single' ,'Double' , 'EG' ]) ]
         mc = list(set(theList)^set(data))
 
         dummy = [ "WZZ" ] #, "WZZ" , "WWW" , "ZZTo2L2Q" , "ST_s-channel" ]
 
-        if   self.dataset_ == 0 : fnames = data + mc ; # no, dont run this
-        elif self.dataset_ == 1 : fnames = mc ;
-        elif self.dataset_ == 2 : fnames = data ;
+        if   self.dataset == 0 : fnames = data + mc ; # no, dont run this
+        elif self.dataset == 1 : fnames = mc ;
+        elif self.dataset == 2 : fnames = data ;
         else : fnames = dummy # testing
 
         ###### modules ############
-        bVetoer   = lambda : bVetoProducer        ( self.year_ )
-        lepSF     = lambda : lepSFProducerCpp     ( self.year_ , 2 , 'total_SF' )
-        pujetIdSF = lambda : pujetIdSFProducerCpp ( self.year_ , 'loose' )
-        flipSF    = lambda : eleFlipSFProducerCpp ( self.year_ , 2 , 'total_SF' )
-        aliaser   = lambda : aliasProducer        ( self.year_ ) 
+        bVetoer   = lambda : bVetoProducer        ( self.year )
+        lepSF     = lambda : lepSFProducerCpp     ( self.year , 2 , 'total_SF' )
+        pujetIdSF = lambda : pujetIdSFProducerCpp ( self.year , 'loose' )
+        flipSF    = lambda : eleFlipSFProducerCpp ( self.year , 2 , 'total_SF' )
+        aliaser   = lambda : aliasProducer        ( self.year )
 
-        if self.dataset_ == 1 or self.dataset_ > 2 : self.modules = [ lepSF() , pujetIdSF() , bVetoer() , flipSF() , aliaser() ]
-        if self.dataset_ == 2 : self.modules = [ bVetoer() , aliaser() ]
+        if self.dataset == 1 or self.dataset > 2 : self.modules = [ lepSF() , pujetIdSF() , bVetoer() , flipSF() , aliaser() ]
+        if self.dataset == 2 : self.modules = [ bVetoer() , aliaser() ]
 
         # load libraries only once
-        if self.dataset_ == 1 or self.dataset_ > 2 :
+        if self.dataset == 1 or self.dataset > 2 :
             self._load("lepSFProducerCpp")
             self._load("pujetIdSFProducerCpp")
 
-        print("Running on : " if self.dataset_ < 3 else "Running on dummy : ", fnames)
+        print("Running on : " if self.dataset < 3 else "Running on dummy : ", fnames)
 
         for i in fnames :
-            sample_files = open( "%s/scripts/filelists/%s/%s.txt" %( os.environ["NANOAODTOOLS_BASE"] , self.year_ , i ) , "r" )
+            sample_files = open( "%s/scripts/filelists/%s/%s.txt" %( os.environ["NANOAODTOOLS_BASE"] , self.year , i ) , "r" )
             self.samples[i] = [ x.strip('\n') for x in sample_files.readlines() ]
             sample_files.close()
         pass
 
-    def run( self , infiles , supercuts ):
+    def run( self , infiles ):
 
         p=PostProcessor(
-            outputDir='%s/%s/%s/' %( os.getcwd() , self.outfolder_ , isample ) ,
+            outputDir='%s/%s/%s/' %( os.getcwd() , self.outfolder , isample ) ,
             inputFiles=infiles ,
-            cut=supercuts,
-            branchsel= "%s/scripts/data/slimming-%s-in.txt" %( os.getcwd() , self.year_ ),
+            cut=self.presel,
+            branchsel= "%s/scripts/data/slimming-%s-in.txt" %( os.getcwd() , self.year ),
             modules= self.modules ,
             compression="LZMA:9",
             friend=False,
@@ -92,7 +93,7 @@ class skimmer:
             fwkJobReport=False,
             histFileName=None,
             histDirName=None,
-            outputbranchsel = "%s/scripts/data/slimming-%s-in.txt" %( os.getcwd() , self.year_ ),
+            outputbranchsel = "%s/scripts/data/slimming-%s-in.txt" %( os.getcwd() , self.year ),
             maxEntries=None,
             firstEntry=0,
             prefetch=False,
@@ -103,8 +104,8 @@ class skimmer:
 
 
 ## Parallelism helper
-def putQueue( func , arg1 ,arg2 , queue ):
-    queue.put( func(arg1,arg2) )
+def putQueue( func , arg1 , queue ):
+    queue.put( func(arg1) )
     pass
 
 def readQueue( nbatch , queue ):
@@ -126,7 +127,7 @@ def parallalizedByFiles( filelist , presel, q, target , nsplit=20 ):
         counter+=1 ; sublist.append(ifile)
         ## number of file perjobs
         if counter == nsplit or i+1 == len(filelist) :
-            Process(target=putQueue, args=( target , sublist , presel, q)).start()
+            Process(target=putQueue, args=( target , sublist , q)).start()
             # reset
             njobs+=1 ; counter=0 ; sublist=[]
 
@@ -192,7 +193,7 @@ if __name__ == "__main__" :
                 BFs.append(isample)
                 continue
             filelist = skim.samples[isample]
-            proc = Process(target=skim.run, args=(filelist,presel,))
+            proc = Process(target=skim.run, args=(filelist,))
             procs.append(proc) ; proc.start()
 
         [ r.join() for r in procs  ]
@@ -228,14 +229,14 @@ if __name__ == "__main__" :
                 filelist = skim.samples[isample]
                 for ifile in filelist:
                     #if 'MuonEG_Run2016B' not in ifile: continue
-                    proc = Process(target=skim.run, args=([ifile],presel,))
+                    proc = Process(target=skim.run, args=([ifile],))
                     procs.append(proc) ; proc.start()
             [ r.join() for r in procs  ]
         else:
             print " --> DUMMY : Running with serialism"
             for isample in skim.samples:
                 filelist = skim.samples[isample]
-                skim.run( filelist , presel )
+                skim.run( filelist )
 
     ## benchmarking proram ##
     print("--- %s seconds ---" % (time.time() - start_time))
