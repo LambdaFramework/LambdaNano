@@ -43,7 +43,6 @@ class aliasProducer(Module):
         muons = Collection(event, "Muon")
         cleanjets = Collection(event,"CleanJet")
         jets = Collection(event,"Jet")
-        genparts = Collection(event,"GenPart")
 
         lepton_dz=[]; lepton_dxy=[]
         for ilep in leptons:
@@ -87,10 +86,9 @@ class aliasProducer(Module):
 
         ## TopGEN for 2018
         Top_pTrw = -9999.
-        if self.year == '2018':
-            lastcopy = (1 << 13)
-            topGenPtOTF = 0.
-            antitopGenPtOTF = 0.
+        if self.year == '2018' and self.isMC:
+            genparts = Collection(event,"GenPart")
+            topGenPtOTF = 0. ; antitopGenPtOTF = 0.
             TTbar = filter( lambda x : abs(x.pdgId) == 6 and ( ( x.statusFlags / (1 << 13) ) % 2 ) != 0 , genparts )
             top = filter( lambda x : x.pdgId == 6 and ( ( x.statusFlags / (1 << 13) ) % 2 ) != 0 , TTbar )
             antitop = filter( lambda x : x.pdgId == -6 and ( ( x.statusFlags / (1 << 13) ) % 2 ) != 0 , TTbar )

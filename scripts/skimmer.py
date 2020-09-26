@@ -22,64 +22,62 @@ class skimmer:
         self.outfolder = outfolder_
         self.year = year_
         self.presel = presel_
-        self.samples={}
+        self.samples = {}
         self.modules = []
 
         if not os.path.isdir('%s/%s' %( os.getcwd() , self.outfolder ) ): os.mkdir('%s/%s' %( os.getcwd() , self.outfolder ) )
 
-        pass
-
-    def _load(self, basename ):
-        if "/%s_cc.so" %basename not in ROOT.gSystem.GetLibraries():
-            print "Load C++ %s.cc worker module" %basename
-            base = os.getenv("NANOAODTOOLS_BASE")
-            ROOT.gROOT.ProcessLine(".L %s/src/%s.cc+O" %(base,basename) )
-        pass
-
-    def initialization(self):
-        if not os.environ['NANOAODTOOLS_BASE']:
-            print("ERROR: NANOAODTOOLS_BASE not set"); sys.exit();
+        ########### getting filelist according to year ##############
+        if not os.environ['NANOAODTOOLS_BASE']: print("ERROR: NANOAODTOOLS_BASE not set"); sys.exit();
 
         theList = map( lambda x: x.split('.')[0] , os.listdir( '%s/scripts/filelists/%s' %( os.environ["NANOAODTOOLS_BASE"] , self.year ) ) )
         data = [ x for x in theList if any(y in x for y in [ 'Single' ,'Double' , 'EG' ]) ]
         mc = list(set(theList)^set(data))
 
-        dummy = [ "WZZ" ] #, "WZZ" , "WWW" , "ZZTo2L2Q" , "ST_s-channel" ]
-
-        if   self.dataset == 0 : fnames = data + mc ; # no, dont run this
-        elif self.dataset == 1 : fnames = mc ;
-        elif self.dataset == 2 : fnames = data ;
-        else : fnames = dummy # testing
-
-        ###### modules ############
-        bVetoer   = lambda : bVetoProducer        ( self.year )
+        #### modules ####
+        bVetoer   = lambda : bVetoProducer        ( self.year                  )
         lepSF     = lambda : lepSFProducerCpp     ( self.year , 2 , 'total_SF' )
-        pujetIdSF = lambda : pujetIdSFProducerCpp ( self.year , 'loose' )
+        pujetIdSF = lambda : pujetIdSFProducerCpp ( self.year , 'loose'        )
         flipSF    = lambda : eleFlipSFProducerCpp ( self.year , 2 , 'total_SF' )
-        aliaser   = lambda : aliasProducer        ( self.year )
+        aliaser   = lambda : aliasProducer        ( self.year                  )
 
-        if self.dataset == 1 or self.dataset > 2 : self.modules = [ lepSF() , pujetIdSF() , bVetoer() , flipSF() , aliaser() ]
-        if self.dataset == 2 : self.modules = [ bVetoer() , aliaser() ]
+        modules_MC = [ lepSF() , pujetIdSF() , bVetoer() , flipSF() , aliaser() ]
+        modules_DATA = [ bVetoer() , aliaser() ]
+        #################
 
-        # load libraries only once
-        if self.dataset == 1 or self.dataset > 2 :
-            self._load("lepSFProducerCpp")
-            self._load("pujetIdSFProducerCpp")
-
-        print("Running on : " if self.dataset < 3 else "Running on dummy : ", fnames)
-
-        for i in fnames :
-            sample_files = open( "%s/scripts/filelists/%s/%s.txt" %( os.environ["NANOAODTOOLS_BASE"] , self.year , i ) , "r" )
-            self.samples[i] = [ x.strip('\n') for x in sample_files.readlines() ]
+        allDict ={} ; mcDict={} ; dataDict={}
+        for iname in theList :
+            sample_files = open( "%s/scripts/filelists/%s/%s.txt" %( os.environ["NANOAODTOOLS_BASE"] , self.year , iname ) , "r" )
+            unpacklists = [ x.strip('\n') for x in sample_files.readlines() ]
+            allDict[iname] = unpacklists
+            if iname in data : dataDict[iname] = unpacklists
+            elif iname in mc : mcDict[iname]   = unpacklists
             sample_files.close()
+
+
+        if   self.dataset == 0 :
+            self.samples = allDict
+            self.modules = modules_MC + modules_DATA
+        elif self.dataset == 1 :
+            self.samples = mcDict
+            self.modules = modules_MC
+        elif self.dataset == 2 :
+            self.samples = dataDict
+            self.modules = modules_DATA
+        elif self.dataset >= 3 :
+            self.samples = allDict
+            self.modules = modules_MC
+        else:
+            print("ERROR: data type not found"); sys.exit();
+
         pass
 
-    def run( self , infiles ):
+    def run( self , infiles , isample=None ):
 
         p=PostProcessor(
-            outputDir='%s/%s/%s/' %( os.getcwd() , self.outfolder , isample ) ,
+            outputDir='%s/%s/%s/' %( os.getcwd() , self.outfolder , isample ) if isample is not None else '%s/%s/' %( os.getcwd() , self.outfolder ) ,
             inputFiles=infiles ,
-            cut=self.presel,
+            cut= self.presel ,
             branchsel= "%s/scripts/data/slimming-%s-in.txt" %( os.getcwd() , self.year ),
             modules= self.modules ,
             compression="LZMA:9",
@@ -104,8 +102,8 @@ class skimmer:
 
 
 ## Parallelism helper
-def putQueue( func , arg1 , queue ):
-    queue.put( func(arg1) )
+def putQueue( func , arg1 , arg2 , queue ):
+    queue.put( func(arg1,arg2) )
     pass
 
 def readQueue( nbatch , queue ):
@@ -117,21 +115,23 @@ def readQueue( nbatch , queue ):
         sys.exit();
     pass
 
-def parallalizedByFiles( filelist , presel, q, target , nsplit=20 ):
+def parallalizedByFiles( filelist , procname , q , target , nsplit ):
 
     print "Total number of files : ", len(filelist)
     print "Total number of files per jobs : ", round(nsplit)
 
-    sublist=[] ; counter=0 ; njobs=0
-    for i, ifile in enumerate(filelist):
+    tot = len(filelist) ; njobs = 0 ; counter = 0 ; sublist=[]
+    for ifile in filelist :
         counter+=1 ; sublist.append(ifile)
-        ## number of file perjobs
-        if counter == nsplit or i+1 == len(filelist) :
-            Process(target=putQueue, args=( target , sublist , q)).start()
+        ## number of file per jobs
+        if counter == nsplit or ( tot > 0 and tot < nsplit ) :
+            Process(target=putQueue, args=( target , sublist , procname , q)).start()
             # reset
-            njobs+=1 ; counter=0 ; sublist=[]
+            njobs+=1 ;
+            counter=0 ; tot-=nsplit ; sublist=[]
 
     print "Total number of jobs : ", njobs
+
     procs = []
     for j in range(njobs): procs.append(p.apply_async( readQueue , (j+1 , q) ))
     [ r.get() for r in procs ]
@@ -141,17 +141,26 @@ def parallalizedByFiles( filelist , presel, q, target , nsplit=20 ):
 if __name__ == "__main__" :
 
     from optparse import OptionParser
-    parser = OptionParser(usage="%prog [options] -d dataset -o outputfolder")
+    parser = OptionParser(usage="%prog [options] -d dataset -y year -o outfolder -m mode")
 
     usage = "usage: %prog [options]"
-    parser.add_option("-d", "--dataset", action="store", type="int", dest="dataset", default=None , help="specify which dataset to run, 0 : all ; 1 : mc ; 2 : data ; >3 : dummy" )
-    parser.add_option("-y", "--year", action="store", type="string", dest="year", default="2016" , help="data-taking year [default: 2016]")
-    parser.add_option("-o", "--outfolder", action="store", type="string", dest="outfolder", default="skimmed" , help="name of the output folder [default: skimmed]")
-    parser.add_option("-s", "--serialism", action="store_true", dest="serialism", default=False , help="toggle parallelism/serialism in python, useful for testing [default: False]")
+    parser.add_option( "-d" , "--dataset"   , action="store" , type="int"    , dest="dataset"   , default=None      ,
+                       help="specify which dataset to run\
+                       #################################\
+                       # 0 = all                       #\
+                       # 1 = mc                        #\
+                       # 2 = data                      #\
+                       # 3 = dummy (testing code)      #\
+                       # 4 = reprocess sel. files      #\
+                       #################################\
+                       " )
+    parser.add_option( "-y" , "--year"      , action="store" , type="string" , dest="year"      , default="2016"    , help="data-taking year [default: 2016]"             )
+    parser.add_option( "-o" , "--outfolder" , action="store" , type="string" , dest="outfolder" , default="skimmed" , help="name of the output folder [default: skimmed]" )
+    parser.add_option( "-b" , "--batch"     , action="store_true" , dest="batch" , default=False , help="Submit to cluster [Default: False]"                              )
 
     (options, args) = parser.parse_args()
 
-    options.outfolder = options.outfolder if options.dataset < 3 else "dummy"
+    options.outfolder = "dummy" if options.dataset == 3 else options.outfolder
 
     if os.getcwd().split('/')[-1] != 'LambdaNano' :
         print "Please run the scripts from LambdaNano folder."
@@ -162,82 +171,84 @@ if __name__ == "__main__" :
         sys.exit()
 
     start_time = time.time()
+    nTask=60
+    #########################################################
+    # 1.) paralellizes file mode (Nominal choice for data)  #
+    # 2.) paralellizes process mode (Nominal choice for MC) #
+    # 3.) serial file mode                                  #
+    # 4.) serial process mode                               #
+    # 5.) one file mode                                     #
+    #########################################################
 
-    ############################################################################
-    # Preselection
-    presel="mll>12 && Lepton_pt[0]>25 && Lepton_pt[1]>20 && PuppiMET_pt > 30"
+    if not options.batch :
+        ###### reprocessing or testing
+        if options.dataset >= 3 :
+            print "Reprocessing dataset"
+            skim = skimmer( options.dataset , '%s-%s' %( options.outfolder , options.year ) , options.year )
 
-    skim = skimmer( options.dataset , '%s-%s' %(options.outfolder,options.year) , options.year )
-    skim.initialization()
+            inputs = []
+            #inpui missing file
+            if options.dataset == 4 :
+                inputs = [''] #INPUT HERE FOR REPROCESSING
+            elif options.dataset == 3 :
+                inputs = [ "WWZ" , "WZZ" ] # , "WWW" , "ZZTo2L2Q" , "ST_s-channel"
+            # WWZ broke for 2017
+            m = Manager() ; q = m.Queue() ; p = Pool( multiprocessing.cpu_count() )
+            for isample in skim.samples:
+                if isample in inputs:
+                    filelist = skim.samples[isample]
+                    parallalizedByFiles( filelist , isample , q , skim.run , round( float( len(filelist) ) / nTask ) if len(filelist) >= nTask else 1 )
+        ###### data
+        elif options.dataset == 2 :
+            print "Postprocessing Data"
+            skim = skimmer( options.dataset , '%s-%s' %( options.outfolder , options.year ) , options.year )
 
-    print "Number of cpu : ", multiprocessing.cpu_count()
-
-    # number of task/process
-    #nTask = 30
-    nTask = 40
-
-    # Parallelism (in production mode, parallelism always on)
-    if options.dataset == 1 : # mc
-
-        procs = []
-
-        ## Big files, needed parallisim at process level
-        BigFile_16 = [ "TTTo2L2Nu" , "DYJetsToLL_M-50-LO_ext2" ]
-        BigFile_17 = [ "TTTo2L2Nu" , "DYJetsToLL_M-50-LO_ext1" , "ttHToNonbb_M125" ]
-        BigFile_18 = [ "TTTo2L2Nu" , "DYJetsToLL_M-50-LO" ]
-        BigFiles = BigFile_16+BigFile_17+BigFile_18
-        BFs=[]
-        for isample in skim.samples:
-            # skip big files
-            if any ( x in isample for x in BigFiles ):
-                BFs.append(isample)
-                continue
-            filelist = skim.samples[isample]
-            proc = Process(target=skim.run, args=(filelist,))
-            procs.append(proc) ; proc.start()
-
-        [ r.join() for r in procs  ]
-
-        if len(BFs)!=0:
-            m = Manager() ; q = m.Queue() ; p = Pool(12)
-            print "only running on :", BFs
-            for isample in BFs:
-                filelist = skim.samples[isample]
-                parallalizedByFiles( filelist , presel, q , skim.run , round(float(len(filelist))/nTask) if isample != "TTTo2L2Nu" else 1 )
-
-    elif options.dataset == 2 : # data
-
-        m = Manager() ; q = m.Queue() ; p = Pool(12)
-        for isample in skim.samples:
-            filelist = skim.samples[isample]
-            parallalizedByFiles( filelist , presel, q , skim.run , round(float(len(filelist))/nTask) )
-    elif options.dataset == 0 : # run all
-
-        procs = []
-        m = Manager() ; q = m.Queue() ; p = Pool(12)
-        for isample in skim.samples:
-            print("isample : ", isample)
-            filelist = skim.samples[isample]
-            parallalizedByFiles( filelist , presel, q , skim.run , round(float(len(filelist))/nTask) )
-
-    else:
-
-        if not options.serialism:
-            print " --> DUMMY : Running with parallelism"
-            procs = []
+            m = Manager() ; q = m.Queue() ; p = Pool( multiprocessing.cpu_count() )
             for isample in skim.samples:
                 filelist = skim.samples[isample]
-                for ifile in filelist:
-                    #if 'MuonEG_Run2016B' not in ifile: continue
-                    proc = Process(target=skim.run, args=([ifile],))
-                    procs.append(proc) ; proc.start()
+                parallalizedByFiles( filelist , isample , q , skim.run , round( float( len(filelist) ) / nTask ) if len(filelist) >= nTask else 1 )
+        ###### MC
+        elif options.dataset == 1 :
+            print "Postprocessing MC"
+            skim = skimmer( options.dataset , '%s-%s' %( options.outfolder , options.year ) , options.year )
+
+            procs = [] ; BigFiles = []
+            if options.year == '2016'   : BigFiles = [ "TTTo2L2Nu" , "DYJetsToLL_M-50-LO_ext2" , "ZZTo2L2Nu_ext1" , "ZZTo4L_ext1" ]
+            elif options.year == '2017' : BigFiles = [ "TTTo2L2Nu" , "DYJetsToLL_M-50-LO_ext1" , "WZTo2L2Q" , "ZZTo2L2Nu" , "ZGToLLG" ]
+            elif options.year == '2018' : BigFiles = [ "TTTo2L2Nu" , "DYJetsToLL_M-50-LO" , "ZZTo2L2Q" , "ZZTo2L2Nu_ext1" , "WZTo3LNu_mllmin01" ]
+
+            for isample in skim.samples:
+                if any ( x in isample for x in BigFiles ): continue
+                # 2017 "WWZ" faulty
+                if options.year == '2017' and isample == 'WWZ' : continue
+
+                filelist = skim.samples[isample]
+                proc = Process(target=skim.run, args=( filelist , isample , ))
+                procs.append(proc) ; proc.start()
+
+            # Parallellizes per process
             [ r.join() for r in procs  ]
-        else:
-            print " --> DUMMY : Running with serialism"
-            for isample in skim.samples:
-                filelist = skim.samples[isample]
-                skim.run( filelist )
 
+            # Parallellizes per file
+            if len(BigFiles) != 0 :
+                m = Manager() ; q = m.Queue() ; p = Pool( multiprocessing.cpu_count() )
+                for ibg in BigFiles:
+                    filelist = skim.samples[ibg]
+                    parallalizedByFiles( filelist , isample , q , skim.run , round( float( len(filelist) ) / nTask ) if len(filelist) > nTask else 1 )
+    ############################################################################
+    else :
+        print "submitting to LSF batch"
+        if '/lustre/cmswork/hoh' not in os.getcwd():
+            print "ERROR, use batch on cluster"
+            sys.exit()
+            
+        #Data (longer queue)
+        skim_mc = skimmer( 1 , '/lustre/cmsdata/hoh/homebrew_latino/%s-%s' %( options.outfolder , options.year ) , options.year )
+        #MC (short queue)
+        skim_data = skimmer( 2 , '/lustre/cmsdata/hoh/homebrew_latino/%s-%s' %( options.outfolder , options.year ) , options.year )
+        
+
+    #########################
     ## benchmarking proram ##
     print("--- %s seconds ---" % (time.time() - start_time))
     print("--- %s minutes ---" % ( (time.time() - start_time)/60. ))
