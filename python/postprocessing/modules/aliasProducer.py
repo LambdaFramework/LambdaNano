@@ -86,11 +86,11 @@ class aliasProducer(Module):
                 dRjjL2_ = deltaR( dijet.Eta() , dijet.Phi() , lepton2.Eta() , lepton2.Phi() )
 
         ## TopGEN for 2018
+        Top_pTrw = -9999.
         if self.year == '2018':
             lastcopy = (1 << 13)
             topGenPtOTF = 0.
             antitopGenPtOTF = 0.
-            Top_pTrw = -9999.
             TTbar = filter( lambda x : abs(x.pdgId) == 6 and ( ( x.statusFlags / (1 << 13) ) % 2 ) != 0 , genparts )
             top = filter( lambda x : x.pdgId == 6 and ( ( x.statusFlags / (1 << 13) ) % 2 ) != 0 , TTbar )
             antitop = filter( lambda x : x.pdgId == -6 and ( ( x.statusFlags / (1 << 13) ) % 2 ) != 0 , TTbar )
