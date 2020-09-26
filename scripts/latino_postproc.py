@@ -1,15 +1,15 @@
 #!/usr/bin/env python
 import os, sys
 import ROOT
+from datetime import datetime
 ROOT.PyConfig.IgnoreCommandLineOptions = True
 from importlib import import_module
 from PhysicsTools.NanoAODTools.postprocessing.framework.postprocessor import PostProcessor
-from PhysicsTools.NanoAODTools.postprocessing.modules.analysis.WHSS.bVetoProducer import  bVetoProducer #bVetoer
-from PhysicsTools.NanoAODTools.postprocessing.modules.analysis.WHSS.lepSFProducerCpp import lepSFProducerCpp #lepSF
-from PhysicsTools.NanoAODTools.postprocessing.modules.analysis.WHSS.pujetIdSFProducerCpp import pujetIdSFProducerCpp #pujetIdSF
-from PhysicsTools.NanoAODTools.postprocessing.modules.analysis.WHSS.aliasProducer import alias
-from PhysicsTools.NanoAODTools.postprocessing.modules.analysis.WHSS.eleFlipSFProducerCpp import eleFlipSFProducerCpp
-#from PhysicsTools.NanoAODTools.postprocessing.modules.analysis.ChargeFlips.ChargeFlipWeight import ChargeFlipWeight #flipSF
+from PhysicsTools.NanoAODTools.postprocessing.modules.bVetoProducer import  bVetoProducer
+from PhysicsTools.NanoAODTools.postprocessing.modules.lepSFProducerCpp import lepSFProducerCpp
+from PhysicsTools.NanoAODTools.postprocessing.modules.pujetIdSFProducerCpp import pujetIdSFProducerCpp
+from PhysicsTools.NanoAODTools.postprocessing.modules.aliasProducer import aliasProducer
+from PhysicsTools.NanoAODTools.postprocessing.modules.eleFlipSFProducerCpp import eleFlipSFProducerCpp
 
 from multiprocessing import Process, Pool, Queue, Manager
 import multiprocessing, time
@@ -43,7 +43,7 @@ class skimmer:
         data = [ x for x in theList if any(y in x for y in [ 'Single' ,'Double' , 'EG' ]) ]
         mc = list(set(theList)^set(data))
 
-        dummy = [ "ZZZ" ] #, "WZZ" , "WWW" , "ZZTo2L2Q" , "ST_s-channel" ]
+        dummy = [ "WZZ" ] #, "WZZ" , "WWW" , "ZZTo2L2Q" , "ST_s-channel" ]
 
         if   self.dataset_ == 0 : fnames = data + mc ; # no, dont run this
         elif self.dataset_ == 1 : fnames = mc ;
@@ -55,9 +55,10 @@ class skimmer:
         lepSF     = lambda : lepSFProducerCpp     ( self.year_ , 2 , 'total_SF' )
         pujetIdSF = lambda : pujetIdSFProducerCpp ( self.year_ , 'loose' )
         flipSF    = lambda : eleFlipSFProducerCpp ( self.year_ , 2 , 'total_SF' )
+        aliaser   = lambda : aliasProducer        ( self.year_ ) 
 
-        if self.dataset_ == 1 or self.dataset_ > 2 : self.modules = [ lepSF() , pujetIdSF() , bVetoer() , flipSF() , alias() ]
-        if self.dataset_ == 2 : self.modules = [ bVetoer() , alias() ]
+        if self.dataset_ == 1 or self.dataset_ > 2 : self.modules = [ lepSF() , pujetIdSF() , bVetoer() , flipSF() , aliaser() ]
+        if self.dataset_ == 2 : self.modules = [ bVetoer() , aliaser() ]
 
         # load libraries only once
         if self.dataset_ == 1 or self.dataset_ > 2 :
@@ -186,7 +187,6 @@ if __name__ == "__main__" :
         BigFiles = BigFile_16+BigFile_17+BigFile_18
         BFs=[]
         for isample in skim.samples:
-            if isample != "ttHToNonbb_M125": continue
             # skip big files
             if any ( x in isample for x in BigFiles ):
                 BFs.append(isample)
@@ -202,7 +202,7 @@ if __name__ == "__main__" :
             print "only running on :", BFs
             for isample in BFs:
                 filelist = skim.samples[isample]
-                parallalizedByFiles( filelist , presel, q , skim.run , 1 ) #round(float(len(filelist))/nTask) if isample != "TTTo2L2Nu" else 1 )
+                parallalizedByFiles( filelist , presel, q , skim.run , round(float(len(filelist))/nTask) if isample != "TTTo2L2Nu" else 1 )
 
     elif options.dataset == 2 : # data
 

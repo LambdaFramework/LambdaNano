@@ -17,11 +17,12 @@ class Config(object):
         self._groupPlot = {}
 
         # import the module
-        samples_ = importlib.import_module('PhysicsTools.NanoAODTools.LambPlot.plotConfiguration.WH_SS.Full%snanov6.samples' %self._year )
-        cuts_ = importlib.import_module('PhysicsTools.NanoAODTools.LambPlot.plotConfiguration.WH_SS.Full%snanov6.cuts' %self._year )
-        aliases_ = importlib.import_module('PhysicsTools.NanoAODTools.LambPlot.plotConfiguration.WH_SS.Full%snanov6.aliases' %self._year )
-        variables_ = importlib.import_module('PhysicsTools.NanoAODTools.LambPlot.plotConfiguration.WH_SS.Full%snanov6.variables' %self._year )
-        plot_ = importlib.import_module('PhysicsTools.NanoAODTools.LambPlot.plotConfiguration.WH_SS.Full%snanov6.plot' %self._year )
+        basePath   = 'PhysicsTools.NanoAODTools.LambPlot.plotConfiguration.WH_SS.Full%snanov6' %self._year
+        samples_   = importlib.import_module('%s.samples' %basePath )
+        cuts_      = importlib.import_module('%s.cuts' %basePath )
+        aliases_   = importlib.import_module('%s.aliases' %basePath )
+        variables_ = importlib.import_module('%s.variables' %basePath )
+        plot_      = importlib.import_module('%s.plot' %basePath )
 
         self.modules['samples'] = samples_.samples
         self.modules['selection'] = cuts_.cuts

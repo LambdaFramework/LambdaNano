@@ -21,9 +21,9 @@ eleFlipSFProducerCpp::eleFlipSFProducerCpp( const char* year, const unsigned int
   std::string base = std::getenv("NANOAODTOOLS_BASE") ;
 
   // 2016
-  SF_files_map["electron"]["TightObjWP"]["2016"]["flipper"] = { base + "/python/postprocessing/data/latino/scale_factor/chargeFlip/Full2016/chargeFlip_nanov5_2016_SF.root" } ;
-  SF_files_map["electron"]["TightObjWP"]["2017"]["flipper"] = { base + "/python/postprocessing/data/latino/scale_factor/chargeFlip/Full2017/chargeFlip_nanov5_2017_SF.root" } ;
-  SF_files_map["electron"]["TightObjWP"]["2018"]["flipper"] = { base + "/python/postprocessing/data/latino/scale_factor/chargeFlip/Full2018/chargeFlip_nanov5_2018_SF.root" } ;
+  SF_files_map["electron"]["TightObjWP"]["2016"]["flipper"] = { base + "/python/postprocessing/data/scale_factor/chargeFlip/Full2016/chargeFlip_nanov5_2016_SF.root" } ;
+  SF_files_map["electron"]["TightObjWP"]["2017"]["flipper"] = { base + "/python/postprocessing/data/scale_factor/chargeFlip/Full2017/chargeFlip_nanov5_2017_SF.root" } ;
+  SF_files_map["electron"]["TightObjWP"]["2018"]["flipper"] = { base + "/python/postprocessing/data/scale_factor/chargeFlip/Full2018/chargeFlip_nanov5_2018_SF.root" } ;
   
   SF_files_map_ = SF_files_map;
 
