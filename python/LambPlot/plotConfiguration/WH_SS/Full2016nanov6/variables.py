@@ -130,9 +130,14 @@ variables['Mu2_pfRelIso04_all'] = { 'name' : 'Muon_pfRelIso04_all[Lepton_muonIdx
 ####################################
 
 variables['MinMjjl'] = { 'name' : 'TMath::Min(mjjL1,mjjL2)' ,
-                         #'range' : ( 40 , 0. , 200. ),
                          'range' : ( 50 , 0. , 500. ),
                          'xaxis' : 'Min(mjjl1,mjjl2) [GeV/c2]',
+                         'fold' : 3
+}
+
+variables['MinMjl'] = { 'name' : 'TMath::Min(mjL1,mjL2)' ,
+		         'range' : ( 50 , 0. , 500. ),
+                         'xaxis' : 'Min(mjl1,mjl2) [GeV/c2]',
                          'fold' : 3
 }
 
@@ -168,10 +173,10 @@ variables['mlljj20_whss_bin3']  = {   'name': 'mlljj20_whss',
                         }
 
 variables['mlljj20_whss_bin4']  = {   'name': 'mlljj20_whss',
-                        'range' : (8,60.,300.),
+                        'range' : ( 8 , 60. ,300. ),
                         'xaxis' : 'mlljj20_whss [GeV]',
                         'fold' : 3
-                        }
+                         }
 
 variables['ZH3l_dphilmetjj']  = {  'name': 'ZH3l_dphilmetjj*(CleanJet_pt[1]>30)',
                         'range' : (20,0,3.2),

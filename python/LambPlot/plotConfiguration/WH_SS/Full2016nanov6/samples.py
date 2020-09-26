@@ -47,14 +47,18 @@ DataTrig = {
 ############ MC COMMON ##################
 #########################################
 
-# common, DEFAULT= SFweight 
+# common, DEFAULT= SFweight
+#IDcutMC='SFweight'
+#IDcutDATA='LepWPCut'
+#IDcutFAKE='fakeW2l_ele_mva_90p_Iso2016_mu_cut_Tight80x'
+
 IDcutMC='SFweight_tthmva' # SFweight
 IDcutDATA='LepWPCut_tthmva' # LepWPcut
 IDcutFAKE='fakeW2l_ele_mva_90p_Iso2016_tthmva_70_mu_cut_Tight80x_tthmva_80' # fakeW2l_ele_mva_90p_Iso2016_mu_cut_Tight80x
 
 mcCommonWeightNoMatch = 'XSWeight*%s*METFilter_MC' %IDcutMC
 mcCommonWeight = 'XSWeight*%s*PromptGenLepMatch2l*METFilter_MC' %IDcutMC
-
+#flip_ele_SF_2l
 ###########################################
 #############  BACKGROUNDS  ###############
 ###########################################
@@ -298,14 +302,14 @@ samples['Fake'] = {
 
 samples['Fake_em'] = {
     'name': [],
-    'weight': 'METFilter_DATA*%s*( ( (Lepton_pdgId[0]==11 && Lepton_pdgId[1]==13) || (Lepton_pdgId[0]==13 && Lepton_pdgId[1]==11) ) || ( (Lepton_pdgId[0]==-11 && Lepton_pdgId[1]==-13) || (Lepton_pdgId[0]==-13 && Lepton_pdgId[1]==-11) ) )' %IDcutFAKE ,
+    'weight': 'METFilter_DATA*%s*(Lepton_pdgId[0]*Lepton_pdgId[1] == 11*13)' %IDcutFAKE ,
     'isData': ['all'],
     'FilesPerJob': 50
 }
 
 samples['Fake_mm'] = {
     'name': [],
-    'weight': 'METFilter_DATA*%s*( ( Lepton_pdgId[0]==13 && Lepton_pdgId[1]==13 ) || ( Lepton_pdgId[0]==-13 && Lepton_pdgId[1]==-13 ) )' %IDcutFAKE ,
+    'weight': 'METFilter_DATA*%s*(Lepton_pdgId[0]*Lepton_pdgId[1] == 13*13)' %IDcutFAKE ,
     'isData': ['all'],
     'FilesPerJob': 50
 }

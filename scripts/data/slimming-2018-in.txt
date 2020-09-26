@@ -55,6 +55,8 @@ keepmatch GenPart_pt
 keepmatch GenPart_eta
 keepmatch GenPart_phi
 keepmatch GenPart_statusFlags
+keepmatch LeptonGen_isPrompt
+keepmatch LeptonGen_pt
 
 # RECO
 keepmatch Lepton_pdgId
@@ -187,7 +189,12 @@ keepmatch mjL1
 keepmatch mjL2
 keepmatch mjjL1
 keepmatch mjjL2
+keepmatch dRjL1
+keepmatch dRjL2
+keepmatch dRjjL1
+keepmatch dRjjL2
 keepmatch flip_ele_SF_2l
+keepmatch Top_pTrw
 
 keepmatch METFilter_DATA
 

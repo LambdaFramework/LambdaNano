@@ -127,11 +127,11 @@ def plot(var, cut, norm=False):
 
     if gROOT.IsBatch():
             out[0].Print(pathname+"/"+var.replace('.', '_')+"_lin.png")
-            out[0].Print(pathname+"/"+var.replace('.', '_')+"_lin.pdf")
+            #out[0].Print(pathname+"/"+var.replace('.', '_')+"_lin.pdf")
             # log
             out[0].cd(1).SetLogy()
             out[0].Print(pathname+"/"+var.replace('.', '_')+"_logy.png")
-            out[0].Print(pathname+"/"+var.replace('.', '_')+"_logy.pdf")
+            #out[0].Print(pathname+"/"+var.replace('.', '_')+"_logy.pdf")
             
     else:
         out[0].Draw()
@@ -217,7 +217,7 @@ def plot_signal( var, cut, norm=False ):
 
     if gROOT.IsBatch():
         c1.Print(pathname+"/"+var.replace('.', '_')+".png")
-        c1.Print(pathname+"/"+var.replace('.', '_')+".pdf")
+        #c1.Print(pathname+"/"+var.replace('.', '_')+".pdf")
         
     #print col.WARNING+"PURGE OBJECTS IN MEMORY"+col.ENDC
     #for process in histlist:

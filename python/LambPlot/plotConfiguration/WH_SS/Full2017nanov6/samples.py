@@ -43,9 +43,13 @@ DataTrig = {
 #########################################
 
 # SFweight
-IDcutMC='SFweight' # SFweight 
-IDcutDATA='LepWPCut' # LepWPCut
-IDcutFAKE='fakeW2l_ele_mvaFall17V1Iso_WP90_mu_cut_Tight_HWWW' # fakeW2l_ele_mvaFall17V1Iso_WP90_tthmva_70_mu_cut_Tight_HWWW_tthmva_80
+#IDcutMC='SFweight' # SFweight 
+#IDcutDATA='LepWPCut' # LepWPCut
+#IDcutFAKE='fakeW2l_ele_mvaFall17V1Iso_WP90_mu_cut_Tight_HWWW'
+
+IDcutMC='SFweight_tthmva'
+IDcutDATA='LepWPCut_tthmva'
+IDcutFAKE='fakeW2l_ele_mvaFall17V1Iso_WP90_tthmva_70_mu_cut_Tight_HWWW_tthmva_80'
 
 mcCommonWeightNoMatch = 'XSWeight*%s*METFilter_MC' %IDcutMC
 mcCommonWeight = 'XSWeight*%s*PromptGenLepMatch2l*METFilter_MC' %IDcutMC
@@ -147,7 +151,7 @@ files = nanoGetSampleFiles(mcDirectory, 'ZGToLLG')
 
 samples['Zg'] = {
     'name': files,
-    'weight': mcCommonWeightNoMatch + '*!(Gen_ZGstar_mass > 0)',
+    'weight': mcCommonWeightNoMatch + '*(!(Gen_ZGstar_mass > 0))',
     'FilesPerJob': 10
 }
 
@@ -157,7 +161,7 @@ files = nanoGetSampleFiles(mcDirectory, 'Wg_MADGRAPHMLM')
 
 samples['Wg'] = {
     'name': files,
-    'weight': mcCommonWeightNoMatch + '*!(Gen_ZGstar_mass > 0)',
+    'weight': mcCommonWeightNoMatch + '*(!(Gen_ZGstar_mass > 0))',
     'FilesPerJob': 10
 }
 

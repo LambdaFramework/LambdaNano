@@ -1,11 +1,13 @@
-import inspect
+import inspect, os
 
 configurations = os.path.realpath(inspect.getfile(inspect.currentframe())) # this file
 configurations = os.path.dirname(configurations) # Full2016_nanoAODv4_CR
 configurations = os.path.dirname(configurations) # ggH
 configurations = os.path.dirname(configurations) # Configurations
 
-#aliases = {}
+aliases = {}
+
+from samples import samples
 
 #mc = [skey for skey in samples if skey not in ('Fakes', 'DATA')]
 mc = [skey for skey in samples if skey not in ('Fake', 'DATA')]
@@ -21,6 +23,10 @@ eleWP = 'mvaFall17V1Iso_WP90_tthmva_70'
 muWP = 'cut_Tight_HWWW_tthmva_80'
 
 aliases['LepWPCut'] = {
+    'expr' : 'LepCut2l__ele_mvaFall17V1Iso_WP90__mu_cut_Tight_HWWW',
+}
+
+aliases['LepWPCut_tthmva'] = {
     'expr': 'LepCut2l__ele_mvaFall17V1Iso_WP90__mu_cut_Tight_HWWW*( (abs(Lepton_pdgId[0])==11 || Muon_mvaTTH[Lepton_muonIdx[0]]>0.8) && (abs(Lepton_pdgId[1])==11 || Muon_mvaTTH[Lepton_muonIdx[1]]>0.8) && (abs(Lepton_pdgId[0])==13 || Electron_mvaTTH[Lepton_electronIdx[0]]>0.70) && (abs(Lepton_pdgId[1])==13 || Electron_mvaTTH[Lepton_electronIdx[1]]>0.70))',
     'samples': mc + ['DATA']
 }
@@ -36,7 +42,7 @@ aliases['gstarHigh'] = {
 }
 
 aliases['PromptGenLepMatch2l'] = {
-    'expr': 'Alt$(Lepton_promptgenmatched[0]*Lepton_promptgenmatched[1], 0)',
+    'expr': '(Lepton_promptgenmatched[0]*Lepton_promptgenmatched[1])',
     'samples': mc
 }
 
@@ -162,7 +168,7 @@ aliases['btagSF'] = {
     'expr': 'bVetoSF*bVeto',
     'samples': mc
 }
-
+'''
 for shift in ['jes','lf','hf','lfstats1','lfstats2','hfstats1','hfstats2','cferr1','cferr2']:
 
     for targ in ['bVeto', 'bReq']:
@@ -181,17 +187,17 @@ for shift in ['jes','lf','hf','lfstats1','lfstats2','hfstats1','hfstats2','cferr
         'expr': aliases['btagSF']['expr'].replace('SF', 'SF' + shift + 'down'),
         'samples': mc
     }
-
+'''
 # PostProcessing did not create (anti)topGenPt for ST samples with _ext1
 lastcopy = (1 << 13)
 
 aliases['isTTbar'] = {
-    'expr': 'Sum$(TMath::Abs(GenPart_pdgId) == 6 && TMath::Odd(GenPart_statusFlags / %d)) == 2' % lastcopy,
+    'expr': 'Sum(TMath::Abs(GenPart_pdgId) == 6 && TMath::Odd(GenPart_statusFlags / %d)) == 2' % lastcopy,
     'samples': ['top']
 }
 
 aliases['isSingleTop'] = {
-    'expr': 'Sum$(TMath::Abs(GenPart_pdgId) == 6 && TMath::Odd(GenPart_statusFlags / %d)) == 1' % lastcopy,
+    'expr': 'Sum(TMath::Abs(GenPart_pdgId) == 6 && TMath::Odd(GenPart_statusFlags / %d)) == 1' % lastcopy,
     'samples': ['top']
 }
 
@@ -225,17 +231,17 @@ aliases['ZH3l_dphilmetj_test'] = {
 
 # PU jet Id SF
 
-puidSFSource = '%s/src/LatinoAnalysis/NanoGardener/python/data/JetPUID_effcyandSF.root' % os.getenv('CMSSW_BASE')
-
-aliases['PUJetIdSF'] = {
-    'linesToAdd': [
-        'gSystem->AddIncludePath("-I%s/src");' % os.getenv('CMSSW_BASE'),
-        '.L %s/patches/pujetidsf_event.cc+' % configurations
-    ],
-    'class': 'PUJetIdEventSF',
-    'args': (puidSFSource, '2018', 'loose'),
-    'samples': mc
-}
+#puidSFSource = '%s/src/LatinoAnalysis/NanoGardener/python/data/JetPUID_effcyandSF.root' % os.getenv('CMSSW_BASE')
+#
+#aliases['PUJetIdSF'] = {
+#    'linesToAdd': [
+#        'gSystem->AddIncludePath("-I%s/src");' % os.getenv('CMSSW_BASE'),
+#        '.L %s/patches/pujetidsf_event.cc+' % configurations
+#    ],
+#    'class': 'PUJetIdEventSF',
+#    'args': (puidSFSource, '2018', 'loose'),
+#    'samples': mc
+#}
 
 # data/MC scale factors
 #aliases['SFweight'] = {
@@ -264,11 +270,11 @@ aliases['SFweightMuDown'] = {
 ### Total SFs, i.e. ttHMVA+old lepton SFs ###
 #############################################
 
-aliases['ttHMVA_SF_2l'] = {'linesToAdd': ['.L %s/patches/compute_SF_BETA.C+' % configurations],
-                           'class': 'compute_SF',
-                           'args' : ('2018', 2, 'total_SF'),
-                           'samples': mc
-                          }
+#aliases['ttHMVA_SF_2l'] = {'linesToAdd': ['.L %s/patches/compute_SF_BETA.C+' % configurations],
+#                           'class': 'compute_SF',
+#                           'args' : ('2018', 2, 'total_SF'),
+#                           'samples': mc
+#                          }
 
 
 ############################################################
@@ -329,6 +335,11 @@ aliases['ttHMVA_2l_mu_SF_Down'] = {'expr' : '(ttHMVA_SF_Down_0*(TMath::Abs(Lepto
 
 # data/MC scale factors
 aliases['SFweight'] = {
-    'expr': ' * '.join(['SFweight2l', 'ttHMVA_SF_2l', 'LepWPCut', 'btagSF','PUJetIdSF']),
-    'samples': mc
+    'expr' : 'SFweight2l*LepSF2l__ele_mvaFall17V1Iso_WP90__mu_cut_Tight_HWWW*LepWPCut*(isbVeto*vbVetoSF)*PUJetIdSF',
+    'samples' : mc
+}
+
+aliases['SFweight_tthmva'] = {
+    'expr' : 'SFweight2l*ttHMVA_SF_2l*LepWPCut_tthmva*(isbVeto*vbVetoSF)*PUJetIdSF',
+    'samples' : mc
 }

@@ -83,18 +83,31 @@ cuts['VgCR'] = 'nCleanJet>=2 && nLepton>=2 && isbVeto && ( \
 ) \
 '
 
-cuts['SSmumu_ugo'] ='nLepton==2 && Sum(CleanJet_pt>30)<3 \
+cuts['SSmumu_ugo_2jets'] ='nLepton==2 && Sum(CleanJet_pt>30)<3 \
 && ((Lepton_pdgId[0]*Lepton_pdgId[1]==13*13)||(Lepton_pdgId[0]*Lepton_pdgId[1]==-13*-13)) \
 && Muon_pt[Lepton_muonIdx[0]]>25 && Muon_pt[Lepton_muonIdx[1]]>20 \
 && abs(Muon_eta[Lepton_muonIdx[0]])<2.1 && abs(Muon_eta[Lepton_muonIdx[1]])<2.1 \
 '
 
-cuts['SSmumu_ugo_iso'] ='nLepton==2 && Sum(CleanJet_pt>30)<3 \
+cuts['SSmumu_ugo_1jet'] ='nLepton==2 && Sum(CleanJet_pt>30)<2 \
+&& ((Lepton_pdgId[0]*Lepton_pdgId[1]==13*13)||(Lepton_pdgId[0]*Lepton_pdgId[1]==-13*-13)) \
+&& Muon_pt[Lepton_muonIdx[0]]>25 && Muon_pt[Lepton_muonIdx[1]]>20 \
+&& abs(Muon_eta[Lepton_muonIdx[0]])<2.1 && abs(Muon_eta[Lepton_muonIdx[1]])<2.1 \
+'
+
+cuts['SSmumu_ugo_2jets_iso_ip'] ='nLepton==2 && Sum(CleanJet_pt>30)<3 \
 && ((Lepton_pdgId[0]*Lepton_pdgId[1]==13*13)||(Lepton_pdgId[0]*Lepton_pdgId[1]==-13*-13)) \
 && Muon_pt[Lepton_muonIdx[0]]>25 && Muon_pt[Lepton_muonIdx[1]]>20 \
 && abs(Muon_eta[Lepton_muonIdx[0]])<2.1 && abs(Muon_eta[Lepton_muonIdx[1]])<2.1 \
 && abs(Muon_dz[Lepton_muonIdx[0]])<0.5 && abs(Muon_dz[Lepton_muonIdx[1]])<0.5 \
 && abs(Muon_dxy[Lepton_muonIdx[0]])<0.004 && abs(Muon_dxy[Lepton_muonIdx[1]])<0.004 \
+&& Muon_pfRelIso03_all[Lepton_muonIdx[0]]<0.05 && Muon_pfRelIso03_all[Lepton_muonIdx[1]]<0.05 \
+'
+
+cuts['SSmumu_ugo_2jets_iso'] ='nLepton==2 && Sum(CleanJet_pt>30)<3 \
+&& ((Lepton_pdgId[0]*Lepton_pdgId[1]==13*13)||(Lepton_pdgId[0]*Lepton_pdgId[1]==-13*-13)) \
+&& Muon_pt[Lepton_muonIdx[0]]>25 && Muon_pt[Lepton_muonIdx[1]]>20 \
+&& abs(Muon_eta[Lepton_muonIdx[0]])<2.1 && abs(Muon_eta[Lepton_muonIdx[1]])<2.1 \
 && Muon_pfRelIso03_all[Lepton_muonIdx[0]]<0.05 && Muon_pfRelIso03_all[Lepton_muonIdx[1]]<0.05 \
 '
 

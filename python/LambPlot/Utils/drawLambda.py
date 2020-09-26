@@ -51,7 +51,7 @@ def expressAliases(cut_):
                     newcut.append('( %s )' %jcut)
         else :
             newcut.append('( %s )' %icut)
-            
+
     return ' * '.join(newcut)
 
 def makeVectorList( filelist_ ):
@@ -68,12 +68,14 @@ def makeHisto( df_ , var_ , cut_ , weights_ , isample_ ):
     print col.OKGREEN+ "drawLambda::WEIGHTS : "  , weights_ + col.ENDC
     print col.OKGREEN+ "drawLambda::Samples : "  , isample_ + col.ENDC
     print ""
-    
+
     # Define column for weights
     df_ = df_.Define( "weights" , weights_ )
     # Define column for variable expression
     if any (x in variables[var_]['name'] for x in [ '*' , '[' , ']' , 'TMath::' ]):
         df_ = df_.Define( var_ , variables[var_]['name'] )
+    elif var_ != variables[var_]['name'] :
+        var_ = variables[var_]['name']
     # Filter column
     df_ = df_.Filter( cut_ )
 
@@ -87,12 +89,12 @@ def makeHisto( df_ , var_ , cut_ , weights_ , isample_ ):
         hists = df_.Histo1D( ROOT.RDF.TH1DModel( var_ , ' ; ' + variables[var_]['xaxis'] + ' ; '+ ylabel , range_[0] , range_[1], range_[2] ) , var_ , "weights" )
     else:
         hists = df_.Histo1D( ROOT.RDF.TH1DModel( var_ , ' ; ' + variables[var_]['xaxis'] + ' ; Events' , len(range_[0])-1 , np.asarray(range_[0],'d') ) , var_ , "weights" )
-                            
+
     return hists
 pass
 
 def applyAction_( histList ):
-    
+
     hLists=OrderedDict()
     for igroup in histList.keys():
         print "igroup : ", igroup
@@ -116,7 +118,7 @@ def flatten(d):
         for key, val in d.items():
             res.extend(flatten(val))
     elif isinstance(d, list):
-        res = d        
+        res = d
     else:
         raise TypeError("Undefined type for flatten: %s"%type(d))
     return res
@@ -147,18 +149,18 @@ def ProjectDraw( var, cut, Lumi, samplelist, pd ):
 
     plt.cfg.register(samplelist)
     groupList = plt.cfg.getGroupPlot()
-    
+
     histList=OrderedDict()
     VAR = var
     # remove extra space
     CUT = ' '.join(filter( None , selection[cut].split(" ") ))
-    
+
     # group tag
     for igroup in groupList:
         CUT_=CUT
         if igroup == 'BkgSum' : continue;
         #if igroup in [ 'Fake', 'DATA' ] : CUT_ =  CUT.replace("isbVeto && ","")
-        
+
         print col.CYAN+ "drawLambda::GroupTag : "  , igroup + col.ENDC
         histList[igroup]={}
         ##sample tag
@@ -177,7 +179,7 @@ def ProjectDraw( var, cut, Lumi, samplelist, pd ):
             else:
                 WEIGHTS = expressAliases(samples[isample]['weight'])
                 #WEIGHTS = samples[isample]['weight']
-                if igroup not in [ 'Fake' , 'DATA' ]: WEIGHTS = "%s*(%s)" %( str(float(Lumi)/1000.) , WEIGHTS ) 
+                if igroup not in [ 'Fake' , 'DATA' ]: WEIGHTS = "%s*(%s)" %( str(float(Lumi)/1000.) , WEIGHTS )
                 filelist = samples[isample]['name']
                 files = makeVectorList(filelist)
                 df = ROOT.RDataFrame("Events", files); gROOT.cd()
@@ -191,7 +193,7 @@ pass
 def draw(hist, data, back, sign, snorm=1, ratio=0, poisson=True, log=False):
 
     groupList = plt.cfg.getGroupPlot()
-    
+
     # If not present, create BkgSum
     #if not 'BkgSum' in hist.keys():
     #    hist['BkgSum'] = hist['DATA'].Clone("BkgSum") if 'DATA' in hist else hist[back[0]].Clone("BkgSum")
@@ -233,7 +235,7 @@ def draw(hist, data, back, sign, snorm=1, ratio=0, poisson=True, log=False):
     # Create stack
     #bkg = THStack("Bkg", ";"+hist['BkgSum'].GetXaxis().GetTitle()+";Events")
     bkg = THStack("Bkg", ";"+hist['BkgSum'].GetXaxis().GetTitle()+";"+hist['BkgSum'].GetYaxis().GetTitle())
-    
+
     for i, s in enumerate(back): bkg.Add(hist[s])
 
     # Legend
@@ -305,7 +307,7 @@ def draw(hist, data, back, sign, snorm=1, ratio=0, poisson=True, log=False):
 
     setHistStyle(bkg, 1.2 if ratio else 1.1)
     setHistStyle( hist['BkgSum'] , 1.2 if ratio else 1.1)
-    
+
     if ratio:
         #err.GetXaxis().SetTitleOffset(err.GetXaxis().GetTitleOffset()*1)
         c1.cd(2)
@@ -389,18 +391,18 @@ def drawSB(bkg,sig):
 pass
 
 def printTable(hist , pathout , txtname , sign=[] ):
-    
+
     #groupList = plt.cfg.getGroupPlot()
 
     f = open( '%s/%s' %(pathout,txtname) ,'w')
-    
+
     #samplelist = [x for x in hist.keys() if not 'DATA' in x and not 'BkgSum' in x and not x in sign and not x=="files"]
     samplelist = [ x for x in hist.keys() if not 'DATA' in x and not 'BkgSum' in x ]
     print >>f, txtname
     print >>f, "-"*80
     print >>f, "Sample                  Events          Entries         %"
     print >>f, "-"*80
-    ## data and backgrounds 
+    ## data and backgrounds
     for i, s in enumerate(['DATA']+samplelist+['BkgSum'] if 'DATA' in hist.keys() else samplelist+['BkgSum']):
         if s=="BkgSum" : print >>f, "-"*80
         print >>f, "%-20s" % s, "\t%-10.2f" % hist[s].Integral(), "\t%-10.0f" % (hist[s].GetEntries()-2), "\t%-10.2f" % (100.*hist[s].Integral()/hist['BkgSum'].Integral()) if hist['BkgSum'].Integral() > 0 else 0
@@ -411,7 +413,7 @@ def printTable(hist , pathout , txtname , sign=[] ):
     for i, s in enumerate(sign):
         demonimator = math.sqrt( hist['BkgSum'].Integral() ) # sign is added as backgrounds
         #if not groupList[s]['plot']: continue
-        print >>f, "%-20s" % s, "\t%-10.2f" % hist[s].Integral(), "\t%-10.0f" % (hist[s].GetEntries()-2), "\t%-10.2f (S/sqrt(S+B))" % ( float(hist[s].Integral()) / demonimator if hist[s].Integral() > 0 else 0 ) 
+        print >>f, "%-20s" % s, "\t%-10.2f" % hist[s].Integral(), "\t%-10.0f" % (hist[s].GetEntries()-2), "\t%-10.2f (S/sqrt(S+B))" % ( float(hist[s].Integral()) / demonimator if hist[s].Integral() > 0 else 0 )
     print >>f, "-"*80
 
     f.close()
@@ -419,7 +421,7 @@ def printTable(hist , pathout , txtname , sign=[] ):
     fcheck = open( '%s/%s' %(pathout,txtname) ,'r')
     print(fcheck.read())
     fcheck.close()
-    
+
 pass
 
 def printTable_signal( histlist , pathout , txtname , sign ):
@@ -805,7 +807,7 @@ pass
 def drawSignal(hist, sign, log=False):
 
     groupList = plt.cfg.getGroupPlot()
-    
+
     n = len(sign)
     leg = TLegend(0.7, 0.9-0.05*n, 0.95, 0.9)
     leg.SetBorderSize(0)
