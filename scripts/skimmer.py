@@ -152,6 +152,7 @@ if __name__ == "__main__" :
                        # 2 = data                      #\
                        # 3 = dummy (testing code)      #\
                        # 4 = reprocess sel. files      #\
+                       # 5 = single run                #\
                        #################################\
                        " )
     parser.add_option( "-y" , "--year"      , action="store" , type="string" , dest="year"      , default="2016"    , help="data-taking year [default: 2016]"             )
@@ -172,17 +173,15 @@ if __name__ == "__main__" :
 
     start_time = time.time()
     nTask=60
-    #########################################################
-    # 1.) paralellizes file mode (Nominal choice for data)  #
-    # 2.) paralellizes process mode (Nominal choice for MC) #
-    # 3.) serial file mode                                  #
-    # 4.) serial process mode                               #
-    # 5.) one file mode                                     #
-    #########################################################
 
     if not options.batch :
+        ###### single run files
+        if options.dataset == 5 :
+            skim = skimmer( options.dataset , 'testRun-%s' %( options.year ) , options.year )
+            rootfile="/media/shoh/02A1ACF427292FC0/nanov5/Autumn18_102X_nAODv6_Full2018v6/MCl1loose2018v6__MCCorr2018v6__l2loose__l2tightOR2018v6/nanoLatino_TTTo2L2Nu__part4.root"
+            skim.run([rootfile],'test')
         ###### reprocessing or testing
-        if options.dataset >= 3 :
+        if options.dataset == 3 or options.dataset == 4 :
             print "Reprocessing dataset"
             skim = skimmer( options.dataset , '%s-%s' %( options.outfolder , options.year ) , options.year )
 

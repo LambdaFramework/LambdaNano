@@ -9,6 +9,7 @@ from PhysicsTools.NanoAODTools.postprocessing.helpers.tools import *
 class aliasProducer(Module):
     def __init__( self , year_ ):
         self.year = year_
+        self.isMC = True
         pass
     def beginJob(self):
         pass
@@ -99,9 +100,6 @@ class aliasProducer(Module):
                 Top_pTrw = ROOT.TMath.Sqrt ( ROOT.TMath.Exp( 0.0615 - 0.0005 * topGenPtOTF ) * ROOT.TMath.Exp( 0.0615 - 0.0005 * antitopGenPtOTF ) )
             elif len(TTbar) == 1 :
                 Top_pTrw = 1.
-
-
-        #'(Sum(abs(GenPart_pdgId) == 6 && TMath::Odd(GenPart_statusFlags / (1 << 13))) == 2) * (TMath::Sqrt(TMath::Exp(0.0615 - 0.0005 * (Sum((GenPart_pdgId == 6 && TMath::Odd(GenPart_statusFlags / (1 << 13))) * GenPart_pt))) * TMath::Exp(0.0615 - 0.0005 * (Sum((GenPart_pdgId == -6 && TMath::Odd(GenPart_statusFlags / (1 << 13))) * GenPart_pt))))) + (Sum(abs(GenPart_pdgId) == 6 && TMath::Odd(GenPart_statusFlags / (1 << 13))) == 1)'
 
         self.out.fillBranch( 'Lepton_dz'  , lepton_dz )
         self.out.fillBranch( 'Lepton_dxy' , lepton_dxy )
