@@ -1,7 +1,5 @@
 #!/bin/python
 import os, sys
-from PhysicsTools.NanoAODTools.LambPlot.plotConfiguration.WH_SS.Full2016nanov6.variables import variables
-from PhysicsTools.NanoAODTools.LambPlot.plotConfiguration.WH_SS.Full2016nanov6.cuts import cuts
 
 base=os.environ['NANOAODTOOLS_BASE']
 
