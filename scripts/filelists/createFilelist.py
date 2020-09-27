@@ -1,6 +1,6 @@
 #!/bin/python
 
-import os
+import os, sys
 from collections import OrderedDict
 
 base="/media/shoh/02A1ACF427292FC0/nanov5"
@@ -27,15 +27,15 @@ dirlist=OrderedDict({
 
 for ilist in dirlist:
     year=ilist ; MCdir=dirlist[ilist]['MCdir'] ; DATAdir=dirlist[ilist]['DATAdir'] ; FAKEdir=dirlist[ilist]['FAKEdir']
-
+    
     if os.path.isdir('%s/%s' %( os.getcwd() , year ) ):
         os.system('rm -r %s/%s' %( os.getcwd() , year ))
     
     os.mkdir('%s/%s' %( os.getcwd() , year ) )
 
-    MClist = list(dict.fromkeys([ x.replace('nanoLatino_','').split('__')[0] for x in os.listdir(MCdir) ]))
-    DATAlist = list(dict.fromkeys([ x.replace('nanoLatino_','').split('__')[0].split('_')[0] for x in os.listdir(DATAdir) ]))
-    FAKElist = map( lambda x: "%s_fake" %x , list(dict.fromkeys([ x.replace('nanoLatino_','').split('__')[0].split('_')[0] for x in os.listdir(FAKEdir) ])))
+    MClist   = list( dict.fromkeys([ x.replace('nanoLatino_','').split('__')[0] for x in os.listdir(MCdir) ]) )
+    DATAlist = list( dict.fromkeys([ x.replace('nanoLatino_','').split('__')[0].split('_')[0] for x in os.listdir(DATAdir) ]) )
+    FAKElist = map( lambda x: "%s_fake" %x , list(dict.fromkeys([ x.replace('nanoLatino_','').split('__')[0].split('_')[0] for x in os.listdir(FAKEdir) ])) )
 
     for i, ilist in enumerate([ MClist , DATAlist , FAKElist ]) :
         if i == 0 : directory=MCdir
@@ -43,4 +43,7 @@ for ilist in dirlist:
         if i == 2 : directory=FAKEdir
         for iprocess in ilist:
             print('creating filelist for process %s for year %s ' %(iprocess,year) )
-            os.system('ls %s/*%s* > %s/%s.txt' %( directory , iprocess if i !=2 else iprocess.split('_')[0] , year , iprocess  ) )
+            if i == 0:
+                os.system('ls %s/*_%s__* > %s/%s.txt' %( directory , iprocess if i !=2 else iprocess.split('_')[0] , year , iprocess  ) )
+            else:
+                os.system('ls %s/*%s* > %s/%s.txt' %( directory , iprocess if i !=2 else iprocess.split('_')[0] , year , iprocess  ) )
