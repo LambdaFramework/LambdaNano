@@ -179,8 +179,10 @@ keepmatch PrefireWeight
 keepmatch SFweight2l
 
 # on-the-fly compute
-keepmatch isbVeto
-keepmatch vbVetoSF
+keepmatch bVeto_v1
+keepmatch bVeto_v2
+keepmatch bVetoSF_v1
+keepmatch bVetoSF_v2
 keepmatch ttHMVA_SF_2l
 keepmatch PUJetIdSF
 keepmatch Lepton_dz

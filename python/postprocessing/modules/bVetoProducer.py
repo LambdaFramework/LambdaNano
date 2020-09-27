@@ -17,8 +17,10 @@ class bVetoProducer(Module):
         pass
     def beginFile(self, inputFile, outputFile, inputTree, wrappedOutputTree):
         self.out = wrappedOutputTree
-        self.out.branch( "isbVeto" , "I" )
-        self.out.branch( "vbVetoSF" , "F" )
+        self.out.branch( "bVeto_v1" , "I" )
+        self.out.branch( "bVeto_v2" , "I" )
+        self.out.branch( "bVetoSF_v1" , "F" )
+        self.out.branch( "bVetoSF_v2" , "F" )
         if any (x in inputFile.GetName() for x in [ 'SingleMuon' , 'SingleElectron' , 'DoubleMuon' , 'DoubleEG' , 'MuonEG' , 'EGamma' ]):
             self.isMC = False    
         pass
@@ -29,33 +31,49 @@ class bVetoProducer(Module):
         
         cleanjets = Collection(event, "CleanJet")
 
-        bWP={
+        # latino's
+        # loose
+        bWP_v1 = {
             '2016' : 0.1522 ,
             '2017' : 0.1522 ,
             '2018' : 0.1241
         }
 
-        bJet_cands = filter( self.jetSel , cleanjets)
-        nbveto=0 ; btagSF=1. ; bReqSF=1.
-        zerojet = True
-        if len(bJet_cands)!=0 :
-            zerojet = True if list(bJet_cands)[0].pt < 30. else False
-        
-        for ijet in bJet_cands :
+        # alberto's
+        # https://github.com/zucchett/NanoSkim/blob/master/Skimmer/samesign.py#L118-L135
+        # medium
+        bWP_v2 = {
+            '2016' : 0.6321 ,
+            '2017' : 0.4941 ,
+            '2018' : 0.4184
+        }
+
+        bJet20 = filter( self.jetSel , cleanjets )
+        bJet30 = filter( lambda x : x.pt > 30 and abs(x.eta) < 2.5 , cleanjets )
+
+        nbjet_v1 = 0 ; btagSF_v1 = 1. ; bReqSF_v1 = 1.
+        nbjet_v2 = 0 ; btagSF_v2 = 1. ; bReqSF_v2 = 1.
+
+        # v1
+        for ijet in bJet20 :
             jetIdx = ijet.jetIdx
-            if jetIdx < 0 :
-                print("ijet.jetIdx < 0")
-                continue;
-            if event.Jet_btagDeepB[jetIdx] > bWP[self.year]: nbveto+=1
-
-        btagSF = sum( map(lambda y : ROOT.TMath.Log(event.Jet_btagSF_shape[y.jetIdx]) , bJet_cands ) ) if self.isMC else 1.
-
-        #if self.year=='2017':
-        #    bjcands = filter( lambda x : x.pt > 30 and abs(x.eta)<2.5 , cleanjets )
-        #    bReqSF = sum( map(lambda y : ROOT.TMath.Log(event.Jet_btagSF_shape[y.jetIdx]) , bjcands ) ) if self.isMC else 1.
+            if jetIdx < 0 : continue;
+            if event.Jet_btagDeepB[jetIdx] > bWP_v1[self.year]: nbjet_v1+=1
+            if self.isMC: btagSF_v1+= ROOT.TMath.Log(event.Jet_btagSF_shape[jetIdx])
+        # v2
+        for ijet in bJet30 :
+            jetIdx = ijet.jetIdx
+            if jetIdx < 0 : continue;
+            if event.Jet_btagDeepB[jetIdx] >= bWP_v2[self.year]: nbjet_v2+=1
+            if self.isMC: btagSF_v2+= ROOT.TMath.Log(event.Jet_btagSF_shape[jetIdx])
         
-        self.out.fillBranch( "isbVeto" , 1 if nbveto == 0 else 0 )
-        self.out.fillBranch( "vbVetoSF" , ROOT.TMath.Exp(btagSF) )
+        self.out.fillBranch( "bVeto_v1" , 1 if nbjet_v1 == 0 else 0 )
+        self.out.fillBranch( "bVeto_v2" , 1 if nbjet_v2 == 0 else 0 )
+        self.out.fillBranch( "bVetoSF_v1" , ROOT.TMath.Exp(btagSF_v1) )
+        self.out.fillBranch( "bVetoSF_v2" , ROOT.TMath.Exp(btagSF_v2) )
+
+        # 2017 missing some
+        #https://github.com/latinos/PlotsConfigurations/blob/master/Configurations/WH_SS/Full2017nanov6/aliases.py#L146-L149
 
         return True
     pass

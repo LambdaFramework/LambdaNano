@@ -191,7 +191,7 @@ if __name__ == "__main__" :
             if options.dataset == 4 :
                 inputs = [''] #INPUT HERE FOR REPROCESSING
             elif options.dataset == 3 :
-                inputs = [ "WWZ" , "WZZ" ] # , "WWW" , "ZZTo2L2Q" , "ST_s-channel"
+                inputs = [ "ZZZ" , "WZZ" ] # , "WWW" , "ZZTo2L2Q" , "ST_s-channel"
             # WWZ broke for 2017
             m = Manager() ; q = m.Queue() ; p = Pool( multiprocessing.cpu_count() )
             for isample in skim.samples:
