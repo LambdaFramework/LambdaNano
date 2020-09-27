@@ -50,9 +50,8 @@ class skimmer:
             sample_files = open( "%s/scripts/filelists/%s/%s.txt" %( os.environ["NANOAODTOOLS_BASE"] , self.year , iname ) , "r" )
             unpacklists = [ x.strip('\n') for x in sample_files.readlines() ]
             allDict[iname] = unpacklists
-            rname = '_%s__' %iname
-            if rname in data : dataDict[iname] = unpacklists
-            elif rname in mc : mcDict[iname]   = unpacklists
+            if iname in data : dataDict[iname] = unpacklists
+            elif iname in mc : mcDict[iname]   = unpacklists
             sample_files.close()
 
 
