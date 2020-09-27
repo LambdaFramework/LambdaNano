@@ -233,7 +233,7 @@ if __name__ == "__main__" :
                 m = Manager() ; q = m.Queue() ; p = Pool( multiprocessing.cpu_count() )
                 for ibg in BigFiles:
                     filelist = skim.samples[ibg]
-                    parallalizedByFiles( filelist , isample , q , skim.run , round( float( len(filelist) ) / nTask ) if len(filelist) > nTask else 1 )
+                    parallalizedByFiles( filelist , ibg , q , skim.run , round( float( len(filelist) ) / nTask ) if len(filelist) > nTask else 1 )
     ############################################################################
     else :
         print "submitting to LSF batch"
