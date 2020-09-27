@@ -50,8 +50,9 @@ class skimmer:
             sample_files = open( "%s/scripts/filelists/%s/%s.txt" %( os.environ["NANOAODTOOLS_BASE"] , self.year , iname ) , "r" )
             unpacklists = [ x.strip('\n') for x in sample_files.readlines() ]
             allDict[iname] = unpacklists
-            if iname in data : dataDict[iname] = unpacklists
-            elif iname in mc : mcDict[iname]   = unpacklists
+            rname = '_%s__' %iname
+            if rname in data : dataDict[iname] = unpacklists
+            elif rname in mc : mcDict[iname]   = unpacklists
             sample_files.close()
 
 
@@ -212,7 +213,7 @@ if __name__ == "__main__" :
             skim = skimmer( options.dataset , '%s-%s' %( options.outfolder , options.year ) , options.year )
 
             procs = [] ; BigFiles = []
-            if options.year == '2016'   : BigFiles = [ "TTTo2L2Nu" , "DYJetsToLL_M-50-LO_ext2" , "ZZTo2L2Nu_ext1" , "ZZTo4L_ext1" ]
+            if options.year == '2016'   : BigFiles = [ "TTTo2L2Nu" , "DYJetsToLL_M-50-LO_ext2" , "ZZTo2L2Nu" ]
             elif options.year == '2017' : BigFiles = [ "TTTo2L2Nu" , "DYJetsToLL_M-50-LO_ext1" , "WZTo2L2Q" , "ZZTo2L2Nu" , "ZGToLLG" ]
             elif options.year == '2018' : BigFiles = [ "TTTo2L2Nu" , "DYJetsToLL_M-50-LO" , "ZZTo2L2Q" , "ZZTo2L2Nu_ext1" , "WZTo3LNu_mllmin01" ]
 
@@ -220,7 +221,7 @@ if __name__ == "__main__" :
                 if any ( x in isample for x in BigFiles ): continue
                 # 2017 "WWZ" faulty
                 if options.year == '2017' and isample == 'WWZ' : continue
-
+                
                 filelist = skim.samples[isample]
                 proc = Process(target=skim.run, args=( filelist , isample , ))
                 procs.append(proc) ; proc.start()
