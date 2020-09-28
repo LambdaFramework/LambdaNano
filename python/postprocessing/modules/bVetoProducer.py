@@ -59,13 +59,16 @@ class bVetoProducer(Module):
             jetIdx = ijet.jetIdx
             if jetIdx < 0 : continue;
             if event.Jet_btagDeepB[jetIdx] > bWP_v1[self.year]: nbjet_v1+=1
-            if self.isMC: btagSF_v1+= ROOT.TMath.Log(event.Jet_btagSF_shape[jetIdx])
+            
+        btagSF_v1 = sum( map(lambda y : ROOT.TMath.Log(event.Jet_btagSF_shape[y.jetIdx]) , bJet20 ) ) if self.isMC else 1.
+        
         # v2
         for ijet in bJet30 :
             jetIdx = ijet.jetIdx
             if jetIdx < 0 : continue;
             if event.Jet_btagDeepB[jetIdx] >= bWP_v2[self.year]: nbjet_v2+=1
-            if self.isMC: btagSF_v2+= ROOT.TMath.Log(event.Jet_btagSF_shape[jetIdx])
+            
+        btagSF_v2 = sum( map(lambda y : ROOT.TMath.Log(event.Jet_btagSF_shape[y.jetIdx]) , bJet30 ) ) if self.isMC else	1.
         
         self.out.fillBranch( "bVeto_v1" , 1 if nbjet_v1 == 0 else 0 )
         self.out.fillBranch( "bVeto_v2" , 1 if nbjet_v2 == 0 else 0 )
