@@ -72,10 +72,11 @@ def makeHisto( df_ , var_ , cut_ , weights_ , isample_ ):
     # Define column for weights
     df_ = df_.Define( "weights" , weights_ )
     # Define column for variable expression
+    VAR_ = var_
     if any (x in variables[var_]['name'] for x in [ '*' , '[' , ']' , 'TMath::' ]):
-        df_ = df_.Define( var_ , variables[var_]['name'] )
+        df_ = df_.Define( VAR_ , variables[var_]['name'] )
     elif var_ != variables[var_]['name'] :
-        var_ = variables[var_]['name']
+        VAR_ = variables[var_]['name']
     # Filter column
     df_ = df_.Filter( cut_ )
 
@@ -86,9 +87,9 @@ def makeHisto( df_ , var_ , cut_ , weights_ , isample_ ):
             ylabel = 'Events / %s %s' %( float(range_[2]-range_[1])/float(range_[0]) , variables[var_]['xaxis'].split(' ')[-1].strip('[').strip(']') )
         else:
             ylabel = 'Events / %s' %( float(range_[2]-range_[1])/float(range_[0]) )
-        hists = df_.Histo1D( ROOT.RDF.TH1DModel( var_ , ' ; ' + variables[var_]['xaxis'] + ' ; '+ ylabel , range_[0] , range_[1], range_[2] ) , var_ , "weights" )
+        hists = df_.Histo1D( ROOT.RDF.TH1DModel( VAR_ , ' ; ' + variables[var_]['xaxis'] + ' ; '+ ylabel , range_[0] , range_[1], range_[2] ) , VAR_ , "weights" )
     else:
-        hists = df_.Histo1D( ROOT.RDF.TH1DModel( var_ , ' ; ' + variables[var_]['xaxis'] + ' ; Events' , len(range_[0])-1 , np.asarray(range_[0],'d') ) , var_ , "weights" )
+        hists = df_.Histo1D( ROOT.RDF.TH1DModel( VAR_ , ' ; ' + variables[var_]['xaxis'] + ' ; Events' , len(range_[0])-1 , np.asarray(range_[0],'d') ) , VAR_ , "weights" )
 
     return hists
 pass
