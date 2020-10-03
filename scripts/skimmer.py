@@ -35,13 +35,14 @@ class skimmer:
         mc = list(set(theList)^set(data))
 
         #### modules ####
-        bVetoer   = lambda : bVetoProducer        ( self.year                  )
-        lepSF     = lambda : lepSFProducerCpp     ( self.year , 2 , 'total_SF' )
-        pujetIdSF = lambda : pujetIdSFProducerCpp ( self.year , 'loose'        )
-        flipSF    = lambda : eleFlipSFProducerCpp ( self.year , 2 , 'total_SF' )
-        aliaser   = lambda : aliasProducer        ( self.year                  )
+        bVetoer       = lambda : bVetoProducer        ( self.year                   )
+        lepSF         = lambda : lepSFProducerCpp     ( self.year , 2 , 'total_SF'  )
+        pujetIdSF     = lambda : pujetIdSFProducerCpp ( self.year , 'loose'         )
+        hww_flipSF    = lambda : eleFlipSFProducerCpp ( self.year , 'HWW_WP'        )
+        tthmva_flipSF = lambda : eleFlipSFProducerCpp ( self.year , 'HWW_tthMVA_WP' )
+        aliaser       = lambda : aliasProducer        ( self.year                   )
 
-        modules_MC = [ lepSF() , pujetIdSF() , bVetoer() , flipSF() , aliaser() ]
+        modules_MC = [ lepSF() , pujetIdSF() , bVetoer() , hww_flipSF() , tthmva_flipSF() , aliaser() ]
         modules_DATA = [ bVetoer() , aliaser() ]
         #################
 

@@ -5,7 +5,8 @@ ROOT.PyConfig.IgnoreCommandLineOptions = True
 from PhysicsTools.NanoAODTools.postprocessing.framework.eventloop import Module
 
 class eleFlipSFProducerCpp(Module):
-    def __init__(self , year , nlep , sf ):
+    def __init__(self , year , wp ):
+        self.wp = wp
         if "/eleFlipSFProducerCpp_cc.so" not in ROOT.gSystem.GetLibraries():
             print "Load C++ eleFlipSFProducerCpp worker module"
             base = os.getenv("NANOAODTOOLS_BASE")
@@ -17,7 +18,7 @@ class eleFlipSFProducerCpp(Module):
                 ROOT.gROOT.ProcessLine(".L %s/interface/eleFlipSFProducerCpp.h"%base)
                 
         # Initialization
-        self.worker = ROOT.eleFlipSFProducerCpp( year , nlep , sf )
+        self.worker = ROOT.eleFlipSFProducerCpp( year , wp )
         
         self.isMC = True
         pass
@@ -28,7 +29,8 @@ class eleFlipSFProducerCpp(Module):
     def beginFile(self, inputFile, outputFile, inputTree, wrappedOutputTree):
         self.initReaders(inputTree) # initReaders must be called in beginFile
         self.out = wrappedOutputTree
-        self.out.branch("flip_ele_SF_2l",  "F");
+        self.out.branch( "flip_ele_%s_2l" % self.wp   ,  "F" );
+        #self.out.branch( "flip_ele_%s_SF_2l" % self.wp   ,  "F" );
         if any (x in inputFile.GetName() for x in [ 'SingleMuon' , 'SingleElectron' , 'DoubleMuon' , 'DoubleEG' , 'MuonEG' , 'EGamma' ]):
             self.isMC = False
         pass
@@ -41,7 +43,14 @@ class eleFlipSFProducerCpp(Module):
             tree.valueReader("nLepton") ,
             tree.arrayReader("Lepton_pt") ,
             tree.arrayReader("Lepton_eta") ,
-            tree.arrayReader("Lepton_pdgId")
+            tree.arrayReader("Lepton_phi") ,
+            tree.arrayReader("Lepton_pdgId") ,
+            tree.valueReader("nLeptonGen") ,
+            tree.arrayReader("LeptonGen_pt") ,
+            tree.arrayReader("LeptonGen_eta") ,
+            tree.arrayReader("LeptonGen_phi") ,
+            tree.arrayReader("LeptonGen_pdgId") ,
+
         ) 
         self._ttreereaderversion = tree._ttreereaderversion # self._ttreereaderversion must be set AFTER all calls to tree.valueReader or tree.arrayReader
 
@@ -53,9 +62,11 @@ class eleFlipSFProducerCpp(Module):
             self.initReaders(event._tree)
         # do NOT access other branches in python between the check/call to initReaders and the call to C++ worker code
         
-        output = self.worker.evaluate()
+        totalFlip = self.worker.evaluate()
         
-        self.out.fillBranch("flip_ele_SF_2l", output )
+        self.out.fillBranch( "flip_ele_%s_2l" % self.wp      ,  totalFlip ) # total flip rate
+        #self.out.fillBranch( "flip_ele_%s_SF_2l" % self.wp   ,  totalFlip[1] ) # scale factor
+
         return True
 
 # define modules using the syntax 'name = lambda : constructor' to avoid having them loaded when not needed
