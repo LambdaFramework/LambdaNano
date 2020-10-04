@@ -1,7 +1,6 @@
 import os, re, sys
 import commands
 import math, time
-from PhysicsTools.NanoAODTools.postprocessing.modules.analysis.datasets import datasets
 from PhysicsTools.NanoAODTools.postprocessing.helpers.colors import *
 
 class batchJob:
