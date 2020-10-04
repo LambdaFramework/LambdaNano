@@ -77,6 +77,7 @@ def makeHisto( df_ , var_ , cut_ , weights_ , isample_ ):
         df_ = df_.Define( VAR_ , variables[var_]['name'] )
     elif var_ != variables[var_]['name'] :
         VAR_ = variables[var_]['name']
+
     # Filter column
     df_ = df_.Filter( cut_ )
 
@@ -143,6 +144,7 @@ def applyAction(histList,groupList):
         histout[ihist].SetFillStyle(groupList[ihist]['fillstyle'])
         histout[ihist].SetLineColor(groupList[ihist]['linecolor'])
         histout[ihist].SetLineStyle(groupList[ihist]['linestyle'])
+        print ihist , "'s integral = ", histout[ihist].Integral()
     return histout
 pass
 

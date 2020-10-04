@@ -67,7 +67,7 @@ class skimmer:
             self.modules = modules_DATA
         elif self.dataset >= 3 :
             self.samples = allDict
-            self.modules = modules_MC
+            self.modules = modules_DATA
         else:
             print("ERROR: data type not found"); sys.exit();
 
@@ -184,15 +184,17 @@ if __name__ == "__main__" :
         ###### reprocessing or testing
         if options.dataset == 3 or options.dataset == 4 :
             print "Reprocessing dataset"
-            skim = skimmer( options.dataset , '%s-%s' %( options.outfolder , options.year ) , options.year )
 
             inputs = []
             #inpui missing file
             if options.dataset == 4 :
-                inputs = [''] #INPUT HERE FOR REPROCESSING
+                inputs = ['SingleElectron'] #INPUT HERE FOR REPROCESSING
             elif options.dataset == 3 :
                 inputs = [ "ZZZ" , "WZZ" ] # , "WWW" , "ZZTo2L2Q" , "ST_s-channel"
             # WWZ broke for 2017
+
+            skim = skimmer( options.dataset , '%s-%s' %( options.outfolder , options.year ) , options.year )
+            
             m = Manager() ; q = m.Queue() ; p = Pool( multiprocessing.cpu_count() )
             for isample in skim.samples:
                 if isample in inputs:
@@ -205,6 +207,7 @@ if __name__ == "__main__" :
 
             m = Manager() ; q = m.Queue() ; p = Pool( multiprocessing.cpu_count() )
             for isample in skim.samples:
+                #here
                 filelist = skim.samples[isample]
                 parallalizedByFiles( filelist , isample , q , skim.run , round( float( len(filelist) ) / nTask ) if len(filelist) >= nTask else 1 )
         ###### MC
