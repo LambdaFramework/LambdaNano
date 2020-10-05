@@ -197,6 +197,8 @@ keepmatch flip_ele_HWW_WP_SF_2l
 keepmatch flip_ele_HWW_tthMVA_WP_2l
 keepmatch flip_ele_HWW_tthMVA_WP_SF_2l
 keepmatch METFilter_DATA
+keepmatch isSS_2l
+keepmatch isOS_2l
 
 # dropping all variation
 dropmatch TriggerEffWeight_2l_u
