@@ -4,11 +4,11 @@ import math, time
 from PhysicsTools.NanoAODTools.postprocessing.helpers.colors import *
 
 class batchJob:
-    def __init__( self , skimmer , queue , taskperproc ):
+    def __init__( self , skimmer , queue , taskperproc=60 ):
         # batchJob parameter
         self._skimmer      = skimmer
         self._queue        = queue
-        self._ntask        = taskperproc
+        self._MaxNjob      = taskperproc
 
         #skimmer parameters
         self._dataset    = skimmer.dataset
@@ -16,9 +16,10 @@ class batchJob:
         self._processkey = skimmer.samples
         self._year       = skimmer.year
         self._modules    = skimmer.modules
+        self._presel     = skimmer.presel
 
         #global parameters
-        if os.environ['NANOAODTOOLS_BASE']:
+        if not os.environ['NANOAODTOOLS_BASE']:
             print("ERROR, please setup NANOAODTOOLS_BASE")
             sys.exit()
             
@@ -26,107 +27,76 @@ class batchJob:
         
     pass
 
-    '''
-    def register(self, samplelist , cutter, modconfig , slimmer , slimmerin , slimmerout ):
-        
-        if '2016' in samplelist:
-            self._dirdata='Run2016'
-            self._dirmc='Summer16'
-        elif '2017' in samplelist:
-            self._dirdata='Run2017'
-            self._dirmc='Fall17'
-        elif '2018' in samplelist:
-            self._dirdata='Run2018'
-            self._dirmc='Autumn18'
-
-        self._jsoner = '%s/python/postprocessing/data/json/%s' %( self._base, datasets[samplelist]['cert'] )
-        if self._jsoner.split('.')[1:][0]!='txt': raise Exception('ERROR: Json file is not correctly loaded!')
-        self._samplelistData = list(datasets[samplelist]['data'])
-        self._samplelistMC = list(datasets[samplelist]['mc'])
-        if 'test' in datasets[samplelist]:
-            self._samplelists = list(datasets[samplelist]['test'])
-        else:
-            self._samplelists = self._samplelistData + self._samplelistMC
-            
-        self._cutter = cutter
-
-        self._modules=[]
-        
-        for i,mod in enumerate(modconfig):
-            if 'puWeight' in mod: 
-                self._modules.append( '-I PhysicsTools.NanoAODTools.postprocessing.modules.common.puWeightProducer %s'%mod )
-            elif 'lepSFProducer' in mod:
-                self._modules.append( '-I PhysicsTools.NanoAODTools.postprocessing.modules.common.lepSFProducer %s'%mod )
-            else:
-                self._modules.append( '-I PhysicsTools.NanoAODTools.postprocessing.modules.analysis.%s %s'%(mod,mod) )
-                #self.modules.append( '-I PhysicsTools.NanoAODTools.postprocessing.modules.%s %s'%(mod,mod) if i+1!= len(modconfig) \
-                #                         else '-I PhysicsTools.NanoAODTools.postprocessing.analysis.%s %s'%(mod,mod) )
-
-        self._slimmer = slimmer
-        self._slimmerin = slimmerin
-        self._slimmerout = slimmerout
-
-    '''
-
-    def makeJOb( self , sublists , key , counter_ , dryrun=True ):
+    def makeJob( self , sublists , key , counter_ , dryrun=True ):
         
         ######### LOOP ON LSF JOB ##########
         jobdir= '%s/%s/%s/jobs' %( self._base , self._outfolder , key )
-        resultdir= jobdir.replace( '/'+jobdir.split('/')[-1] , '' )
+        resultdir= jobdir.replace( '/'+jobdir.split('/')[-1] , '' ).replace( self._base , '' )
         jobname = 'job_%s.sh' %counter_
+        listname = 'list_%s.txt' %counter_
         
-        os.system('mkdir '+ jobdir)
+        os.system('mkdir -p '+ jobdir)
         os.chdir(jobdir)
+        
+        # make list
+        listfile = open(listname , 'w')
+        listfile.write( '\n'.join(sublists) )
+        listfile.close()
+
         with open( jobname , 'w') as fout:
             fout.write('#!/bin/bash\n')
             fout.write('echo "PWD:"\n')
-            fout.write('pwd\n')
             fout.write('export VO_CMS_SW_DIR=/cvmfs/cms.cern.ch\n')
             fout.write('source $VO_CMS_SW_DIR/cmsset_default.sh\n')
+            fout.write('cd $PWD/../../../../CMSSW_11_2_0_pre6_ROOT622/src\n')
+            fout.write('ls .\n')
+            fout.write('eval `scram runtime -sh`\n')
+            fout.write('cd $PWD\n')
             fout.write('echo "environment:"\n')
             fout.write('echo\n')
             fout.write('env > local.env\n')
             fout.write('env\n')
             fout.write('# ulimit -v 3000000 # NO\n')
-            fout.write('echo "copying job dir to worker"\n')
-            fout.write('eval `scram runtime -sh`\n')
+            fout.write('cd $NANOAODTOOLS_BASE\n')
             fout.write('ls\n')
             fout.write('echo "running"\n')
-            fout.write('python %s/scripts/postproc.py ./ %s/list.txt --cut=\"%s\" --bi %s/%s --bo /%s/%s ' %( self._base , lsubfold ,self._cutter, self._base, self._slimmerin, self._base, self._slimmerout ))
-
-            #fout.write('%s\n'%moder if i+1==len(self._modules) else '%s '%moder )
+            fout.write('python $NANOAODTOOLS_BASE/scripts/skimmer.py -b -o %s -d %s -y %s -p "%s" -t %s/%s\n' %( resultdir , self._dataset , self._year , self._presel , os.getcwd() , listname  ) )
             fout.write('exit $?\n')
             fout.write('echo ""\n')
             os.system( 'chmod 755 '+ jobname )
             
             ########## SEND JOB ON LSF QUEUE ##########
             if not dryrun:
-                os.system('bsub -q '+ self._queue +' -o logs < job.sh')
-                print 'bsub -q '+ self._queue +' -o logs < job.sh'
-                print 'process ' + key + ' - job nr ' + counter_ + ' -> submitted'
+                os.system('bsub -q %s -o %s/log_%s < %s' %( self._queue , jobdir , counter_ , jobname ) )
+                print 'bsub -q %s -o %s/log_%s < %s  --> submitted' %( self._queue , jobdir , counter_ , jobname )
             else:
-                print 'process ' + key + ' - job nr ' + counter_ + ' -> prepared'
+                print 'process %s - job nr %s -> Prepared' % ( key , counter_ )
         os.chdir('../../../../')
     pass
             
 #################################################################################################################
     def submit(self, dryrun=True ):
-        #1 job/1 dataset, possibly create job contains multiple root file
+        
+        var=0 ; FileperJob = 3
         for ikey in self._processkey:
             filelist = self._processkey[ikey]
-            splitting = max( int(float( len(filelist) ) / self._ntask ) , 1 )
+            
+            # keeping below MaxNjob for one process
+            nfilelist =len(filelist)
+            njob = int( nfilelist / FileperJob )
+            
+            if njob > self._MaxNjob: 
+                FileperJob = int( nfilelist / self._MaxNjob )
+                njob = self._MaxNjob
 
-            print "Total number of files : ", len(filelist)
-    
-            print WARNING+'--> Splitting', ikey ,'in', self._ntask ,'chunk(s) of approximately', splitting ,'files each'+ENDC
-            tot =len(filelist) ; njobs = 0 ; counter = 0 ; sublist = []
-            for ifile in filelist :
-                counter+=1 ; sublist.append(ifile)
-                # number of file per jobs
-                if counter == nsplit or ( tot > 0 and tot < splitting ) :
-                    makeJob( sublist , ikey , njobs , dryrun )
-                    njobs+=1 ;
-                    counter=0 ; tot-=nsplit ; sublist=[]
+            divlist = [ filelist[ x:x+FileperJob ] for x in range(0, nfilelist, FileperJob) ]
+            
+            print "number of file : ", nfilelist
+            print WARNING+'--> Splitting process : ', ikey , 'into ' , len(divlist) , 'chunk(s) of approximately ', FileperJob ,' files per chunk'+ENDC
+
+            for jdiv ,  idivlist in enumerate(divlist):
+                jdiv = jdiv+1
+                self.makeJob( idivlist , ikey , jdiv , dryrun )
                     
         print
         print 'CURRENT JOB SUMMARY:'

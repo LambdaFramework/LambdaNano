@@ -4,7 +4,8 @@ import ROOT
 from datetime import datetime
 ROOT.PyConfig.IgnoreCommandLineOptions = True
 from importlib import import_module
-
+from PhysicsTools.NanoAODTools.postprocessing.helpers.submission import batchJob
+ 
 from PhysicsTools.NanoAODTools.postprocessing.framework.postprocessor import PostProcessor
 from PhysicsTools.NanoAODTools.postprocessing.modules.bVetoProducer import  bVetoProducer
 from PhysicsTools.NanoAODTools.postprocessing.modules.lepSFProducerCpp import lepSFProducerCpp
@@ -34,6 +35,13 @@ class skimmer:
         theList = map( lambda x: x.split('.')[0] , os.listdir( '%s/scripts/filelists/%s' %( os.environ["NANOAODTOOLS_BASE"] , self.year ) ) )
         data = [ x for x in theList if any(y in x for y in [ 'Single' ,'Double' , 'EG' ]) ]
         mc = list(set(theList)^set(data))
+
+        #### load all available c++ modules ####
+        #for Cpp in [ 'lepSFProducerCpp' , 'pujetIdSFProducerCpp' , 'eleFlipSFProducerCpp' ]:
+        #    if "/%s_cc.so" %Cpp not in ROOT.gSystem.GetLibraries():
+        #        print "Load C++ %s.cc worker module" %Cpp
+        #    base = os.getenv("NANOAODTOOLS_BASE")
+        #    ROOT.gROOT.ProcessLine(".L %s/src/%s.cc+O" %( base , Cpp ) )
 
         #### modules ####
         bVetoer       = lambda : bVetoProducer        ( self.year                   )
@@ -160,13 +168,14 @@ if __name__ == "__main__" :
     parser.add_option( "-y" , "--year"      , action="store" , type="string" , dest="year"      , default="2016"    , help="data-taking year [default: 2016]"             )
     parser.add_option( "-o" , "--outfolder" , action="store" , type="string" , dest="outfolder" , default="skimmed" , help="name of the output folder [default: skimmed]" )
     parser.add_option( "-b" , "--batch"     , action="store_true" , dest="batch" , default=False , help="Submit to cluster [Default: False]"                              )
-
+    parser.add_option( "-x" , "--dryrun"    , action="store_true" , dest="dryrun" , default=False , help="batch jon dry run [Default: False]"                               ) 
+    parser.add_option( "-t" , "--textfile"  , action="store" , type="string" , dest="intextfile" , default=None , help="feed in text file, for batch submission"          )
+    parser.add_option( "-p" , "--presel"    , action="store" , type="string" , dest="presel" , default=None , help="preselection, for batch submission"                   )
     (options, args) = parser.parse_args()
-
-    options.outfolder = "dummy" if options.dataset == 3 else options.outfolder
 
     if os.getcwd().split('/')[-1] != 'LambdaNano' :
         print "Please run the scripts from LambdaNano folder."
+        print os.getcwd()
         sys.exit()
 
     if options.dataset == None :
@@ -176,7 +185,14 @@ if __name__ == "__main__" :
     start_time = time.time()
     nTask=60
 
-    if not options.batch :
+    if options.intextfile is not None and options.batch :
+        intext = open( options.intextfile , 'r')
+        textlist = [ x.rstrip("\n") for x in intext.readlines() ]
+        skim = skimmer( options.dataset , options.outfolder , options.year , options.presel )
+        skim.run( textlist )
+    
+    elif options.intextfile is None and not options.batch :
+        #######################
         ###### single run files
         if options.dataset == 5 :
             skim = skimmer( options.dataset , 'testRun-%s' %( options.year ) , options.year )
@@ -185,7 +201,7 @@ if __name__ == "__main__" :
         ###### reprocessing or testing
         if options.dataset == 3 or options.dataset == 4 :
             print "Reprocessing dataset"
-
+            options.outfolder = "dummy"
             inputs = []
             #inpui missing file
             if options.dataset == 4 :
@@ -240,26 +256,50 @@ if __name__ == "__main__" :
                     filelist = skim.samples[ibg]
                     parallalizedByFiles( filelist , ibg , q , skim.run , round( float( len(filelist) ) / nTask ) if len(filelist) > nTask else 1 )
     ############################################################################
-    else :
-        print "submitting to LSF batch"
-            
+    elif options.intextfile is None and options.batch :
+        print "submitting to LSF batch for year : ", options.year
+        
         if '/lustre/cmswork/hoh' not in os.getcwd():
             print "ERROR, use batch on cluster"
             sys.exit()
-
-        skim_mc = skimmer( 1 , '/lustre/cmsdata/hoh/homebrew_latino/%s-%s' %( options.outfolder , options.year ) , options.year )
-        skim_data = skimmer( 2 , '/lustre/cmsdata/hoh/homebrew_latino/%s-%s' %( options.outfolder , options.year ) , options.year )
             
+        options.outfolder = 'LSF_%s' % options.outfolder
+
+        if os.path.exists('%s-%s' %( options.outfolder , options.year )):
+            print 'ERROR: %s-%s folder exist' %( options.outfolder , options.year )
+            sys.exit()
+
         #Data (longer queue)
         if options.dataset == 0:
-            data_job = batchJob( skim_data , 'local-cms-short' , 60 )
-            mc_job = batchJob( skim_mc , 'local-cms-short' , 60 )
+            skim_mc = skimmer( 1 , '%s-%s' %( options.outfolder , options.year ) , options.year )
+            skim_data = skimmer( 2 , '%s-%s' %( options.outfolder , options.year ) , options.year )
+
+            data_job = batchJob( skim_data , 'local-cms-short' )
+            mc_job = batchJob( skim_mc , 'local-cms-short' )
+            
+            data_job.submit(options.dryrun)
+            mc_job.submit(options.dryrun)
         elif options.dataset == 1:
-            mc_job = batchJob( skim_mc , 'local-cms-short' , 60 )
-            mc_job.submit()
+            skim_mc = skimmer( 1 , '%s-%s' %( options.outfolder , options.year ) , options.year )
+
+            mc_job = batchJob( skim_mc , 'local-cms-short' )
+            mc_job.submit(options.dryrun)
+            
         elif options.dataset == 2:
-            mc_job = batchJob( skim_mc , 'local-cms-short' , 60 )
-            data_job.submit()
+            skim_data = skimmer( 2 , '%s-%s' %( options.outfolder , options.year ) , options.year )
+
+            data_job = batchJob( skim_data , 'local-cms-short' )
+            data_job.submit(options.dryrun)
+
+        elif options.dataset == 3:
+            inputs = 'SingleElectron'
+            
+            skim_mc = skimmer( 3 , '%s-%s' %( options.outfolder , options.year ) , options.year )
+            # overriding
+            skim_mc.samples = dict(filter(lambda x: x[0] == inputs , skim_mc.samples.items()))
+
+            mc_job = batchJob( skim_mc , 'local-cms-short' )
+            mc_job.submit(options.dryrun)
         else:
             print "ERROR: run only 0,1,2"
             sys.exit()
