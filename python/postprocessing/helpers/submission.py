@@ -4,13 +4,29 @@ import math, time
 from PhysicsTools.NanoAODTools.postprocessing.helpers.colors import *
 
 class batchJob:
-    def __init__(self, queue, maxlsftime, eventspersec, lsfoutput, base):
+    def __init__( self , skimmer , queue , taskperproc ):
+        # batchJob parameter
+        self._skimmer      = skimmer
         self._queue        = queue
-        self._maxlsftime  = maxlsftime
-        self._eventspersec = eventspersec
-        self._lsfoutput    = lsfoutput
-        self._base         = base
+        self._ntask        = taskperproc
 
+        #skimmer parameters
+        self._dataset    = skimmer.dataset
+        self._outfolder  = skimmer.outfolder
+        self._processkey = skimmer.samples
+        self._year       = skimmer.year
+        self._modules    = skimmer.modules
+
+        #global parameters
+        if os.environ['NANOAODTOOLS_BASE']:
+            print("ERROR, please setup NANOAODTOOLS_BASE")
+            sys.exit()
+            
+        self._base      = os.environ['NANOAODTOOLS_BASE']
+        
+    pass
+
+    '''
     def register(self, samplelist , cutter, modconfig , slimmer , slimmerin , slimmerout ):
         
         if '2016' in samplelist:
@@ -49,66 +65,69 @@ class batchJob:
         self._slimmer = slimmer
         self._slimmerin = slimmerin
         self._slimmerout = slimmerout
+
+    '''
+
+    def makeJOb( self , sublists , key , counter_ , dryrun=True ):
         
-    def submit(self, dryrun=False):
-        #1 job/1 dataset, possibly create job contains multiple root file
-        var=0            
-        for l in self._samplelists:
-            #tag=l.split("/")[-1].split('.')[0]
-            file=open(os.path.expandvars( self._base + 'python/postprocessing/data/filelists/Legnaro_T2/%s/' %(self._dirdata if 'Run' in l.filename() else self._dirmc) +l.filename()+'.txt' ),'r')            
-            filelist = file.readlines()
-            splitting= max(int(float(l.nevent())/(self._maxlsftime*3600*self._eventspersec)),1)
-            njobs    = int(len(filelist)/splitting)+1
-            sublists = [filelist[i:i+njobs] for i in range(0, len(filelist), njobs)]
-            print WARNING+'--> Splitting',l.filename(),'in',len(sublists),'chunk(s) of approximately',njobs,'files each'+ENDC
+        ######### LOOP ON LSF JOB ##########
+        jobdir= '%s/%s/%s/jobs' %( self._base , self._outfolder , key )
+        resultdir= jobdir.replace( '/'+jobdir.split('/')[-1] , '' )
+        jobname = 'job_%s.sh' %counter_
+        
+        os.system('mkdir '+ jobdir)
+        os.chdir(jobdir)
+        with open( jobname , 'w') as fout:
+            fout.write('#!/bin/bash\n')
+            fout.write('echo "PWD:"\n')
+            fout.write('pwd\n')
+            fout.write('export VO_CMS_SW_DIR=/cvmfs/cms.cern.ch\n')
+            fout.write('source $VO_CMS_SW_DIR/cmsset_default.sh\n')
+            fout.write('echo "environment:"\n')
+            fout.write('echo\n')
+            fout.write('env > local.env\n')
+            fout.write('env\n')
+            fout.write('# ulimit -v 3000000 # NO\n')
+            fout.write('echo "copying job dir to worker"\n')
+            fout.write('eval `scram runtime -sh`\n')
+            fout.write('ls\n')
+            fout.write('echo "running"\n')
+            fout.write('python %s/scripts/postproc.py ./ %s/list.txt --cut=\"%s\" --bi %s/%s --bo /%s/%s ' %( self._base , lsubfold ,self._cutter, self._base, self._slimmerin, self._base, self._slimmerout ))
+
+            #fout.write('%s\n'%moder if i+1==len(self._modules) else '%s '%moder )
+            fout.write('exit $?\n')
+            fout.write('echo ""\n')
+            os.system( 'chmod 755 '+ jobname )
             
-            lfold = self._base + self._lsfoutput+'/'+l.filename()
-            os.system('mkdir '+lfold)
-            #if lfold.find('lustre')!= -1: outputbase = ""
-            #else: outputbase = options.base
- 
-            ######### LOOP ON LSF JOB ##########
-            for x in range(len(sublists)):
-                lsubfold = lfold+'/'+str(x).zfill(4)
-                os.system('mkdir '+lsubfold)
-                os.chdir(lsubfold)
-                splitlist=open('list.txt','w')  
-                splitlist.write(''.join(str(x) for x in sublists[x]))
-                splitlist.close()
-        
-                with open('job.sh', 'w') as fout:
-                    fout.write('#!/bin/bash\n')
-                    fout.write('echo "PWD:"\n')
-                    fout.write('pwd\n')
-                    fout.write('export VO_CMS_SW_DIR=/cvmfs/cms.cern.ch\n')
-                    fout.write('source $VO_CMS_SW_DIR/cmsset_default.sh\n')
-                    fout.write('echo "environment:"\n')
-                    fout.write('echo\n')
-                    fout.write('env > local.env\n')
-                    fout.write('env\n')
-                    fout.write('# ulimit -v 3000000 # NO\n')
-                    fout.write('echo "copying job dir to worker"\n')
-                    fout.write('eval `scram runtime -sh`\n')
-                    fout.write('ls\n')
-                    fout.write('echo "running"\n')
-                    fout.write('python %s/scripts/postproc.py ./ %s/list.txt --cut=\"%s\" --bi %s/%s --bo /%s/%s ' %( self._base , lsubfold ,self._cutter, self._base, self._slimmerin, self._base, self._slimmerout ))
-                    if 'Run' in l.filename(): fout.write('--json=%s ' %(self._jsoner))
-                    for i,moder in enumerate(self._modules): 
-                        #remove module does nothing to the DATA
-                        if 'Run' in l.filename() and 'lepSF' in moder: continue;
-                        if 'Run' in l.filename() and 'puWeight' in moder: continue;
-                        fout.write('%s\n'%moder if i+1==len(self._modules) else '%s '%moder )
-                    fout.write('exit $?\n') 
-                    fout.write('echo ""\n')
-                os.system('chmod 755 job.sh')
+            ########## SEND JOB ON LSF QUEUE ##########
+            if not dryrun:
+                os.system('bsub -q '+ self._queue +' -o logs < job.sh')
+                print 'bsub -q '+ self._queue +' -o logs < job.sh'
+                print 'process ' + key + ' - job nr ' + counter_ + ' -> submitted'
+            else:
+                print 'process ' + key + ' - job nr ' + counter_ + ' -> prepared'
+        os.chdir('../../../../')
+    pass
+            
+#################################################################################################################
+    def submit(self, dryrun=True ):
+        #1 job/1 dataset, possibly create job contains multiple root file
+        for ikey in self._processkey:
+            filelist = self._processkey[ikey]
+            splitting = max( int(float( len(filelist) ) / self._ntask ) , 1 )
+
+            print "Total number of files : ", len(filelist)
     
-                ########## SEND JOB ON LSF QUEUE ##########
-                if not dryrun:
-                    os.system('bsub -q '+ self._queue +' -o logs < job.sh')
-                    #print 'bsub -q '+options.queue+' -o logs < job.sh'
-                    #print 'filelist ' + l + ' - job nr ' + str(x).zfill(4) + ' -> submitted'
-                var+=1
-                os.chdir('../../../')
+            print WARNING+'--> Splitting', ikey ,'in', self._ntask ,'chunk(s) of approximately', splitting ,'files each'+ENDC
+            tot =len(filelist) ; njobs = 0 ; counter = 0 ; sublist = []
+            for ifile in filelist :
+                counter+=1 ; sublist.append(ifile)
+                # number of file per jobs
+                if counter == nsplit or ( tot > 0 and tot < splitting ) :
+                    makeJob( sublist , ikey , njobs , dryrun )
+                    njobs+=1 ;
+                    counter=0 ; tot-=nsplit ; sublist=[]
+                    
         print
         print 'CURRENT JOB SUMMARY:'
         if not dryrun: os.system('bjobs')

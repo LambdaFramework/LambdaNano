@@ -4,6 +4,7 @@ import ROOT
 from datetime import datetime
 ROOT.PyConfig.IgnoreCommandLineOptions = True
 from importlib import import_module
+
 from PhysicsTools.NanoAODTools.postprocessing.framework.postprocessor import PostProcessor
 from PhysicsTools.NanoAODTools.postprocessing.modules.bVetoProducer import  bVetoProducer
 from PhysicsTools.NanoAODTools.postprocessing.modules.lepSFProducerCpp import lepSFProducerCpp
@@ -241,15 +242,29 @@ if __name__ == "__main__" :
     ############################################################################
     else :
         print "submitting to LSF batch"
+            
         if '/lustre/cmswork/hoh' not in os.getcwd():
             print "ERROR, use batch on cluster"
             sys.exit()
+
+        skim_mc = skimmer( 1 , '/lustre/cmsdata/hoh/homebrew_latino/%s-%s' %( options.outfolder , options.year ) , options.year )
+        skim_data = skimmer( 2 , '/lustre/cmsdata/hoh/homebrew_latino/%s-%s' %( options.outfolder , options.year ) , options.year )
             
         #Data (longer queue)
-        skim_mc = skimmer( 1 , '/lustre/cmsdata/hoh/homebrew_latino/%s-%s' %( options.outfolder , options.year ) , options.year )
-        #MC (short queue)
-        skim_data = skimmer( 2 , '/lustre/cmsdata/hoh/homebrew_latino/%s-%s' %( options.outfolder , options.year ) , options.year )
-        
+        if options.dataset == 0:
+            data_job = batchJob( skim_data , 'local-cms-short' , 60 )
+            mc_job = batchJob( skim_mc , 'local-cms-short' , 60 )
+        elif options.dataset == 1:
+            mc_job = batchJob( skim_mc , 'local-cms-short' , 60 )
+            mc_job.submit()
+        elif options.dataset == 2:
+            mc_job = batchJob( skim_mc , 'local-cms-short' , 60 )
+            data_job.submit()
+        else:
+            print "ERROR: run only 0,1,2"
+            sys.exit()
+            
+    pass
 
     #########################
     ## benchmarking proram ##
