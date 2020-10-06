@@ -30,8 +30,11 @@ class batchJob:
     def makeJob( self , sublists , key , counter_ , dryrun=True ):
         
         ######### LOOP ON LSF JOB ##########
+        #cmsrelease="CMSSW_11_2_0_pre6_ROOT622"
+        cmsrelease="CMSSW_10_2_24"
         jobdir= '%s/%s/%s/jobs' %( self._base , self._outfolder , key )
         resultdir= jobdir.replace( '/'+jobdir.split('/')[-1] , '' ).replace( self._base , '' )
+        #resultdir= '/lustre/cmsdata/hoh/homebrew-latino/%s' % self._outfolder
         jobname = 'job_%s.sh' %counter_
         listname = 'list_%s.txt' %counter_
         
@@ -48,14 +51,13 @@ class batchJob:
             fout.write('echo "PWD:"\n')
             fout.write('export VO_CMS_SW_DIR=/cvmfs/cms.cern.ch\n')
             fout.write('source $VO_CMS_SW_DIR/cmsset_default.sh\n')
-            fout.write('cd $PWD/../../../../CMSSW_11_2_0_pre6_ROOT622/src\n')
+            fout.write('cd $PWD/../../../../%s/src\n' %cmsrelease )
             fout.write('ls .\n')
             fout.write('eval `scram runtime -sh`\n')
             fout.write('cd $PWD\n')
             fout.write('echo "environment:"\n')
             fout.write('echo\n')
             fout.write('env > local.env\n')
-            fout.write('env\n')
             fout.write('# ulimit -v 3000000 # NO\n')
             fout.write('cd $NANOAODTOOLS_BASE\n')
             fout.write('ls\n')
@@ -65,12 +67,12 @@ class batchJob:
             fout.write('echo ""\n')
             os.system( 'chmod 755 '+ jobname )
             
-            ########## SEND JOB ON LSF QUEUE ##########
-            if not dryrun:
-                os.system('bsub -q %s -o %s/log_%s < %s' %( self._queue , jobdir , counter_ , jobname ) )
-                print 'bsub -q %s -o %s/log_%s < %s  --> submitted' %( self._queue , jobdir , counter_ , jobname )
-            else:
-                print 'process %s - job nr %s -> Prepared' % ( key , counter_ )
+        ########## SEND JOB ON LSF QUEUE ##########
+        if not dryrun:
+            os.system('bsub -q %s -o %s/log_%s < %s' %( self._queue , jobdir , counter_ , jobname ) )
+            print 'bsub -q %s -o %s/log_%s < %s  --> submitted' %( self._queue , jobdir , counter_ , jobname )
+        else:
+            print 'process %s - job nr %s -> Prepared' % ( key , counter_ )
         os.chdir('../../../../')
     pass
             

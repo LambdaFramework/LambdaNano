@@ -5,7 +5,7 @@ from collections import OrderedDict
 
 base="/media/shoh/02A1ACF427292FC0/nanov5"
 
-if os.getcwd().split('/')[1] == 'lustre' : base="/lustre/cmsdata/hoh/latino"
+if os.getcwd().split('/')[1] == 'lustre' : base="/lustre/cmswork/hoh/Homebrew_latino/data"
 
 dirlist=OrderedDict({
     '2016' : {
