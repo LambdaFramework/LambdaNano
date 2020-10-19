@@ -49,7 +49,6 @@ pujetIdSFProducerCpp::pujetIdSFProducerCpp( char const* filename, char const* yr
 }
 
 pujetIdSFProducerCpp::~pujetIdSFProducerCpp(){
-  std::cout<<"This is running"<<std::endl;
   for (auto& sms : sfMapSets) {
     for (auto& sfMap : sms)
       sfMap.reset();
