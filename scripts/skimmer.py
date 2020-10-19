@@ -205,9 +205,9 @@ if __name__ == "__main__" :
             inputs = []
             #inpui missing file
             if options.dataset == 4 :
-                inputs = ['SingleElectron'] #INPUT HERE FOR REPROCESSING
+                inputs = ['sshwminus012j','sshwplus012j'] #INPUT HERE FOR REPROCESSING
             elif options.dataset == 3 :
-                inputs = [ "ZZZ" , "WZZ" ] # , "WWW" , "ZZTo2L2Q" , "ST_s-channel"
+                inputs = [ "WZZ" , "SingleMuon" , "SingleMuon_fake" ] # , "WWW" , "ZZTo2L2Q" , "ST_s-channel"
             # WWZ broke for 2017
 
             skim = skimmer( options.dataset , '%s-%s' %( options.outfolder , options.year ) , options.year )
@@ -216,6 +216,7 @@ if __name__ == "__main__" :
             for isample in skim.samples:
                 if isample in inputs:
                     filelist = skim.samples[isample]
+                    if "Single" in isample: filelist = filelist[0:5] # few data file for testing
                     parallalizedByFiles( filelist , isample , q , skim.run , round( float( len(filelist) ) / nTask ) if len(filelist) >= nTask else 1 )
         ###### data
         elif options.dataset == 2 :
