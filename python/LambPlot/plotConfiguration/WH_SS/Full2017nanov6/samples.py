@@ -43,7 +43,7 @@ DataTrig = {
 #########################################
 
 # SFweight
-#IDcutMC='SFweight' # SFweight 
+#IDcutMC='SFweight' # SFweight
 #IDcutDATA='LepWPCut' # LepWPCut
 #IDcutFAKE='fakeW2l_ele_mvaFall17V1Iso_WP90_mu_cut_Tight_HWWW'
 
@@ -51,8 +51,17 @@ IDcutMC='SFweight_tthmva'
 IDcutDATA='LepWPCut_tthmva'
 IDcutFAKE='fakeW2l_ele_mvaFall17V1Iso_WP90_tthmva_70_mu_cut_Tight_HWWW_tthmva_80'
 
-mcCommonWeightNoMatch = 'XSWeight*%s*METFilter_MC' %IDcutMC
-mcCommonWeight = 'XSWeight*%s*PromptGenLepMatch2l*METFilter_MC' %IDcutMC
+btag_ver='v1'
+BTAG_VETO='bVeto_%s*bVetoSF_%s' %( btag_ver , btag_ver )
+
+flav="1" #"isSS_2l"
+
+mcCommonWeightNoMatch = 'XSWeight*%s*METFilter_MC*(%s)*%s' %( IDcutMC , BTAG_VETO , flav )
+mcCommonWeight = 'XSWeight*%s*PromptGenLepMatch2l*METFilter_MC*(%s)*%s' %( IDcutMC , BTAG_VETO , flav )
+
+mcFlip_os = 'flip_ele_HWW_WP_2l' if 'tthmva' not in mcCommonWeight or 'tthmva' not in mcCommonWeightNoMatch else 'flip_ele_HWW_tthMVA_WP_2l'
+
+mcCommonWeight_os = 'XSWeight*%s*PromptGenLepMatch2l*METFilter_MC*(%s)*(%s)*isOS_2l' %( IDcutMC , BTAG_VETO , mcFlip_os )
 
 ###########################################
 #############  BACKGROUNDS  ###############
@@ -87,15 +96,24 @@ else:
 '''
 files = nanoGetSampleFiles(mcDirectory, 'DYJetsToLL_M-10to50-LO_ext1') + \
         nanoGetSampleFiles(mcDirectory, 'DYJetsToLL_M-50-LO_ext1')
-    
+
 samples['DY'] = {
     'name': files,
-    'weight' : mcCommonWeight ,
-    #'weight': mcCommonWeight + '*(Sum(GenPart_pdgId == 22 && TMath::Odd(GenPart_statusFlags) && GenPart_pt > 20.) == 0)',
+    'weight': mcCommonWeight + '*(Sum(GenPart_pdgId == 22 && (GenPart_statusFlags % 2) && GenPart_pt > 20.) == 0)' ,
     'FilesPerJob': 8,
 }
 addSampleWeight(samples,'DY','DYJetsToLL_M-10to50-LO_ext1',ptllDYW_LO)
 addSampleWeight(samples,'DY','DYJetsToLL_M-50-LO_ext1',ptllDYW_LO)
+
+## chargeflip samples
+samples['mischar'] = {
+    'name': files,
+    'weight': mcCommonWeight + '*(Sum(GenPart_pdgId == 22 && (GenPart_statusFlags % 2) && GenPart_pt > 20.) == 0)',
+    #'weight': mcCommonWeightNoMatch + '*flip_ele_HWW_tthMVA_WP_2l',
+    'FilesPerJob': 8,
+}
+addSampleWeight(samples,'mischar','DYJetsToLL_M-10to50-LO_ext1',ptllDYW_LO)
+addSampleWeight(samples,'mischar','DYJetsToLL_M-50-LO_ext1',ptllDYW_LO)
 
 ###### Top #######
 
@@ -113,6 +131,9 @@ samples['top'] = {
 }
 
 addSampleWeight(samples,'top','TTTo2L2Nu','(topGenPt * antitopGenPt > 0.) * (TMath::Sqrt(TMath::Exp(0.0615 - 0.0005 * topGenPt) * TMath::Exp(0.0615 - 0.0005 * antitopGenPt))) + (topGenPt * antitopGenPt <= 0.)')
+#addSampleWeight(samples,'top','TTTo2L2Nu', mcFlip_os.split('*')[-1] )
+#addSampleWeight(samples,'top','ST_tW_antitop', mcFlip_os.split('*')[-1] )
+#addSampleWeight(samples,'top','ST_tW_top', mcFlip_os.split('*')[-1] )
 
 ###### WW ########
 
@@ -122,11 +143,15 @@ samples['WW'] = {
     'FilesPerJob': 1
 }
 
+#addSampleWeight(samples,'WW','WWTo2L2Nu', mcFlip_os.split('*')[-1] )
+
 samples['WWewk'] = {
     'name': nanoGetSampleFiles(mcDirectory, 'WpWmJJ_EWK_noTop'),
     'weight': mcCommonWeight + '*(Sum(abs(GenPart_pdgId)==6 || GenPart_pdgId==25)==0)', #filter tops and Higgs
     'FilesPerJob': 2
 }
+
+#addSampleWeight(samples,'WW','WpWmJJ_EWK_noTop', mcFlip_os.split('*')[-1] )
 
 # k-factor 1.4 already taken into account in XSWeight
 files = nanoGetSampleFiles(mcDirectory, 'GluGluToWWToENEN') + \
@@ -141,7 +166,7 @@ files = nanoGetSampleFiles(mcDirectory, 'GluGluToWWToENEN') + \
 
 samples['ggWW'] = {
     'name': files,
-    'weight': mcCommonWeight + '*1.53/1.4', # updating k-factor
+    'weight': mcCommonWeight + '*(1.53/1.4)' ,#+ mcFlip_os , # updating k-factor
     'FilesPerJob': 10
 }
 
@@ -327,7 +352,7 @@ signals.append('WH_htt')
 
 samples['Fake'] = {
     'name': [],
-    'weight': 'METFilter_DATA*%s' %IDcutFAKE ,
+    'weight': 'METFilter_DATA*%s*%s*%s' %( IDcutFAKE , BTAG_VETO.split('*')[0] , flav ),
     'isData': ['all'],
     'FilesPerJob': 10
 }
@@ -350,21 +375,21 @@ samples['Fake']['subsamples'] = {
 
 samples['Fake_em'] = {
     'name': [],
-    'weight': 'METFilter_DATA*%s*( ( (Lepton_pdgId[0]==11 && Lepton_pdgId[1]==13) || (Lepton_pdgId[0]==13 && Lepton_pdgId[1]==11) ) || ( (Lepton_pdgId[0]==-11 && Lepton_pdgId[1]==-13) || (Lepton_pdgId[0]==-13 && Lepton_pdgId[1]==-11) ) )' %IDcutFAKE ,
+    'weight': 'METFilter_DATA*%s*%s && ( Lepton_pdgId[0]*Lepton_pdgId[1] == 11*13 )' %( IDcutFAKE , BTAG_VETO.split('*')[0] ) ,
     'isData': ['all'],
     'FilesPerJob': 50
 }
 
 samples['Fake_mm'] = {
     'name': [],
-    'weight': 'METFilter_DATA*%s*( ( Lepton_pdgId[0]==13 && Lepton_pdgId[1]==13 ) || ( Lepton_pdgId[0]==-13 && Lepton_pdgId[1]==-13 ) )' %IDcutFAKE ,
+    'weight': 'METFilter_DATA*%s*%s && ( Lepton_pdgId[0]*Lepton_pdgId[1] == 13*13 )' %( IDcutFAKE , BTAG_VETO.split('*')[0] ) ,
     'isData': ['all'],
     'FilesPerJob': 50
 }
 
 samples['Fake_ee'] = {
     'name': [],
-    'weight': 'METFilter_DATA*%s*( ( Lepton_pdgId[0]==11 && Lepton_pdgId[1]==11 ) || ( Lepton_pdgId[0]==-11 && Lepton_pdgId[1]==-11 ) )' %IDcutFAKE ,
+    'weight': 'METFilter_DATA*%s*%s && ( Lepton_pdgId[0]*Lepton_pdgId[1] == 11*11 )' %( IDcutFAKE , BTAG_VETO.split('*')[0] ) ,
     'isData': ['all'],
     'FilesPerJob': 50
 }
@@ -379,7 +404,7 @@ for _, sd in DataRun:
 
 for _, sd in DataRun:
     for pd in DataSets:
-        pd_name = pd + '_' + sd 
+        pd_name = pd + '_' + sd
         addSampleWeight( samples , 'Fake_em' , pd_name , DataTrig[pd]  )
         addSampleWeight( samples , 'Fake_mm' , pd_name , DataTrig[pd]  )
         addSampleWeight( samples , 'Fake_ee' , pd_name , DataTrig[pd]  )
@@ -391,7 +416,7 @@ for _, sd in DataRun:
 
 samples['DATA'] = {
   'name': [],
-  'weight': 'METFilter_DATA*%s' %IDcutDATA ,
+    'weight': 'METFilter_DATA*%s*%s*%s' %( IDcutDATA , BTAG_VETO.split('*')[0] , flav ),
   'isData': ['all'],
   'FilesPerJob': 40
 }

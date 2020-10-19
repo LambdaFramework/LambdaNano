@@ -36,6 +36,7 @@ parser.add_option("-V", "--PrintVar", action="store_true", dest="printVar", defa
 #parser.add_option("-m", "--multiprocessing", action="store_true", dest="multiprocessing", default=False)
 parser.add_option("-l", "--logy", action="store_true", dest="logy", default=False)
 parser.add_option("-y", "--year", action="store", type="string", dest="year", default="2016")
+parser.add_option("-o", "--out", action="store", type="string", dest="outfolder", default="analysis")
 (options, args) = parser.parse_args()
 if options.bash: gROOT.SetBatch(True)
 
@@ -70,14 +71,12 @@ SIGNAL      = 1. #500. # rescaling factor 1/35800
 RATIO       = 4 if not BLIND else 0 #4 # default=4 # 0: No ratio plot; !=0: ratio between the top and bottom pads
 POISSON     = False
 
-print "logy : ", options.logy
-
 def plot(var, cut, norm=False):
 
     #PD = getPrimaryDataset(selection[cut])
     plotdir=""
     if cut in selection: plotdir = cut
-    pathname = PLOTDIR+"/analysis/"+plotdir
+    pathname = "%s/%s/%s" %( PLOTDIR , options.outfolder , plotdir )
     if not os.path.exists(pathname): os.system('mkdir -p %s'%pathname)
 
     PROC=data+back if not BLIND else back
@@ -116,11 +115,11 @@ def plot(var, cut, norm=False):
         drawRegion(cut)
         printTable( Histlist , pathname , '%s_%s.txt' %(plotdir,var) , sign )
         
-    else:
-        out = drawSignal(Histlist, sign, options.logy )
-        out[0].cd(1)
-        drawCMS(LUMI, "Simulation")
-        drawRegion(cut)
+    #else:
+    #    out = drawSignal(Histlist, sign, options.logy )
+    #    out[0].cd(1)
+    #    drawCMS(LUMI, "Simulation")
+    #    drawRegion(cut)
         
     out[0].Modified()
     out[0].Update()
@@ -137,9 +136,9 @@ def plot(var, cut, norm=False):
         out[0].Draw()
 
     #if options.all:
-    #print col.WARNING+"PURGE OBJECTS IN MEMORY"+col.ENDC
-    #for process in Histlist:
-    #    Histlist[process].Delete()
+    print col.WARNING+"PURGE OBJECTS IN MEMORY"+col.ENDC
+    for process in Histlist:
+        Histlist[process].Delete()
     pass
 ###########################################
 
@@ -180,7 +179,7 @@ def plot_signal( var, cut, norm=False ):
     leg.SetBorderSize(0)
     leg.SetFillStyle(1001) #1001                                                                                                                                    
     leg.SetFillColor(0)
-    for s in signlist : leg.AddEntry(histlist[s], s, "l")
+    for s in signlist : leg.AddEntry(histlist[s], '%s [%.1f]' %( s , histlist[s].Integral() ) , "l")
 
     c1 = TCanvas("c1", "Signals", 800, 600)
     c1.cd().SetLogy() if options.logy else c1.cd()
@@ -211,7 +210,7 @@ def plot_signal( var, cut, norm=False ):
     leg.Draw()
 
     drawCMS(LUMI, "Simulation")
-    printTable_signal( histlist , pathname , '%s_%s.txt' %(plotdir,var) , signlist )
+    printTable_signal( histlist , pathname , '%s_%s.txt' %(plotdir,var) , signlist , histplease=True )
     ### fitting mass shape?
     ########################
 

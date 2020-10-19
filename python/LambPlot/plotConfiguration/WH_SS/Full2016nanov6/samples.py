@@ -56,8 +56,14 @@ IDcutMC='SFweight_tthmva' # SFweight
 IDcutDATA='LepWPCut_tthmva' # LepWPcut
 IDcutFAKE='fakeW2l_ele_mva_90p_Iso2016_tthmva_70_mu_cut_Tight80x_tthmva_80' # fakeW2l_ele_mva_90p_Iso2016_mu_cut_Tight80x
 
-mcCommonWeightNoMatch = 'XSWeight*%s*METFilter_MC' %IDcutMC
-mcCommonWeight = 'XSWeight*%s*PromptGenLepMatch2l*METFilter_MC' %IDcutMC
+btag_ver='v1'
+BTAG_VETO='bVeto_%s*bVetoSF_%s' %( btag_ver , btag_ver )
+
+flav="1" #"isSS_2l"
+
+mcCommonWeightNoMatch = 'XSWeight*%s*METFilter_MC*%s*%s' %( IDcutMC , BTAG_VETO , flav )
+mcCommonWeight = 'XSWeight*%s*PromptGenLepMatch2l*METFilter_MC*%s*%s' %( IDcutMC , BTAG_VETO , flav )
+
 #flip_ele_SF_2l
 ###########################################
 #############  BACKGROUNDS  ###############
@@ -155,15 +161,15 @@ files = nanoGetSampleFiles(mcDirectory, 'Wg_MADGRAPHMLM') + \
 
 samples['WgS'] = {
     'name': files,
-    'weight': mcCommonWeight + '*((Gen_ZGstar_mass >0 && Gen_ZGstar_mass < 4)*0.94)', 
-    #'weight': mcCommonWeight + '*(gstarLow*0.94)', 
+    'weight': mcCommonWeight + '*((Gen_ZGstar_mass >0 && Gen_ZGstar_mass < 4)*0.94)',
+    #'weight': mcCommonWeight + '*(gstarLow*0.94)',
     'FilesPerJob': 4,
-}   
+}
 addSampleWeight(samples, 'WgS', 'Wg_MADGRAPHMLM', '(Gen_ZGstar_mass > 0 && Gen_ZGstar_mass < 0.1)')
 addSampleWeight(samples, 'WgS', 'WZTo3LNu_mllmin01', '(Gen_ZGstar_mass > 0.1)')
-    
+
 ######## WZ ########
-    
+
 files = nanoGetSampleFiles(mcDirectory, 'WZTo3LNu_mllmin01') + \
     nanoGetSampleFiles(mcDirectory, 'WZTo2L2Q')
 
@@ -210,7 +216,7 @@ signals = []
 
 samples['ggH_hww'] = {
     'name': nanoGetSampleFiles(mcDirectory, 'GluGluHToWWTo2L2NuPowheg_M125'),
-    'weight': mcCommonWeight, 
+    'weight': mcCommonWeight,
     'FilesPerJob': 4,
 }
 
@@ -294,7 +300,7 @@ signals.append('WH_htt')
 
 samples['Fake'] = {
     'name': [],
-    'weight': 'METFilter_DATA*%s' %IDcutFAKE ,
+    'weight': 'METFilter_DATA*%s*%s*%s' %( IDcutFAKE , BTAG_VETO.split('*')[0] , flav ) ,
     'isData': ['all'],
     'FilesPerJob': 50
 }
@@ -325,7 +331,7 @@ for _, sd in DataRun:
     for pd in DataSets:
         # only this file is v3
         if ('2016E' in sd and 'MuonEG' in pd):
-            files = nanoGetSampleFiles(fakeDirectory, pd + '_' + sd.replace('v1', 'v3') , True)  
+            files = nanoGetSampleFiles(fakeDirectory, pd + '_' + sd.replace('v1', 'v3') , True)
         else:
             files = nanoGetSampleFiles(fakeDirectory, pd + '_' + sd , True)
 
@@ -348,7 +354,7 @@ for _, sd in DataRun:
 
 samples['DATA'] = {
   'name': [],
-  'weight': 'METFilter_DATA*%s' %IDcutDATA,
+  'weight': 'METFilter_DATA*%s*%s*%s' %( IDcutDATA , BTAG_VETO.split('*')[0] , flav ) ,
   'isData': ['all'],
   'FilesPerJob': 50
 }
@@ -360,7 +366,7 @@ for _, sd in DataRun:
         files = nanoGetSampleFiles(dataDirectory, pd + '_' + sd.replace('v1', 'v3'))
     else:
         files = nanoGetSampleFiles(dataDirectory, pd + '_' + sd)
-    
+
     samples['DATA']['name'].extend(files)
 
 for _, sd in DataRun:

@@ -48,8 +48,13 @@ IDcutMC='SFweight_tthmva'
 IDcutDATA='LepWPCut_tthmva'
 IDcutFAKE='fakeW2l_ele_mvaFall17V1Iso_WP90_tthmva_70_mu_cut_Tight_HWWW_tthmva_80'
 
-mcCommonWeightNoMatch = 'XSWeight*%s*METFilter_MC' %IDcutMC
-mcCommonWeight = 'XSWeight*%s*PromptGenLepMatch2l*METFilter_MC' %IDcutMC
+btag_ver='v1'
+BTAG_VETO='bVeto_%s*bVetoSF_%s' %( btag_ver , btag_ver )
+
+flav="1" #"isSS_2l"
+
+mcCommonWeightNoMatch = 'XSWeight*%s*METFilter_MC*(%s)*%s' %( IDcutMC , BTAG_VETO , flav )
+mcCommonWeight = 'XSWeight*%s*PromptGenLepMatch2l*METFilter_MC*(%s)*%s' %( IDcutMC , BTAG_VETO , flav )
 
 ###########################################
 #############  BACKGROUNDS  ###############
@@ -67,11 +72,10 @@ files = nanoGetSampleFiles(mcDirectory, 'DYJetsToLL_M-50-LO') + \
 
 samples['DY'] = {
     'name': files,
-    #'weight': mcCommonWeight + '*( !(Sum(PhotonGen_isPrompt==1 && PhotonGen_pt>15 && abs(PhotonGen_eta)<2.6) > 0 &&\
-    #                                 Sum(LeptonGen_isPrompt==1 && LeptonGen_pt>15)>=2) )',
-    'weight': mcCommonWeight + '*( !(Sum(PhotonGen_isPrompt==1 && PhotonGen_pt>15 && abs(PhotonGen_eta)<2.6) > 0))',
+    'weight': mcCommonWeight + '*( !(Sum(PhotonGen_isPrompt==1 && PhotonGen_pt>15 && abs(PhotonGen_eta)<2.6) > 0 && Sum(LeptonGen_isPrompt==1 && LeptonGen_pt>15)>=2) )',
     'FilesPerJob': 6,
 }
+
 #addSampleWeight(samples,'DY','DYJetsToTT_MuEle_M-50_private',ptllDYW_NLO)
 addSampleWeight(samples,'DY','DYJetsToLL_M-50-LO',ptllDYW_LO)
 addSampleWeight(samples,'DY','DYJetsToLL_M-10to50-LO_ext1',ptllDYW_LO)
@@ -91,8 +95,7 @@ samples['top'] = {
     'FilesPerJob': 2,
 }
 
-addSampleWeight(samples,'top','TTTo2L2Nu','(Sum(abs(GenPart_pdgId) == 6 && TMath::Odd(GenPart_statusFlags / (1 << 13))) == 2) * (TMath::Sqrt(TMath::Exp(0.0615 - 0.0005 * (Sum((GenPart_pdgId == 6 && TMath::Odd(GenPart_statusFlags / (1 << 13))) * GenPart_pt))) * TMath::Exp(0.0615 - 0.0005 * (Sum((GenPart_pdgId == -6 && TMath::Odd(GenPart_statusFlags / (1 << 13))) * GenPart_pt))))) + (Sum(abs(GenPart_pdgId) == 6 && TMath::Odd(GenPart_statusFlags / (1 << 13))) == 1)')
-#addSampleWeight( samples , 'top' , 'TTTo2L2Nu' , '(topGenPt * antitopGenPt > 0.) * (TMath::Sqrt(TMath::Exp(0.0615 - 0.0005 * topGenPt) * TMath::Exp(0.0615 - 0.0005 * antitopGenPt))) + (topGenPt * antitopGenPt <= 0.)')
+addSampleWeight(samples,'top','TTTo2L2Nu', 'Top_pTrw' )
 
 ###### WW ########
 
@@ -313,7 +316,7 @@ signals.append('WH_htt')
 
 samples['Fake'] = {
   'name': [],
-  'weight': 'METFilter_DATA*%s' %IDcutFAKE,
+    'weight': 'METFilter_DATA*%s*%s*%s' %( IDcutFAKE , BTAG_VETO.split('*')[0] , flav ),
   'isData': ['all'],
   'FilesPerJob': 10
 }
@@ -375,7 +378,7 @@ samples['Fake']['subsamples'] = {
 
 samples['DATA'] = {
   'name': [],
-  'weight': 'METFilter_DATA*%s' %IDcutDATA ,
+    'weight': 'METFilter_DATA*%s*%s*%s' %( IDcutDATA , BTAG_VETO.split('*')[0] , flav ),
   'isData': ['all'],
   'FilesPerJob': 40
 }

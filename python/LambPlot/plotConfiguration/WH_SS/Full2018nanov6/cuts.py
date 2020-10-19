@@ -4,20 +4,23 @@ supercut = 'mll>12  \
             && bVeto \
             && PuppiMET_pt > 30 \
             '
-
 cuts={}
 
-cuts['OSee'] = 'nCleanJet>=2 && nLepton>=2 && isbVeto && ((Lepton_pdgId[0]*Lepton_pdgId[1]==11*-11)||(Lepton_pdgId[0]*Lepton_pdgId[1]==-11*11)) \
+cuts['Signal_incl_2j'] = 'nLepton==2 && isSS_2l && nCleanJet>1 && CleanJet_pt[0]>30 && CleanJet_pt[1]>30'
+
+cuts['Signal_incl_1j'] = 'nLepton==2 && isSS_2l && ( (nCleanJet==1 && CleanJet_pt[0]>30) || (nCleanJet>1 && CleanJet_pt[0]>30 && CleanJet_pt[1]<30) )'
+
+cuts['OSee'] = 'nCleanJet>=2 && nLepton>=2 && ((Lepton_pdgId[0]*Lepton_pdgId[1]==11*-11)||(Lepton_pdgId[0]*Lepton_pdgId[1]==-11*11)) \
 && Electron_pt[Lepton_electronIdx[0]]>25 && Electron_pt[Lepton_electronIdx[1]]>20 \
 && mll>30 \
 '
 
-cuts['OSmumu'] = 'nCleanJet>=2 && nLepton>=2 && isbVeto && ((Lepton_pdgId[0]*Lepton_pdgId[1]==13*-13)||(Lepton_pdgId[0]*Lepton_pdgId[1]==-13*13)) \
+cuts['OSmumu'] = 'nCleanJet>=2 && nLepton>=2 && ((Lepton_pdgId[0]*Lepton_pdgId[1]==13*-13)||(Lepton_pdgId[0]*Lepton_pdgId[1]==-13*13)) \
 && Muon_pt[Lepton_muonIdx[0]]>25 && Muon_pt[Lepton_muonIdx[1]]>20 \
 && mll>30 \
 '
 
-cuts['OSemu-showoff'] = 'Sum(CleanJet_pt>30)>=2 && nLepton>=2 && isbVeto && ((Lepton_pdgId[0]*Lepton_pdgId[1]==13*-11)||(Lepton_pdgId[0]*Lepton_pdgId[1]==-13*11)) \
+cuts['OSemu-showoff'] = 'Sum(CleanJet_pt>30)>=2 && nLepton>=2 && ((Lepton_pdgId[0]*Lepton_pdgId[1]==13*-11)||(Lepton_pdgId[0]*Lepton_pdgId[1]==-13*11)) \
 && Electron_pt[Lepton_electronIdx[0]]>30 && Muon_pt[Lepton_muonIdx[1]]>20 \
 && mll>15 \
 '
@@ -44,41 +47,73 @@ cuts['SSmumu_ugo_2jets_iso'] ='nLepton==2 && Sum(CleanJet_pt>30)<3 \
 && Muon_pfRelIso03_all[Lepton_muonIdx[0]]<0.05 && Muon_pfRelIso03_all[Lepton_muonIdx[1]]<0.05 \
 '
 
+
+cuts['fake_CR'] = 'nLepton == 2 \
+                   && abs(Lepton_pdgId[0]) == 11 \
+                   && nCleanJet>1 \
+'
+
+
 ## SR 2jets
-cuts['hww2l2v_13TeV_of2j_WH_SS_uu_2j'] = '(Lepton_pdgId[0]*Lepton_pdgId[1] == 13*13) \
+cuts['hww2l2v_13TeV_of2j_WH_SS_uu_2j'] = '( Lepton_pdgId[0]*Lepton_pdgId[1] == 13*13 ) \
                                        && nLepton==2  \
-                                       && Alt$(CleanJet_pt[0],0)>30 \
-                                       && Alt$(CleanJet_pt[1],0)>30 \
+                                       && nCleanJet>1 \
+                                       && CleanJet_pt[0]>30 \
+                                       && CleanJet_pt[1]>30 \
                                        && mjj < 100 \
                                        && abs(Lepton_eta[0] - Lepton_eta[1])<2.0 \
                                        && abs(mll-91.2)>15 \
                                        && mlljj20_whss > 50. \
                                        '
-cuts['hww2l2v_13TeV_of2j_WH_SS_eu_2j'] = '(Lepton_pdgId[0]*Lepton_pdgId[1] == 11*13) \
+cuts['hww2l2v_13TeV_of2j_WH_SS_eu_2j'] = '( Lepton_pdgId[0]*Lepton_pdgId[1] == 11*13 ) \
                                        && nLepton==2 \
-                                       && Alt$(CleanJet_pt[0],0)>30 \
-                                       && Alt$(CleanJet_pt[1],0)>30 \
+                                       && nCleanJet>1 \
+                                       && CleanJet_pt[0]>30 \
+                                       && CleanJet_pt[1]>30 \
                                        && mjj < 100 \
                                        && abs(Lepton_eta[0] - Lepton_eta[1])<2.0 \
                                        && mlljj20_whss > 50. \
                                        '
+cuts['hww2l2v_13TeV_of2j_WH_SS_ee_2j'] = '( abs(Lepton_pdgId[0]) == 11 && abs(Lepton_pdgId[1]) == 11 ) \
+                                       && nLepton==2 \
+                                       && nCleanJet>1 \
+                                       && CleanJet_pt[0]>30 \
+                                       && CleanJet_pt[1]>30 \
+                                       && mjj < 100 \
+                                       && abs(Lepton_eta[0] - Lepton_eta[1])<2.0 \
+                                       && abs(mll-91.2)>15 \
+                                       && mlljj20_whss > 50. \
+                                       '
+
+cuts['SS_ee'] = 'nLepton==2 \
+                 && (abs(Lepton_pdgId[0])==11 && abs(Lepton_pdgId[1])==11) \
+                 && abs(mll-91.2)>15 \
+                '
+
 ## SR 1jet
 
-cuts['hww2l2v_13TeV_of2j_WH_SS_uu_1j'] = '(Lepton_pdgId[0]*Lepton_pdgId[1] == 13*13) \
+cuts['hww2l2v_13TeV_of2j_WH_SS_uu_1j'] = '( Lepton_pdgId[0]*Lepton_pdgId[1] == 13*13 ) \
                                        && nLepton==2 \
-                                       && Alt$(CleanJet_pt[0],0)>30 \
-                                       && Alt$(CleanJet_pt[1],0)<30 \
+                                       && ( (nCleanJet==1 && CleanJet_pt[0]>30) || (nCleanJet>1 && CleanJet_pt[0]>30 && CleanJet_pt[1]<30) ) \
                                        && abs(Lepton_eta[0] - Lepton_eta[1])<2.0 \
                                        && abs(mll-91.2)>15 \
                                        && mlljj20_whss > 50. \
                                        '
-cuts['hww2l2v_13TeV_of2j_WH_SS_eu_1j'] = '(Lepton_pdgId[0]*Lepton_pdgId[1] == 11*13) \
+cuts['hww2l2v_13TeV_of2j_WH_SS_eu_1j'] = '( Lepton_pdgId[0]*Lepton_pdgId[1] == 11*13 ) \
                                        && nLepton==2 \
-                                       && Alt$(CleanJet_pt[0],0)>30 \
-                                       && Alt$(CleanJet_pt[1],0)<30 \
+                                       && ( (nCleanJet==1 && CleanJet_pt[0]>30) || (nCleanJet>1 && CleanJet_pt[0]>30 && CleanJet_pt[1]<30) ) \
                                        && abs(Lepton_eta[0] - Lepton_eta[1])<2.0 \
                                        && mlljj20_whss > 50. \
                                        '
+
+cuts['hww2l2v_13TeV_of2j_WH_SS_ee_1j'] = '( abs(Lepton_pdgId[0]) == 11 && abs(Lepton_pdgId[1]) == 11 ) \
+                                       && nLepton==2 \
+                                       && ( (nCleanJet==1 && CleanJet_pt[0]>30) || (nCleanJet>1 && CleanJet_pt[0]>30 && CleanJet_pt[1]<30) )\
+                                       && abs(Lepton_eta[0] - Lepton_eta[1])<2.0 \
+                                       && abs(mll-91.2)>15 \
+                                       && mlljj20_whss > 50. \
+                                       '
+
 ### WZ CR
 
 '''

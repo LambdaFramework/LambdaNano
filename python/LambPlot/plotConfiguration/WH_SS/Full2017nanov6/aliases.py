@@ -284,12 +284,12 @@ aliases['ttHMVA_2l_mu_SF_Down'] = {'expr' : '(ttHMVA_SF_Down_0*(TMath::Abs(Lepto
 #}
 
 aliases['SFweight'] = {
-    'expr' : 'SFweight2l*LepSF2l__ele_mvaFall17V1Iso_WP90__mu_cut_Tight_HWWW*LepWPCut*(isbVeto*vbVetoSF)*PrefireWeight*PUJetIdSF',
+    'expr' : 'SFweight2l*LepSF2l__ele_mvaFall17V1Iso_WP90__mu_cut_Tight_HWWW*LepWPCut*PrefireWeight*PUJetIdSF',
     'samples' : mc
 }
 
 aliases['SFweight_tthmva'] = {
-    'expr' : 'SFweight2l*ttHMVA_SF_2l*LepWPCut_tthmva*(isbVeto*vbVetoSF)*PrefireWeight*PUJetIdSF',
+    'expr' : 'SFweight2l*ttHMVA_SF_2l*LepWPCut_tthmva*PrefireWeight*PUJetIdSF',
     'samples' : mc
 }
 

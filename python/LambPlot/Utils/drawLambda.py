@@ -144,7 +144,7 @@ def applyAction(histList,groupList):
         histout[ihist].SetFillStyle(groupList[ihist]['fillstyle'])
         histout[ihist].SetLineColor(groupList[ihist]['linecolor'])
         histout[ihist].SetLineStyle(groupList[ihist]['linestyle'])
-        print ihist , "'s integral = ", histout[ihist].Integral()
+        #print ihist , "'s integral = ", histout[ihist].Integral()
     return histout
 pass
 
@@ -304,7 +304,7 @@ def draw(hist, data, back, sign, snorm=1, ratio=0, poisson=True, log=False):
     #    bkg.GetYaxis().SetMoreLogLabels(True)
 
     #set range on stack
-    bkg.SetMinimum(1.0)
+    bkg.SetMinimum(5.e-1 if log else 1.0)
 
     leg.Draw()
 
@@ -807,7 +807,10 @@ def printTable_html(hist,sign=[]):
     print '</html>'
 pass
 
+'''
 def drawSignal(hist, sign, log=False):
+
+    print "HERE"
 
     groupList = plt.cfg.getGroupPlot()
 
@@ -817,7 +820,7 @@ def drawSignal(hist, sign, log=False):
     leg.SetFillStyle(0)
     leg.SetFillColor(0)
     #for i, s in enumerate(sign): leg.AddEntry(hist[s], samples[s]['label'], "fl")
-    for i, s in enumerate(sign): leg.AddEntry(hist[s], groupList[s]['label'], "fl")
+    for i, s in enumerate(sign): leg.AddEntry(hist[s], '%s hello [%s]' %( groupList[s]['label'] , hist[s].Integral() ) , "fl")
     # --- Display ---
     c1 = TCanvas("c1", hist.values()[-1].GetXaxis().GetTitle(), 800, 600)
     if log:
@@ -853,3 +856,4 @@ def drawSignal(hist, sign, log=False):
     # return list of objects created by the draw() function
     return [c1, leg]
 pass
+'''

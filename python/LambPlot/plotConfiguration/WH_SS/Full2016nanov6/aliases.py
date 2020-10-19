@@ -302,13 +302,13 @@ aliases['ttHMVA_2l_mu_SF_Down'] = {'expr' : '(ttHMVA_SF_Down_0*(TMath::Abs(Lepto
 # HERE
 aliases['SFweight'] = {
     #'expr' : 'SFweight2l*ttHMVA_SF_2l*LepWPCut*(isbVeto*vbVetoSF)*PrefireWeight*PUJetIdSF',
-    'expr' : 'SFweight2l*LepSF2l__ele_mva_90p_Iso2016__mu_cut_Tight80x*LepWPCut*(isbVeto*vbVetoSF)*PrefireWeight*PUJetIdSF',
+    'expr' : 'SFweight2l*LepSF2l__ele_mva_90p_Iso2016__mu_cut_Tight80x*LepWPCut*PrefireWeight*PUJetIdSF',
     #'expr' : 'SFweight2l*LepSF2l__ele_mva_90p_Iso2016__mu_cut_Tight80x*LepWPCut*PrefireWeight*PUJetIdSF',
     'samples' : mc
 }
 
 aliases['SFweight_tthmva'] = {
-    'expr' : 'SFweight2l*ttHMVA_SF_2l*LepWPCut_tthmva*(isbVeto*vbVetoSF)*PrefireWeight*PUJetIdSF',
+    'expr' : 'SFweight2l*ttHMVA_SF_2l*LepWPCut_tthmva*PrefireWeight*PUJetIdSF',
     'samples' : mc
 }
 

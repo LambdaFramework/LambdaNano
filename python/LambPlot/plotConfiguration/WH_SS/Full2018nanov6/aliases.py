@@ -335,11 +335,11 @@ aliases['ttHMVA_2l_mu_SF_Down'] = {'expr' : '(ttHMVA_SF_Down_0*(TMath::Abs(Lepto
 
 # data/MC scale factors
 aliases['SFweight'] = {
-    'expr' : 'SFweight2l*LepSF2l__ele_mvaFall17V1Iso_WP90__mu_cut_Tight_HWWW*LepWPCut*(isbVeto*vbVetoSF)*PUJetIdSF',
+    'expr' : 'SFweight2l*LepSF2l__ele_mvaFall17V1Iso_WP90__mu_cut_Tight_HWWW*LepWPCut*PUJetIdSF',
     'samples' : mc
 }
 
 aliases['SFweight_tthmva'] = {
-    'expr' : 'SFweight2l*ttHMVA_SF_2l*LepWPCut_tthmva*(isbVeto*vbVetoSF)*PUJetIdSF',
+    'expr' : 'SFweight2l*ttHMVA_SF_2l*LepWPCut_tthmva*PUJetIdSF',
     'samples' : mc
 }
