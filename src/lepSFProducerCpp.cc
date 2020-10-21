@@ -1,53 +1,75 @@
 #include "../interface/lepSFProducerCpp.h"
 
 //constructor
-lepSFProducerCpp::lepSFProducerCpp( const char* year, const unsigned int nLeptons, std::string requested_SF, const unsigned int requested_lepton ){
+lepSFProducerCpp::lepSFProducerCpp( const char* year, const unsigned int nLeptons, std::string requested_SF, bool ele_SS , const unsigned int requested_lepton ){
 
-  nLeptons_ = nLeptons;
-  working_point_ = "TightObjWP";  // WP is hardcoded for now, thinking of passing it at run time for more flexibility
   year_ = year;
+  nLeptons_ = nLeptons;
   requested_SF_ = requested_SF;
   requested_lepton_ = requested_lepton;
-
+  // muon
+  working_point_ = "TightObjWP";  // WP is hardcoded for now, thinking of passing it at run time for more flexibility
+  // ele
+  working_point_ele_ = "TightObjWP";
+  if (ele_SS)
+    working_point_ele_ = "TightObjWP_SS";
+  
   std::cout<<std::endl;
   std::cout<<" worker::lepSFProducerCpp --> configuration" <<std::endl;
   std::cout<<" worker::lepSFProducerCpp::nLeptons_ : "<< nLeptons_ <<std::endl;
   std::cout<<" worker::lepSFProducerCpp::year_ : "<< year_ <<std::endl;
   std::cout<<" worker::lepSFProducerCpp::requested_SF_ : "<< requested_SF_ <<std::endl;
   std::cout<<" worker::lepSFProducerCpp::requested_lepton_ : "<< requested_lepton_ <<std::endl;
+  std::cout<<" worker::lepSFProducerCpp::working_point_ : "<< working_point_ <<std::endl;
+  std::cout<<" worker::lepSFProducerCpp::working_point_ele_ : "<< working_point_ele_ <<std::endl;
   std::cout<<std::endl;
   //
   nested_dict SF_files_map;
   std::string base = std::getenv("NANOAODTOOLS_BASE") ;
 
   // 2016
+  // Electron
   SF_files_map["electron"]["TightObjWP"]["2016"]["wpSF"]= { base + "/python/postprocessing/data/scale_factor/Full2016v7/egammaEffi_passingMVA80Xwp90Iso16.txt" };
+  SF_files_map["electron"]["TightObjWP_SS"]["2016"]["wpSF"]= { base + "/python/postprocessing/data/scale_factor/Full2016v7/egammaEffi_passingMVA80Xwp90Iso16_SS.txt" };
   SF_files_map["electron"]["TightObjWP"]["2016"]["ttHMVA"]= { base + "/python/postprocessing/data/scale_factor/Full2016v7/egammaEffi_TightHWW_ttHMVA_0p7_SFs_2016.txt" } ;
+  SF_files_map["electron"]["TightObjWP_SS"]["2016"]["ttHMVA"]= { base + "/python/postprocessing/data/scale_factor/Full2016v7/egammaEffi_TightHWW_SS_ttHMVA_0p7_SFs_2016.txt" } ;
+  
+  // Muon
   SF_files_map["muon"]["TightObjWP"]["2016"]["idSF"] = { base + "/python/postprocessing/data/scale_factor/Full2016v2/muonID_TH2_SFs_pt_eta.root" } ;
   SF_files_map["muon"]["TightObjWP"]["2016"]["isoSF"] = { base + "/python/postprocessing/data/scale_factor/Full2016v2/muonISO_TH2_SFs_pt_eta.root" } ;
   SF_files_map["muon"]["ttHMVA0p8"]["2016"]["ttHMVA"] = { base + "/python/postprocessing/data/scale_factor/ttH_SYS_SFs/ttHMVA0p8_TightHWWCut_SFs_2016.root" } ;
   SF_files_map["muon"]["ttHMVA0p8"]["2016"]["ttHMVA_SYS"] = { base + "/python/postprocessing/data/scale_factor/ttH_SYS_SFs/ttHMVA0p8_TightHWWCut_SFs_SYS_2016.root" } ;
 
   // 2017
+  // Electron
   SF_files_map["electron"]["TightObjWP"]["2017"]["wpSF"] = { base + "/python/postprocessing/data/scale_factor/Full2017v7/egammaEffi_passingMVA102Xwp90isoHWWiso0p06_2017RunB.txt",
                                                              base + "/python/postprocessing/data/scale_factor/Full2017v7/egammaEffi_passingMVA102Xwp90isoHWWiso0p06_2017RunCD.txt",
                                                              base + "/python/postprocessing/data/scale_factor/Full2017v7/egammaEffi_passingMVA102Xwp90isoHWWiso0p06_2017RunE.txt",
                                                              base + "/python/postprocessing/data/scale_factor/Full2017v7/egammaEffi_passingMVA102Xwp90isoHWWiso0p06_2017RunF.txt" } ;
-  
+  SF_files_map["electron"]["TightObjWP_SS"]["2017"]["wpSF"] = { base + "/python/postprocessing/data/scale_factor/Full2017v7/egammaEffi_passingMVA102Xwp90isoHWWiso0p06_SS_2017RunB.txt",
+                                                             base + "/python/postprocessing/data/scale_factor/Full2017v7/egammaEffi_passingMVA102Xwp90isoHWWiso0p06_SS_2017RunCD.txt",
+                                                             base + "/python/postprocessing/data/scale_factor/Full2017v7/egammaEffi_passingMVA102Xwp90isoHWWiso0p06_SS_2017RunE.txt",
+                                                             base + "/python/postprocessing/data/scale_factor/Full2017v7/egammaEffi_passingMVA102Xwp90isoHWWiso0p06_SS_2017RunF.txt" } ;
   SF_files_map["electron"]["TightObjWP"]["2017"]["ttHMVA"] = { base + "/python/postprocessing/data/scale_factor/Full2017v7/egammaEffi_TightHWW_ttHMVA_0p7_SFs_2017RunB.txt",
 							       base + "/python/postprocessing/data/scale_factor/Full2017v7/egammaEffi_TightHWW_ttHMVA_0p7_SFs_2017RunCD.txt",
 							       base + "/python/postprocessing/data/scale_factor/Full2017v7/egammaEffi_TightHWW_ttHMVA_0p7_SFs_2017RunE.txt",
-							       base + "/python/postprocessing/data/scale_factor/Full2017v7/egammaEffi_TightHWW_ttHMVA_0p7_SFs_2017RunF.txt",
-  };
-
+							       base + "/python/postprocessing/data/scale_factor/Full2017v7/egammaEffi_TightHWW_ttHMVA_0p7_SFs_2017RunF.txt" };
+  SF_files_map["electron"]["TightObjWP_SS"]["2017"]["ttHMVA"] = { base + "/python/postprocessing/data/scale_factor/Full2017v7/egammaEffi_TightHWW_SS_ttHMVA_0p7_SFs_2017RunB.txt",
+                                                               base + "/python/postprocessing/data/scale_factor/Full2017v7/egammaEffi_TightHWW_SS_ttHMVA_0p7_SFs_2017RunCD.txt",
+                                                               base + "/python/postprocessing/data/scale_factor/Full2017v7/egammaEffi_TightHWW_SS_ttHMVA_0p7_SFs_2017RunE.txt",
+                                                               base + "/python/postprocessing/data/scale_factor/Full2017v7/egammaEffi_TightHWW_SS_ttHMVA_0p7_SFs_2017RunF.txt" };
+  // Muon
   SF_files_map["muon"]["TightObjWP"]["2017"]["idSF"] = { base + "/python/postprocessing/data/scale_factor/Full2017/muonID_cut_Tight_HWW_combined.root" };
   SF_files_map["muon"]["TightObjWP"]["2017"]["isoSF"] = { base + "/python/postprocessing/data/scale_factor/Full2017/muonISO_cut_Tight_HWW_combined.root" };
   SF_files_map["muon"]["ttHMVA0p8"]["2017"]["ttHMVA"] = { base + "/python/postprocessing/data/scale_factor/ttH_SYS_SFs/ttHMVA0p8_TightHWWCut_SFs_2017.root" };
   SF_files_map["muon"]["ttHMVA0p8"]["2017"]["ttHMVA_SYS"] = { base + "/python/postprocessing/data/scale_factor/ttH_SYS_SFs/ttHMVA0p8_TightHWWCut_SFs_SYS_2017.root" };
 
   // 2018
+  // Electron
   SF_files_map["electron"]["TightObjWP"]["2018"]["wpSF"] = { base + "/python/postprocessing/data/scale_factor/Full2018v7/egammaEffi_passingMVA102Xwp90isoHWWiso0p06_2018.txt" };
   SF_files_map["electron"]["TightObjWP"]["2018"]["ttHMVA"] = { base + "/python/postprocessing/data/scale_factor/Full2018v7/egammaEffi_TightHWW_ttHMVA_0p7_SFs_2018.txt" };
+  // Electron SS
+  SF_files_map["electron"]["TightObjWP"]["2018"]["ttHMVA_SS"] = { base + "/python/postprocessing/data/scale_factor/Full2018v7/egammaEffi_TightHWW_SS_ttHMVA_0p7_SFs_2018.txt" };
   SF_files_map["muon"]["TightObjWP"]["2018"]["idSF"] = { base + "/python/postprocessing/data/scale_factor/Full2018/ID_TH2_SFs_pt_eta.root" };
   SF_files_map["muon"]["TightObjWP"]["2018"]["isoSF"] = { base + "/python/postprocessing/data/scale_factor/Full2018/ISO_TH2_SFs_pt_eta.root" };
   SF_files_map["muon"]["ttHMVA0p8"]["2018"]["ttHMVA"] = { base + "/python/postprocessing/data/scale_factor/ttH_SYS_SFs/ttHMVA0p8_TightHWWCut_SFs_2018.root" };
@@ -64,8 +86,17 @@ lepSFProducerCpp::lepSFProducerCpp( const char* year, const unsigned int nLepton
   std::vector<TH2D> h_SF_ele_ttHMVA_err {};
   std::vector<TH2D> h_SF_ele_ttHMVA_sys {};
 
-  makeSF_ele( SF_files_map_["electron"][working_point_][year_]["wpSF"]  , h_SF_ele , h_SF_ele_err , h_SF_ele_sys );
-  makeSF_ele( SF_files_map_["electron"][working_point_][year_]["ttHMVA"]  , h_SF_ele_ttHMVA , h_SF_ele_ttHMVA_err , h_SF_ele_ttHMVA_sys );
+  // electron SS
+  //std::vector<TH2D> h_SF_ele_SS {};
+  //std::vector<TH2D> h_SF_ele_SS_err {};
+  //std::vector<TH2D> h_SF_ele_SS_sys {};
+  //std::vector<TH2D> h_SF_ele_ttHMVA_SS {};
+  //std::vector<TH2D> h_SF_ele_ttHMVA_SS_err {};
+  //std::vector<TH2D> h_SF_ele_ttHMVA_SS_sys {};
+
+  // electron
+  makeSF_ele( SF_files_map_["electron"][working_point_ele_][year_]["wpSF"]  , h_SF_ele , h_SF_ele_err , h_SF_ele_sys );
+  makeSF_ele( SF_files_map_["electron"][working_point_ele_][year_]["ttHMVA"]  , h_SF_ele_ttHMVA , h_SF_ele_ttHMVA_err , h_SF_ele_ttHMVA_sys );
 
   h_SF_ele_ = h_SF_ele;
   h_SF_ele_err_ = h_SF_ele_err;
@@ -373,8 +404,8 @@ double lepSFProducerCpp::evaluate(){
   
   for(unsigned i=0;i<nLeptons_;i++){
     if(TMath::Abs(Lepton_pdgId->At(i)) == 11){
-      std::list<std::string> SF_path = SF_files_map_["electron"][working_point_][year_]["wpSF"];
-      std::list<std::string> SF_path_ttHMVA = SF_files_map_["electron"][working_point_][year_]["ttHMVA"];
+      std::list<std::string> SF_path = SF_files_map_["electron"][working_point_ele_][year_]["wpSF"];
+      std::list<std::string> SF_path_ttHMVA = SF_files_map_["electron"][working_point_ele_][year_]["ttHMVA"];
       
       int run_period__; std::string years = year_;
       std::tuple<double, double, double> res;

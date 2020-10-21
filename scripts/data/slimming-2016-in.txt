@@ -186,6 +186,7 @@ keepmatch bVeto_v2
 keepmatch bVetoSF_v1
 keepmatch bVetoSF_v2
 keepmatch ttHMVA_SF_2l
+keepmatch ttHMVA_SS_SF_2l
 keepmatch PUJetIdSF
 keepmatch Lepton_dz
 keepmatch Lepton_dxy

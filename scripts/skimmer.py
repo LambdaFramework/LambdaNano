@@ -44,14 +44,15 @@ class skimmer:
         #    ROOT.gROOT.ProcessLine(".L %s/src/%s.cc+O" %( base , Cpp ) )
 
         #### modules ####
-        bVetoer       = lambda : bVetoProducer        ( self.year                   )
-        lepSF         = lambda : lepSFProducerCpp     ( self.year , 2 , 'total_SF'  )
-        pujetIdSF     = lambda : pujetIdSFProducerCpp ( self.year , 'loose'         )
-        hww_flipSF    = lambda : eleFlipSFProducerCpp ( self.year , 'HWW_WP'        )
-        tthmva_flipSF = lambda : eleFlipSFProducerCpp ( self.year , 'HWW_tthMVA_WP' )
-        aliaser       = lambda : aliasProducer        ( self.year                   )
+        bVetoer       = lambda : bVetoProducer        ( self.year                       )
+        lepSF         = lambda : lepSFProducerCpp     ( self.year , 2 , 'total_SF' , False  )
+        lepSS_SF      = lambda : lepSFProducerCpp     ( self.year , 2 , 'total_SF' , True  )
+        pujetIdSF     = lambda : pujetIdSFProducerCpp ( self.year , 'loose'             )
+        #hww_flipSF    = lambda : eleFlipSFProducerCpp ( self.year , 'HWW_WP'        )
+        #tthmva_flipSF = lambda : eleFlipSFProducerCpp ( self.year , 'HWW_tthMVA_WP' )
+        aliaser       = lambda : aliasProducer        ( self.year                       )
 
-        modules_MC = [ lepSF() , pujetIdSF() , bVetoer() , hww_flipSF() , tthmva_flipSF() , aliaser() ]
+        modules_MC = [ lepSF() , lepSS_SF() , pujetIdSF() , bVetoer() , aliaser() ]
         modules_DATA = [ bVetoer() , aliaser() ]
         #################
 
@@ -76,7 +77,8 @@ class skimmer:
             self.modules = modules_DATA
         elif self.dataset >= 3 :
             self.samples = allDict
-            self.modules = modules_DATA
+            #self.modules = modules_DATA
+            self.modules = modules_MC
         else:
             print("ERROR: data type not found"); sys.exit();
 
@@ -207,7 +209,7 @@ if __name__ == "__main__" :
             if options.dataset == 4 :
                 inputs = ['sshwminus012j','sshwplus012j'] #INPUT HERE FOR REPROCESSING
             elif options.dataset == 3 :
-                inputs = [ "WZZ" , "SingleMuon" , "SingleMuon_fake" ] # , "WWW" , "ZZTo2L2Q" , "ST_s-channel"
+                inputs = [ "WZZ" , ]#"SingleMuon" , "SingleMuon_fake" ] # , "WWW" , "ZZTo2L2Q" , "ST_s-channel"
             # WWZ broke for 2017
 
             skim = skimmer( options.dataset , '%s-%s' %( options.outfolder , options.year ) , options.year )

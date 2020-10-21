@@ -28,7 +28,7 @@ class lepSFProducerCpp {
 
 public:
   
-  lepSFProducerCpp(const char* year, const unsigned int nLeptons, std::string requested_SF, const unsigned int requested_lepton=0);
+  lepSFProducerCpp(const char* year, const unsigned int nLeptons, std::string requested_SF, bool ele_SS , const unsigned int requested_lepton=0);
   double evaluate();
   
   void setVals(
@@ -48,6 +48,7 @@ public:
  private:
   unsigned int nLeptons_;
   const char* working_point_;
+  const char* working_point_ele_;
   const char* year_;
   std::string requested_SF_;
   unsigned int requested_lepton_;
@@ -84,6 +85,14 @@ public:
   std::vector<TH2D> h_SF_mu_ttHMVA_;
   std::vector<TH2D> h_SF_mu_ttHMVA_err_;
   std::vector<TH2D> h_SF_mu_ttHMVA_sys_;
+
+  // SS electron
+  //std::vector<TH2D> h_SF_ele_SS_;
+  //std::vector<TH2D> h_SF_ele_SS_err_;
+  //std::vector<TH2D> h_SF_ele_SS_sys_;
+  //std::vector<TH2D> h_SF_ele_ttHMVA_SS_;
+  //std::vector<TH2D> h_SF_ele_ttHMVA_SS_err_;
+  //std::vector<TH2D> h_SF_ele_ttHMVA_SS_sys_;
   
 };
 #endif

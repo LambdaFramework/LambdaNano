@@ -44,9 +44,14 @@ DataTrig = {
 #IDcutDATA='LepWPCut'
 #IDcutFAKE='fakeW2l_ele_mvaFall17V1Iso_WP90_mu_cut_Tight_HWWW'
 
-IDcutMC='SFweight_tthmva'
-IDcutDATA='LepWPCut_tthmva'
-IDcutFAKE='fakeW2l_ele_mvaFall17V1Iso_WP90_tthmva_70_mu_cut_Tight_HWWW_tthmva_80'
+#IDcutMC='SFweight_tthmva'
+#IDcutDATA='LepWPCut_tthmva'
+#IDcutFAKE='fakeW2l_ele_mvaFall17V1Iso_WP90_tthmva_70_mu_cut_Tight_HWWW_tthmva_80'
+
+# SS
+IDcutMC='SFweight_SS_tthmva'
+IDcutDATA='LepWPCut_SS_tthmva'
+IDcutFAKE='fakeW2l_ele_mvaFall17V1Iso_WP90_SS_tthmva_70_mu_cut_Tight_HWWW_tthmva_80'
 
 btag_ver='v1'
 BTAG_VETO='bVeto_%s*bVetoSF_%s' %( btag_ver , btag_ver )

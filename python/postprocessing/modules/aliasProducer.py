@@ -28,8 +28,8 @@ class aliasProducer(Module):
         self.out.branch( 'dRjjL1' , 'F' )
         self.out.branch( 'dRjjL2' , 'F' )
         self.out.branch( 'Top_pTrw' , 'F' )
-        self.out.branch( 'isSS_2l' , 'I' )
-        self.out.branch( 'isOS_2l' , 'I' )
+        #self.out.branch( 'isSS_2l' , 'I' )
+        #self.out.branch( 'isOS_2l' , 'I' )
 
         if any (x in inputFile.GetName() for x in [ 'SingleMuon' , 'SingleElectron' , 'DoubleMuon' , 'DoubleEG' , 'MuonEG' , 'EGamma' ]):
             self.isMC = False
@@ -104,12 +104,12 @@ class aliasProducer(Module):
                 Top_pTrw = 1.
 
         ## signess
-        isSS_2l_ = 0 ; isOS_2l_ = 0 ;
-        if event.nLepton>1:
-            if (leptons[0].pdgId * leptons[1].pdgId > 0):
-                isSS_2l_=1
-            else:
-                isOS_2l_=1
+        #isSS_2l_ = 0 ; isOS_2l_ = 0 ;
+        #if event.nLepton>1:
+        #    if (leptons[0].pdgId * leptons[1].pdgId > 0):
+        #        isSS_2l_=1
+        #    else:
+        #        isOS_2l_=1
 
         self.out.fillBranch( 'Lepton_dz'  , lepton_dz )
         self.out.fillBranch( 'Lepton_dxy' , lepton_dxy )
@@ -122,8 +122,8 @@ class aliasProducer(Module):
         self.out.fillBranch( 'dRjjL1'     , dRjjL1_ )
         self.out.fillBranch( 'dRjjL2'     , dRjjL2_ )
         self.out.fillBranch( 'Top_pTrw'   , Top_pTrw )
-        self.out.fillBranch( 'isSS_2l'    , isSS_2l_ )
-        self.out.fillBranch( 'isOS_2l'    , isOS_2l_ )
+        #self.out.fillBranch( 'isSS_2l'    , isSS_2l_ )
+        #self.out.fillBranch( 'isOS_2l'    , isOS_2l_ )
 
         # preselection
         #return True if nbveto == 0 else False;

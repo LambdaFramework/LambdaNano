@@ -31,6 +31,11 @@ aliases['LepWPCut_tthmva'] = {
     'samples': mc + ['DATA']
 }
 
+aliases['LepWPCut_SS_tthmva'] = {
+    'expr': 'LepCut2l__ele_mvaFall17V1Iso_WP90_SS__mu_cut_Tight_HWWW*( (abs(Lepton_pdgId[0])==11 || Muon_mvaTTH[Lepton_muonIdx[0]]>0.8) && (abs(Lepton_pdgId[1])==11 || Muon_mvaTTH[Lepton_muonIdx[1]]>0.8) && (abs(Lepton_pdgId[0])==13 || Electron_mvaTTH[Lepton_electronIdx[0]]>0.70) && (abs(Lepton_pdgId[1])==13 || Electron_mvaTTH[Lepton_electronIdx[1]]>0.70))',
+    'samples': mc + ['DATA']
+}
+
 aliases['gstarLow'] = {
     'expr': 'Gen_ZGstar_mass >0 && Gen_ZGstar_mass < 4',
     'samples': 'WgS'
@@ -341,5 +346,10 @@ aliases['SFweight'] = {
 
 aliases['SFweight_tthmva'] = {
     'expr' : 'SFweight2l*ttHMVA_SF_2l*LepWPCut_tthmva*PUJetIdSF',
+    'samples' : mc
+}
+
+aliases['SFweight_SS_tthmva'] = {
+    'expr' : 'SFweight2l*ttHMVA_SS_SF_2l*LepWPCut_SS_tthmva*PUJetIdSF',
     'samples' : mc
 }

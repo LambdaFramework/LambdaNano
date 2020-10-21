@@ -1,11 +1,12 @@
 import ROOT
 import os
+
 ROOT.PyConfig.IgnoreCommandLineOptions = True
 
 from PhysicsTools.NanoAODTools.postprocessing.framework.eventloop import Module
 
 class lepSFProducerCpp(Module):
-    def __init__(self , year , nlep , sf ):
+    def __init__(self , year , nlep , sf , eleSS ):
         if "/lepSFProducerCpp_cc.so" not in ROOT.gSystem.GetLibraries():
             print "Load C++ lepSFProducerCpp worker module"
             base = os.getenv("NANOAODTOOLS_BASE")
@@ -17,9 +18,10 @@ class lepSFProducerCpp(Module):
                 ROOT.gROOT.ProcessLine(".L %s/interface/lepSFProducerCpp.h"%base)
                 
         # Initialization
-        self.worker = ROOT.lepSFProducerCpp( year , nlep , sf )
+        self.worker = ROOT.lepSFProducerCpp( year , nlep , sf , eleSS )
         
         self.isMC = True
+        self.ele_isSS = eleSS
         pass
     def beginJob(self):
         pass
@@ -27,8 +29,8 @@ class lepSFProducerCpp(Module):
         pass
     def beginFile(self, inputFile, outputFile, inputTree, wrappedOutputTree):
         self.initReaders(inputTree) # initReaders must be called in beginFile
-        self.out = wrappedOutputTree
-        self.out.branch("ttHMVA_SF_2l",  "F");
+        self.out = wrappedOutputTree           
+        self.out.branch( "ttHMVA_SF_2l" if not self.ele_isSS else "ttHMVA_SS_SF_2l" ,  "F");
         if any (x in inputFile.GetName() for x in [ 'SingleMuon' , 'SingleElectron' , 'DoubleMuon' , 'DoubleEG' , 'MuonEG' , 'EGamma' ]):
             self.isMC = False
         pass
@@ -59,7 +61,7 @@ class lepSFProducerCpp(Module):
         
         output = self.worker.evaluate()
         
-        self.out.fillBranch("ttHMVA_SF_2l", output )
+        self.out.fillBranch( "ttHMVA_SF_2l" if not self.ele_isSS else "ttHMVA_SS_SF_2l" , output )
         return True
 
 # define modules using the syntax 'name = lambda : constructor' to avoid having them loaded when not needed
@@ -67,5 +69,6 @@ class lepSFProducerCpp(Module):
 #lepSF = lambda : lepSFProducerCpp(
 #    year = '2016' ,
 #    nlep = 2 ,
+#    eleSS = False,
 #    sf = 'total_SF'
 #)
