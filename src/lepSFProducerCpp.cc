@@ -1,7 +1,7 @@
 #include "../interface/lepSFProducerCpp.h"
 
 //constructor
-lepSFProducerCpp::lepSFProducerCpp( const char* year, const unsigned int nLeptons, std::string requested_SF, bool ele_SS , const unsigned int requested_lepton ){
+lepSFProducerCpp::lepSFProducerCpp( const char* year, const unsigned int nLeptons, std::string requested_SF, const bool ele_SS , const unsigned int requested_lepton ){
 
   year_ = year;
   nLeptons_ = nLeptons;
@@ -10,9 +10,12 @@ lepSFProducerCpp::lepSFProducerCpp( const char* year, const unsigned int nLepton
   // muon
   working_point_ = "TightObjWP";  // WP is hardcoded for now, thinking of passing it at run time for more flexibility
   // ele
-  working_point_ele_ = "TightObjWP";
-  if (ele_SS)
+  if (ele_SS){
     working_point_ele_ = "TightObjWP_SS";
+  }
+  else{
+      working_point_ele_ = working_point_;
+  };
   
   std::cout<<std::endl;
   std::cout<<" worker::lepSFProducerCpp --> configuration" <<std::endl;
@@ -20,7 +23,7 @@ lepSFProducerCpp::lepSFProducerCpp( const char* year, const unsigned int nLepton
   std::cout<<" worker::lepSFProducerCpp::year_ : "<< year_ <<std::endl;
   std::cout<<" worker::lepSFProducerCpp::requested_SF_ : "<< requested_SF_ <<std::endl;
   std::cout<<" worker::lepSFProducerCpp::requested_lepton_ : "<< requested_lepton_ <<std::endl;
-  std::cout<<" worker::lepSFProducerCpp::working_point_ : "<< working_point_ <<std::endl;
+  std::cout<<" worker::lepSFProducerCpp::working_point_mu_ : "<< working_point_ <<std::endl;
   std::cout<<" worker::lepSFProducerCpp::working_point_ele_ : "<< working_point_ele_ <<std::endl;
   std::cout<<std::endl;
   //
@@ -67,9 +70,11 @@ lepSFProducerCpp::lepSFProducerCpp( const char* year, const unsigned int nLepton
   // 2018
   // Electron
   SF_files_map["electron"]["TightObjWP"]["2018"]["wpSF"] = { base + "/python/postprocessing/data/scale_factor/Full2018v7/egammaEffi_passingMVA102Xwp90isoHWWiso0p06_2018.txt" };
+  SF_files_map["electron"]["TightObjWP_SS"]["2018"]["wpSF"] = { base + "/python/postprocessing/data/scale_factor/Full2018v7/egammaEffi_passingMVA102Xwp90isoHWWiso0p06_SS_2018.txt" };
   SF_files_map["electron"]["TightObjWP"]["2018"]["ttHMVA"] = { base + "/python/postprocessing/data/scale_factor/Full2018v7/egammaEffi_TightHWW_ttHMVA_0p7_SFs_2018.txt" };
-  // Electron SS
-  SF_files_map["electron"]["TightObjWP"]["2018"]["ttHMVA_SS"] = { base + "/python/postprocessing/data/scale_factor/Full2018v7/egammaEffi_TightHWW_SS_ttHMVA_0p7_SFs_2018.txt" };
+  SF_files_map["electron"]["TightObjWP_SS"]["2018"]["ttHMVA"] = { base + "/python/postprocessing/data/scale_factor/Full2018v7/egammaEffi_TightHWW_SS_ttHMVA_0p7_SFs_2018.txt" };
+
+  // Muon
   SF_files_map["muon"]["TightObjWP"]["2018"]["idSF"] = { base + "/python/postprocessing/data/scale_factor/Full2018/ID_TH2_SFs_pt_eta.root" };
   SF_files_map["muon"]["TightObjWP"]["2018"]["isoSF"] = { base + "/python/postprocessing/data/scale_factor/Full2018/ISO_TH2_SFs_pt_eta.root" };
   SF_files_map["muon"]["ttHMVA0p8"]["2018"]["ttHMVA"] = { base + "/python/postprocessing/data/scale_factor/ttH_SYS_SFs/ttHMVA0p8_TightHWWCut_SFs_2018.root" };

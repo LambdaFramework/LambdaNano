@@ -28,7 +28,7 @@ class lepSFProducerCpp {
 
 public:
   
-  lepSFProducerCpp(const char* year, const unsigned int nLeptons, std::string requested_SF, bool ele_SS , const unsigned int requested_lepton=0);
+  lepSFProducerCpp(const char* year, const unsigned int nLeptons, std::string requested_SF, const bool ele_SS , const unsigned int requested_lepton=0);
   double evaluate();
   
   void setVals(
