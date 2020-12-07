@@ -29,8 +29,8 @@ class eleFlipSFProducerCpp(Module):
     def beginFile(self, inputFile, outputFile, inputTree, wrappedOutputTree):
         self.initReaders(inputTree) # initReaders must be called in beginFile
         self.out = wrappedOutputTree
-        self.out.branch( "flip_ele_%s_2l" % self.wp   ,  "F" );
-        #self.out.branch( "flip_ele_%s_SF_2l" % self.wp   ,  "F" );
+        self.out.branch( "flip_lep_%s_2l" % self.wp   ,  "F" );
+        self.out.branch( "flip_lep_%s_SF_2l" % self.wp   ,  "F" );
         if any (x in inputFile.GetName() for x in [ 'SingleMuon' , 'SingleElectron' , 'DoubleMuon' , 'DoubleEG' , 'MuonEG' , 'EGamma' ]):
             self.isMC = False
         pass
@@ -64,8 +64,8 @@ class eleFlipSFProducerCpp(Module):
         
         totalFlip = self.worker.evaluate()
         
-        self.out.fillBranch( "flip_ele_%s_2l" % self.wp      ,  totalFlip ) # total flip rate
-        #self.out.fillBranch( "flip_ele_%s_SF_2l" % self.wp   ,  totalFlip[1] ) # scale factor
+        self.out.fillBranch( "flip_lep_%s_2l" % self.wp      ,  totalFlip[0] ) # total flip rate
+        self.out.fillBranch( "flip_lep_%s_SF_2l" % self.wp   ,  totalFlip[1] ) # scale factor
 
         return True
 

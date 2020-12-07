@@ -100,49 +100,26 @@ double eleFlipSFProducerCpp::chargeflip( double pt , double eta ){
   return frate;
 }
 
-double eleFlipSFProducerCpp::evaluate(){
+std::pair<double,double> eleFlipSFProducerCpp::evaluate(){
   
-  double CommonW = 0. ; double epsilon1 =0.; double epsilon2 =0.; //double sf = 1.;
+  double epsilon1 = 0.; double epsilon2 = 0.; double sf1 = 1. ; double sf2 = 1.;
   unsigned nlepton = (*nLepton).Get()[0]; //unsigned nGenLepton = (*nLeptonGen).Get()[0];
   
   // return 1
-  if ( nlepton < 2 ) return CommonW;
+  if ( nlepton < 2 ) return std::make_pair( 0. , 0. );
   
-  if (TMath::Abs(Lepton_pdgId->At(0)) == 11) epsilon1 = chargeflip( Lepton_pt->At(0) , Lepton_eta->At(0) );
-  if (TMath::Abs(Lepton_pdgId->At(1)) == 11) epsilon2 = chargeflip( Lepton_pt->At(1) , Lepton_eta->At(1) );
-  
-  CommonW = epsilon1 * ( 1. - epsilon2 ) + ( 1. - epsilon1 ) * epsilon2;
-  
-  return CommonW;
-  /***
-      if (TMath::Abs(Lepton_pdgId->At(0)) == 11) epsilon1 = chargeflip( Lepton_pt->At(0) , Lepton_eta->At(0) );
-      if (TMath::Abs(Lepton_pdgId->At(1)) == 11) epsilon2 = chargeflip( Lepton_pt->At(1) , Lepton_eta->At(1) );
-      
-      // opposite sign
-      if ( (Lepton_pdgId->At(0) == -11 && Lepton_pdgId->At(1) == 11) || (Lepton_pdgId->At(0) == 11 && Lepton_pdgId->At(1) == -11) ){
-      CommonW = epsilon1 * ( 1. - epsilon2 ) + epsilon2 * ( 1. - epsilon1 );
-      }
-      // opposite sign same different flavour
-      else if ( (Lepton_pdgId->At(0) == -11 && Lepton_pdgId->At(1) == 13) || (Lepton_pdgId->At(0) == 11 && Lepton_pdgId->At(1) == -13) ){
-      CommonW = epsilon1 + epsilon2;
-      }
-      // same sign same different flavour
-      else if ( (Lepton_pdgId->At(0) == 11 && Lepton_pdgId->At(1) == 11) || (Lepton_pdgId->At(0) == -11 && Lepton_pdgId->At(1) == -11) ||
-      (Lepton_pdgId->At(0) == 11 && Lepton_pdgId->At(1) == 13) || (Lepton_pdgId->At(0) == -11 && Lepton_pdgId->At(1) == -13) ){
-      for ( unsigned i=0 ; i < nGenLepton ; i++ ){
-      if ( LeptonGen_pt->At(i) < 5 && TMath::Abs(LeptonGen_pdgId->At(0)) != 11 ) continue;
-      ROOT::Math::PtEtaPhiMVector genp4( LeptonGen_pt->At(i) , LeptonGen_eta->At(i) , LeptonGen_phi->At(i) , 0. );
-      for (int j=0 ; j < 2 ; j++){
-      if ( TMath::Abs(Lepton_pdgId->At(j)) != 11 ) continue;
-      ROOT::Math::PtEtaPhiMVector recop4( Lepton_pt->At(j) , Lepton_eta->At(j) , Lepton_phi->At(j) , 0. );
-      if ( ROOT::Math::VectorUtil::DeltaR( recop4 , genp4 ) < 0.3 &&
-      ( ( LeptonGen_pdgId->At(j) == -11 && Lepton_pdgId->At(j) == 11 ) || ( LeptonGen_pdgId->At(j) == 11 && Lepton_pdgId->At(j) == - 11 ) )
-      ){
-      sf = GetSF( Lepton_pt->At(j) , Lepton_eta->At(j) );
-      }
-      }
-      }
-      }
-  ***/
+  if (TMath::Abs(Lepton_pdgId->At(0)) == 11) {
+    epsilon1 = chargeflip( Lepton_pt->At(0) , Lepton_eta->At(0) );
+    sf1 = GetSF( Lepton_pt->At(0) , Lepton_eta->At(0) );
+  }
+  if (TMath::Abs(Lepton_pdgId->At(1)) == 11) {
+    epsilon2 = chargeflip( Lepton_pt->At(1) , Lepton_eta->At(1) );
+    sf2 = GetSF( Lepton_pt->At(1) , Lepton_eta->At(1) );
+  }
 
+  double CommonW = epsilon1 * ( 1. - epsilon2 ) + ( 1. - epsilon1 ) * epsilon2;
+  double sf = sf1 * sf2;
+  
+  return std::make_pair( CommonW , sf );
 }
+

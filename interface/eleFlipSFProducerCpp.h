@@ -29,7 +29,7 @@ class eleFlipSFProducerCpp {
 
 public:
   eleFlipSFProducerCpp( const char* year, const char* wp );
-  double evaluate();
+  std::pair<double,double> evaluate();
   
   void setVals(
 	       TTreeReaderValue<unsigned> *nLepton_ ,

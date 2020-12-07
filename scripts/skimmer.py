@@ -45,14 +45,14 @@ class skimmer:
 
         #### modules ####
         bVetoer       = lambda : bVetoProducer        ( self.year                       )
-        lepSF         = lambda : lepSFProducerCpp     ( self.year , 2 , 'total_SF' , False  )
-        lepSS_SF      = lambda : lepSFProducerCpp     ( self.year , 2 , 'total_SF' , True  )
+        lepSF         = lambda : lepSFProducerCpp     ( self.year , 2 , 'total_SF' , 0  )
+        lepSS_SF      = lambda : lepSFProducerCpp     ( self.year , 2 , 'total_SF' , 1  )
         pujetIdSF     = lambda : pujetIdSFProducerCpp ( self.year , 'loose'             )
         #hww_flipSF    = lambda : eleFlipSFProducerCpp ( self.year , 'HWW_WP'        )
-        #tthmva_flipSF = lambda : eleFlipSFProducerCpp ( self.year , 'HWW_tthMVA_WP' )
+        tthmva_flipSF = lambda : eleFlipSFProducerCpp ( self.year , 'HWW_tthMVA_WP' )
         aliaser       = lambda : aliasProducer        ( self.year                       )
 
-        modules_MC = [ lepSF() , lepSS_SF() , pujetIdSF() , bVetoer() , aliaser() ]
+        modules_MC = [ lepSF(), lepSS_SF() , pujetIdSF() , tthmva_flipSF() , bVetoer() , aliaser() ]
         modules_DATA = [ bVetoer() , aliaser() ]
         #################
 
@@ -198,7 +198,8 @@ if __name__ == "__main__" :
         ###### single run files
         if options.dataset == 5 :
             skim = skimmer( options.dataset , 'testRun-%s' %( options.year ) , options.year )
-            rootfile="/media/shoh/02A1ACF427292FC0/nanov5/Autumn18_102X_nAODv6_Full2018v6/MCl1loose2018v6__MCCorr2018v6__l2loose__l2tightOR2018v6/nanoLatino_TTTo2L2Nu__part4.root"
+            #rootfile="/media/shoh/02A1ACF427292FC0/nanov5/Autumn18_102X_nAODv6_Full2018v6/MCl1loose2018v6__MCCorr2018v6__l2loose__l2tightOR2018v6/nanoLatino_TTTo2L2Nu__part4.root"
+            rootfile="/media/shoh/02A1ACF427292FC0/nanov5/Autumn18_102X_nAODv6_Full2018v6/MCl1loose2018v6__MCCorr2018v6__l2loose__l2tightOR2018v6/nanoLatino_WWW__part1.root"
             skim.run([rootfile],'test')
         ###### reprocessing or testing
         if options.dataset == 3 or options.dataset == 4 :
@@ -209,7 +210,7 @@ if __name__ == "__main__" :
             if options.dataset == 4 :
                 inputs = ['sshwminus012j','sshwplus012j'] #INPUT HERE FOR REPROCESSING
             elif options.dataset == 3 :
-                inputs = [ "WZZ" , ]#"SingleMuon" , "SingleMuon_fake" ] # , "WWW" , "ZZTo2L2Q" , "ST_s-channel"
+                inputs = [ "WWW" ]#"SingleMuon" , "SingleMuon_fake" ] # , "WWW" , "ZZTo2L2Q" , "ST_s-channel"
             # WWZ broke for 2017
 
             skim = skimmer( options.dataset , '%s-%s' %( options.outfolder , options.year ) , options.year )
